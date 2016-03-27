@@ -1,0 +1,10 @@
+*.pyc
+*.egg
+ami/ami.egg-info
+ami/build
+ami/dist
+ami.egg-info
+venv
+*.swp
+*.pkl
+*.*~

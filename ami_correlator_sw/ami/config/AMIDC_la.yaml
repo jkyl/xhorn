@@ -1,0 +1,214 @@
+Configuration:
+    katcp_port: 7147
+    #boffile: amila_2015_Jul_17_0831.bof
+    boffile: amila_2015_Oct_19_1619.bof
+    redis_host: localhost
+    redis_port: 6379
+    control_interface:
+        host: 10.1.0.10
+        data_port: 2007
+        meta_port: 2006
+        n_ants: 8
+        n_agcs: 32
+    correlator:
+        hardcoded:
+            n_ants: 8
+            n_bands: 2
+            n_chans: 2048
+            inputs_per_board: 2
+            window_len: 1024
+            output_format: l
+            n_pols: 1
+            # sync period is in FPGA clocks
+            sync_period: 738197504
+        runtime:
+            fft_shift: 0b111011011011011
+            ten_gbe:
+                # multicast order.
+                # 0 disables multicast
+                # 1 subscribes each receiver to a single address
+                # 2 subscribes each receiver to 2 addresses
+                multicast_order: 0
+                network: 10.1.10.100
+                #port: 10000
+            one_gbe:
+                dest_ip: 10.1.1.1
+                dest_mac: 0x90E2BA75D610
+                port: 10000
+            testing:
+                ct_tvg: no
+                qdr_tvg: no
+                vacc_tvg: no
+            data_path: /media/data0
+
+XEngine:
+    n_chans: 256
+    bw_frac: 8
+    n_ants: 8
+    acc_len: 1024
+
+    nodes:
+        - host: adrian
+          band: 0
+
+        - host: brian
+          band: 1
+
+        - host: charlie
+          band: 2
+
+        - host: daniel
+          band: 3
+
+        - host: bob
+          band: 4
+
+        - host: fred
+          band: 5
+
+        - host: graham
+          band: 6
+
+        - host: harry
+          band: 7
+
+Array:
+    # array location in degrees
+    lat: 52.1694
+    lon: 0.0600
+
+Antennas:
+    - ant: 0
+      loc: [-107.0366, 6.2124, -0.1155]
+      index: 0
+    - ant: 1
+      loc: [-80.2842, 4.6468, -0.0815]
+      index: 1
+    - ant: 2
+      loc: [-62.4503, 3.6095, -0.0574]
+      index: 2
+    - ant: 3
+      loc: [-35.6924, 2.0513, -0.0343]
+      index: 3
+    - ant: 4
+      loc: [-0.0135, -0.0230, 0.0113]
+      index: 4
+    - ant: 5
+      loc: [-17.3429, -42.1490, -1.6452]
+      index: 5
+    - ant: 6
+      loc: [-56.0990, -57.0040, -2.0731]
+      index: 6
+    - ant: 7
+      loc: [-98.1023, -18.9624, -1.0832]
+      index: 7
+
+FEngine:
+    n_chans: 2048
+    adc_power_acc_len: 2500000000
+    #fft_power_acc_len counts in spectra. 1048537 is about 0.85s
+    #(but at the moment it can only be a number <= 20 bits)
+    fft_power_acc_len: 1048575
+    adc_clk: 5000
+    mix_freq: 8500
+    eq_dec: 2
+    eq_format: 'H'
+    eq_bp: 6
+    phase_switch: yes
+    
+    nodes:
+        - ant: 0
+          phase_walsh : 1
+          band: low
+          adc: 0
+          host: adrian
+
+        - ant: 0
+          phase_walsh : 1
+          band: high
+          adc: 1
+          host: adrian
+
+        - ant: 1
+          phase_walsh : 2
+          band: low
+          adc: 0
+          host: brian
+
+        - ant: 1
+          phase_walsh : 2
+          band: high
+          adc: 1
+          host: brian
+
+        - ant: 2
+          phase_walsh : 3
+          band: low
+          adc: 0
+          host: charlie
+
+        - ant: 2
+          phase_walsh : 3
+          band: high
+          adc: 1
+          host: charlie
+
+        - ant: 3
+          phase_walsh : 4
+          band: low
+          adc: 0
+          host: daniel
+
+        - ant: 3
+          phase_walsh : 4
+          band: high
+          adc: 1
+          host: daniel
+
+        - ant: 4
+          phase_walsh : 5
+          band: low
+          adc: 0
+          host: bob
+
+        - ant: 4
+          phase_walsh : 5
+          band: high
+          adc: 1
+          host: bob
+
+        - ant: 5
+          phase_walsh : 6
+          band: low
+          adc: 0
+          host: fred
+
+        - ant: 5
+          phase_walsh : 6
+          band: high
+          adc: 1
+          host: fred
+
+        - ant: 6
+          phase_walsh : 7
+          band: low
+          adc: 0
+          host: graham
+
+        - ant: 6
+          phase_walsh : 7
+          band: high
+          adc: 1
+          host: graham
+
+        - ant: 7
+          phase_walsh : 8
+          band: low
+          adc: 0
+          host: harry
+
+        - ant: 7
+          phase_walsh : 8
+          band: high
+          adc: 1
+          host: harry
