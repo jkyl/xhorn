@@ -90,12 +90,12 @@ class Spec:
         print(time.time() - t0)
         return np.array(struct.unpack('>%d%s'%(d['length'] / n_bytes, fmt), d['data']))
 
-    def snap_spectrum(self):
+    def snap_spec(self):
         '''
         '''
         return self._snap('corr00', fmt = 'q', man_trig = False)
 
-    def snap_time_series(self):
+    def snap_time(self):
         '''
         '''
         return self._snap('snapshot_adc0', 'b', man_trig = True)
@@ -105,15 +105,10 @@ class Spec:
         '''
         return np.linspace(0, self._samp_rate // 2, self._n_chans + 1)[1:]
 
-    def dbs(self, snap):
-        '''
-        '''
-        return 10 * np.log10(snap)
-
     def plot_spec(self):
         '''
         '''
-        f, a = self.freq_axis, self.dbs(self.snap_spectrum())
+        f, a = self.freq_axis, 10 * np.log10((self.snap_spec())
         p = plt.plot(f, a)
         plt.xlim((0, f[-1])
         plt.xlabel('Frequency (MHz)')
