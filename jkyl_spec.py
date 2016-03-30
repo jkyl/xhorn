@@ -13,9 +13,6 @@ class Spec:
     def __init__(self, acc_len = 1, samp_rate = None, deglitch = True,
                  ip = '128.135.52.192', boffile = 'simple_spec.bof'):
         '''
-        Inputs: 
-            acc_len (seconds), samp_rate (MHz), ip (string), boffile (string)
-
         Initializes a 2048 channel spectrometer by connecting to the given IP, 
         loading the given .bof file, setting (or estimating) the sample rate, 
         setting the accumulation length, setting FFT shift, and arming PPS. 
