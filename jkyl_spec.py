@@ -118,7 +118,7 @@ class Spec:
     def plot_time(self):
         '''
         '''
-        t = self.snap_time_series()
+        t = self.snap_time()
         p = plt.plot(t)
         plt.xlim((0, t.size))
         plt.xlabel('Frequency (MHz)')
