@@ -11,23 +11,25 @@ import struct
 class Spec:
     
     def __init__(self, acc_len = 1, samp_rate = None, deglitch = True,
-                 ip = '128.135.52.192', boffile = 'simple_spec.bof'):
+                 ip = '128.135.52.192'):
         '''
         Initializes a 2048 channel spectrometer by connecting to the given IP, 
-        loading the given .bof file, setting (or estimating) the sample rate, 
-        setting the accumulation length, setting FFT shift, and arming PPS. 
+        deglitching (by default) with adc5g_test_rev2.bof, loading simple_spec.bof, 
+        setting the sample rate (or estimating if none given), setting the 
+        accumulation length, setting FFT shift, and arming PPS. 
         '''
         self._n_chans = 2048
         print('\nConnecting to "{}"'.format(ip))
         self.connect(ip)
         if deglitch:
-            print('Loading .bof file "adc5g_test_rev2.bof.gz"')
+            print('Loading "adc5g_test_rev2.bof.gz"')
             self.load_bof('adc5g_test_rev2.bof.gz')
             print('Deglitching')
             self.deglitch()
-        print('Loading .bof file "{}"'.format(boffile))
-        self.load_bof(boffile)
-        print('Setting sample rate to {} MHz'.format(samp_rate))
+        print('Loading "simple_spec.bof"')
+        self.load_bof('simple_spec.bof')
+        if samp_rate != None:
+            print('Setting sample rate to {} MHz'.format(samp_rate))
         self.set_clock(samp_rate)
         print('Setting accumulation length to {} second(s)'.format(acc_len))
         self.set_acc_len(acc_len)
