@@ -92,6 +92,9 @@ if __name__ == '__main__':
         print 'Calibrating ADCs'
         #adc.calibrate_all_delays(r,0,snaps=['snapshot_adc0'],verbosity=opts.verbosity)
         #adc.sync_adc(r)
+
+
+        
     
     print 'Setting accumulation length to %d'%opts.acc_len,
     print '(%.2f seconds)'%((2*N_CHANS*opts.acc_len)/(clkrate*1e6))
@@ -99,6 +102,11 @@ if __name__ == '__main__':
     # controls serial accumulation, so write opts.acc_len/8 to it
     r.write_int('acc_len',opts.acc_len//8)
 
+
+
+
+
+    
     fft_shift_int = int(opts.fft_shift,2)
     print 'Setting fft-shift to %s'%opts.fft_shift
     r.write_int('fft_shift0',fft_shift_int)
@@ -132,12 +140,19 @@ if __name__ == '__main__':
         pylab.ion()
     while True:
         print 'snapping 00...',
-        #d00 = uint2int(snap(r,'corr00','q'),64,34)
-        t1=time.time()
-        d00 = snap(r,'corr00','q',man_trig=False)
+        t1 = time.time()
+        d00 = uint2int(snap(r,'corr00','q'),64,34)
+
+        
+        #d00 = snap(r,'corr00','q',man_trig=False)
         t2=time.time()
         print t2-t1
+        
+        
         adc0 = snap(r,'snapshot_adc0','b',man_trig=True)
+        
+
+        
         cnt = (r.read_uint('mcnt_lsb') >> 11) / (opts.acc_len//8) #shift down by 2**11 because mcnt counts channels (after parallel accumulation)
         print cnt
         pylab.figure(0)

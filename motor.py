@@ -1,7 +1,7 @@
 import serial, sys, time
 
-INIT  = 'F C '     # initialize
-RUN   = 'R'     # run command
+INIT  = 'F C '    # initialize
+RUN   = 'R'       # run command
 ACCL  = 'A1M'     # acceleration (1 - 127)
 SPEED = 'S1M'     # speed (1 - 6000 steps/sec)
 INCR  = 'I1M'     # increment steps
@@ -49,27 +49,31 @@ def send_command(ser, cmd):
     Will close and open again if the port was left open, otherwise throws
     informative exception. 
     '''
+
     try:
         ser.open()
         if ser.isOpen():
             try:
-                ser.flushInput() 
-                ser.flushOutput()
-                ser.write(cmd)
-                time.sleep(.01)
-                while True:
-                    response = ser.readline()
-                    if response != '':
-                        break
+                try:
+                    ser.flushInput() 
+                    ser.flushOutput()
+                    ser.write(cmd)
+                    while True:
+                        time.sleep(.02)
+                        response = ser.readline()
+                        if response != '':
+                            break
+                    ser.close()
+                    return response
+                except Exception, e1:
+                    print("Error communicating: " + str(e1))          
+            except (KeyboardInterrupt, SystemExit):
                 ser.close()
-                return response
-                
-            except Exception, e1:
-                print("Error communicating: " + str(e1))
-                
+                send_command(ser, "D")
+                print('\nStopped')
+                sys.exit()
         else:
             print "Cannot open serial port."
-            
     except Exception, e:
         if str(e) == 'Port is already open.':
             ser.close()
@@ -78,6 +82,8 @@ def send_command(ser, cmd):
             print "Error open serial port: " + str(e)
             sys.exit()
 
+    
+        
 
 class Motor:
     '''
@@ -113,7 +119,7 @@ class Motor:
         
     @property
     def position(self):
-        return int(self.send("X").replace("X", '')[:-1])
+        return int(self.send("X").replace("X", '')[:-1]) / 100.
 
     @property
     def baudrate(self):
@@ -143,25 +149,17 @@ class Motor:
         return self.send('rsm') == '^'
             
     def home(self):
-        try:
-            return self.send("C S1M600, I1M-0, I1M4000, I1M-0,  IA1M-0, R C"+\
-                             "S1M600, I1M-0, I1M4000, I1M-0, IA1M-0, R") == '^'
-        except (KeyboardInterrupt, SystemExit):
-            self._ser.close()
-            self.send("D")
-            print('\nStopped at position {}.'.format(self.position))
-        
+        return self.send("C S1M600, I1M-0, I1M4000, I1M-0,  IA1M-0, R C"+\
+                         "S1M600, I1M-0, I1M4000, I1M-0, IA1M-0, R") == '^'
+    
     def move(self, accl = 1, speed = 2000, incr = None, abst = None):
+        if incr != None:
+            incr *= 100.
+        else:
+            abst *= 100.
         c = gen_command(accl, speed, incr, abst)
-        try:
-            self.send(c)
-            return self.position
-        except (KeyboardInterrupt, SystemExit):
-            self._ser.close()
-            self.send("D")
-            print('')
-            print('\nStopped at position {}.'.format(self.position))
-            
+        return self.send(c) == '^'
+        
         
     
     
