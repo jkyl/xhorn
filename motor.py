@@ -49,40 +49,24 @@ def send_command(ser, cmd):
     Will close and open again if the port was left open, otherwise throws
     informative exception. 
     '''
-
     try:
-        ser.open()
-        if ser.isOpen():
-            try:
-                try:
-                    ser.flushInput() 
-                    ser.flushOutput()
-                    ser.write(cmd)
-                    while True:
-                        time.sleep(.02)
-                        response = ser.readline()
-                        if response != '':
-                            break
-                    ser.close()
-                    return response
-                except Exception, e1:
-                    print("Error communicating: " + str(e1))          
-            except (KeyboardInterrupt, SystemExit):
-                ser.close()
-                send_command(ser, "D")
-                print('\nStopped')
-                sys.exit()
-        else:
-            print "Cannot open serial port."
-    except Exception, e:
-        if str(e) == 'Port is already open.':
-            ser.close()
-            send_command(ser, cmd)
-        else:
-            print "Error open serial port: " + str(e)
-            sys.exit()
-
-    
+        try:
+            ser.flushInput() 
+            ser.flushOutput()
+            ser.write(cmd)
+            while True:
+                time.sleep(.02)
+                response = ser.readline()
+                if response != '':
+                    break
+            return response
+        except Exception, e1:
+            print("Error communicating: " + str(e1))          
+    except (KeyboardInterrupt, SystemExit):
+        ser.close()
+        send_command(ser, "D")
+        print('\nStopped')
+        sys.exit()
         
 
 class Motor:
@@ -116,6 +100,7 @@ class Motor:
     '''
     def __init__(self, port = '/dev/ttyUSB0', baudrate = 38400):
         self._ser = gen_serial_obj(port, baudrate)
+        self._ser.open()
         
     @property
     def position(self):

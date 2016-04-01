@@ -137,6 +137,7 @@ class Spec:
         plt.xlim((0, f[-1]))
         plt.xlabel('Frequency (MHz)')
         plt.ylabel('Power (dB)')
+        plt.grid(True, which = 'both')
         return p
         
     def plot_time(self):
