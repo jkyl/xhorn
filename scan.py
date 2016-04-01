@@ -24,7 +24,7 @@ def go(m, s, v = True, home = 0, step = 1, bound = 60, fname = 'data.csv'):
     '''
     f = open(fname, 'wb')
     wr = csv.writer(f)
-    cols = ['angle_deg', 'acc_len_secs', 'samp_rate_mhz'] + np.arange(2048).tolist())
+    cols = ['angle_deg', 'acc_len_secs', 'samp_rate_mhz'] + np.arange(2048).tolist()
     wr.writerow(cols)
     if v: print('Homing')
     m.move(abst = home)
