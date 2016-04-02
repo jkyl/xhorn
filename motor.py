@@ -9,14 +9,14 @@ ABS   = 'IA1M'    # set absolute position
 POS   = 'X'       #
 
 
-def gen_command(accl = 1, speed = 2000, incr = None, abst = None):
+def gen_command(accl = 1, speed = 2000, incr = 0, abst = 0):
     '''
     Generates a string that specifies speed, acceleration, and whether
     to move incrementally or absolutely. 
     '''
-    if incr == None and abst != None:
+    if incr == 0:
         move = ABS+str(abst)
-    elif abst == None and incr != None:
+    elif abst == 0 and incr != 0:
         move = INCR+str(incr)
     else:
         print('Not a valid move: must specify incr or abst.\n')
@@ -45,9 +45,8 @@ def gen_serial_obj(port = '/dev/ttyUSB0', baudrate = 38400):
 
 def send_command(ser, cmd):
     '''
-    Opens the serial port, writes a command, and reads back the response. 
-    Will close and open again if the port was left open, otherwise throws
-    informative exception. 
+    Writes a command, sleeps for 2 ms, attempts to read, and repeats if no response.
+    Failsafe is to send "D" in the event of keyboard interrupt. 
     '''
     try:
         try:
@@ -63,7 +62,6 @@ def send_command(ser, cmd):
         except Exception, e1:
             print("Error communicating: " + str(e1))          
     except (KeyboardInterrupt, SystemExit):
-        ser.close()
         send_command(ser, "D")
         print('\nStopped')
         sys.exit()
@@ -137,12 +135,8 @@ class Motor:
         return self.send("C S1M600, I1M-0, I1M4000, I1M-0,  IA1M-0, R C"+\
                          "S1M600, I1M-0, I1M4000, I1M-0, IA1M-0, R") == '^'
     
-    def move(self, accl = 1, speed = 2000, incr = None, abst = None):
-        if incr != None:
-            incr *= 100.
-        else:
-            abst *= 100.
-        c = gen_command(accl, speed, incr, abst)
+    def move(self, accl = 1, speed = 20, incr = 0, abst = 0):
+        c = gen_command(accl, speed * 100, incr * 100, abst * 100)
         return self.send(c) == '^'
         
         
