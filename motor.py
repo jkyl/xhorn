@@ -63,7 +63,7 @@ def send_command(ser, cmd):
             print("Error communicating: " + str(e1))          
     except (KeyboardInterrupt, SystemExit):
         send_command(ser, "D")
-        print('\nStopped')
+        print('\nMotor stopped.')
         sys.exit()
         
 
@@ -72,11 +72,11 @@ class Motor:
     Class that combines the previous functions for quick use. Takes optional
     /dev directory and baudrate args. 
 
-        - position property returns integer of current position. 
+        - position() method returns integer of current position. 
 
         - baudrate property returns integer of current baudrate.
 
-        - status property returns 'busy', 'ready', or 'jog mode'.
+        - status() method returns 'busy', 'ready', or 'jog mode'.
 
         - set_baudrate() method takes baudrate arg and sends command to change
           the vxm baudrate, then generates a new serial object with the same br.
@@ -90,8 +90,7 @@ class Motor:
           Returns True if succesful.
 
         - move() method takes optional accl and speed args, and just one of 
-          required abst or incr args. Returns integer of position at the end 
-          of movement.
+          required abst or incr args. Returns bool of move success.
 
         - send() method takes any command string and returns the raw writeback.
 
@@ -100,7 +99,6 @@ class Motor:
         self._ser = gen_serial_obj(port, baudrate)
         self._ser.open()
         
-    @property
     def position(self):
         return int(self.send("X").replace("X", '')[:-1]) / 100.
 
@@ -108,7 +106,6 @@ class Motor:
     def baudrate(self):
         return self._ser.baudrate
 
-    @property
     def status(self):
         rv = self.send('V')
         if rv == 'B':

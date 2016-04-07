@@ -11,7 +11,7 @@ import struct
 class Spec:
     
     def __init__(self, acc_len = 1, samp_rate = None, deglitch = True,
-                 ip = '128.135.52.192', v = True):
+                 ip = '128.135.52.192'):
         '''
         Initializes a 2048 channel spectrometer by connecting to the given IP, 
         deglitching (by default) with adc5g_test_rev2.bof, loading simple_spec.bof, 
@@ -19,25 +19,25 @@ class Spec:
         accumulation length, setting FFT shift, and arming PPS. 
         '''
         self._n_chans = 2048
-        if v: print('\nConnecting to "{}"'.format(ip))
+        print('\nConnecting to "{}"'.format(ip))
         self.connect(ip)
         if deglitch:
-            if v: print('Loading "adc5g_test_rev2.bof.gz"')
+            print('Loading "adc5g_test_rev2.bof.gz"')
             self.load_bof('adc5g_test_rev2.bof.gz')
-            if v: print('Deglitching')
+            print('Deglitching')
             self.deglitch()
         else:
-            if v: print('Skipping deglitching')
-        if v: print('Loading "simple_spec.bof"')
+            print('Skipping deglitching')
+        print('Loading "simple_spec.bof"')
         self.load_bof('simple_spec.bof')
         if samp_rate != None:
-            if v: print('Setting sample rate to {} MHz'.format(samp_rate))
+            print('Setting sample rate to {} MHz'.format(samp_rate))
         self.set_clock(samp_rate)
-        if v: print('Setting accumulation length to {} s'.format(acc_len))
+        print('Setting accumulation length to {} s'.format(acc_len))
         self.set_acc_len(acc_len)
-        if v: print('Setting fft shift')
+        print('Setting fft shift')
         self.set_fft_shift('111111111111')
-        if v: print('Arming PPS')
+        print('Arming PPS')
         self.arm_pps()    
         
     def connect(self, ip):
