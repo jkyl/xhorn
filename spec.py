@@ -9,34 +9,30 @@ import struct
 
 class Spec:
     
-    def __init__(self, acc_len = 1, samp_rate = None, deglitch = True,
-                 ip = '128.135.52.192'):
+    def __init__(self, acc_len = 1, samp_rate = None, ip = '128.135.52.192'):
         '''
-        Initializes a 2048 channel spectrometer by connecting to the given IP, 
-        deglitching with adc5g_test_rev2.bof, loading simple_spec.bof, setting 
-        the sample rate (or estimating if none given), setting the accumulation 
-        length, setting FFT shift, and arming PPS. 
+        Initializes a 2048 channel spectrometer by connecting to the given IP, loading 
+        simple_spec.bof, deglitching, setting the sample rate (or estimating if none 
+        given), setting the accumulation length, setting FFT shift, and arming PPS. 
         '''
         self._n_chans = 2048
         print('Connecting to "{}"'.format(ip))
         self.connect(ip)
-        print('Loading "adc5g_test_rev2.bof.gz"')
-        self.load_bof('test')
+        print('Loading "simple_spec.bof"')
+        self.load_bof()
         print('Deglitching')
         self.deglitch()
-        print('Loading "simple_spec.bof"')
-        self.load_bof('spec')
         if samp_rate != None:
             print('Setting sample rate to {} MHz'.format(samp_rate))
         self.set_clock(samp_rate)
         print('Setting accumulation length to {} s'.format(acc_len))
         self.set_acc_len(acc_len)
         print('Setting fft shift')
-        self.set_fft_shift('111111111111')
+        self.set_fft_shift()
         print('Arming PPS')
         self.arm_pps()    
         
-    def connect(self, ip):
+    def connect(self, ip = '128.135.52.192'):
         '''
         Setter for roach object.
         '''
@@ -47,18 +43,15 @@ class Spec:
         else:
             print('Roach not connected, retrying...')
             self.connect(ip)
-            sys.exit()
   
-    def load_bof(self, boffile):
+    def load_bof(self, boffile = 'simple_spec.bof'):
         '''
         Setter for boffile.
         '''
-        self._boffile = boffile
         if boffile == 'test':
             boffile = 'adc5g_test_rev2.bof.gz'
-        elif boffile == 'spec':
-            boffile = 'simple_spec.bof'
         self.roach.progdev(boffile)
+        self._boffile = boffile
         time.sleep(0.5)
         
     def deglitch(self):
@@ -66,13 +59,12 @@ class Spec:
         For use with adc5g test boffile. Calibrates phase of clock eye to see peaks 
         and troughs, not zero crossings. 
         '''
-        assert(self.boffile == 'test')
         adc.set_test_mode(self.roach, 0)
         adc.sync_adc(self.roach)
         opt0, glitches0 = adc.calibrate_mmcm_phase(self.roach, 0,
-                                                   ['scope_raw_0_snap',])
+                                                   ['snapshot_adc0',])
         adc.unset_test_mode(self.roach, 0)
-
+        
     def is_calibrated(self):
         '''
         Returns False if every element of the OGP matrix is 0, True otherwise. 
@@ -109,11 +101,9 @@ class Spec:
         parameters for each core s.t. the residuals are minimized with a least squares
         fit. 
         '''
-        assert(self.boffile == 'test')
-        snap = np.array(adc.get_snapshot(self.roach, 'scope_raw_0_snap', 
-                                         man_trig=True, wait_period=2))
+        snap = self.snap_time()
         for i in (0, 1):
-            ogp_fit, sinad = fit.fit_snap(snap, freq, self.samp_rate, "if0", 
+            ogp_fit, sinad = fit.fit_snap(snap, freq, self.samp_rate, 'calibration/if0', 
                                           clear_avgs = (not i), prnt = True)
         ogp_fit = np.array(ogp_fit)[3:].reshape(4, 3)
         cur_ogp = self.get_ogp()
@@ -148,7 +138,7 @@ class Spec:
         self.roach.write_int('acc_len',
             int(round(acc_len * self._samp_rate * 1e6 / (16. * self._n_chans))))
         
-    def set_fft_shift(self, bitstring):
+    def set_fft_shift(self, bitstring = '111111111111'):
         '''
         Setter for fft bitshift.
         '''
@@ -177,15 +167,18 @@ class Spec:
                 
     def snap_spec(self):
         '''
-        Snaps the frequency domain over the last accumulation. 
+        Snaps the spectrum over the last accumulation. 
         '''
         return self._snap('corr00', fmt = 'q', man_trig = False)
 
     def snap_time(self):
         '''
-        Snaps the last 4096 samples. 
+        Snaps the last 2^14 samples. 
         '''
-        return self._snap('snapshot_adc0', fmt = 'b', man_trig = True)
+        if self.boffile == 'simple_spec.bof':
+            return self._snap('snapshot_adc0', fmt = 'b', man_trig = True)
+        else:
+            return self._snap('scope_raw_0_snap', fmt = 'b', man_trig = True)
         
     def freq_axis(self):
         '''
@@ -205,15 +198,22 @@ class Spec:
         plt.grid(True, which = 'both')
         return p
         
-    def plot_time(self):
+    def plot_time(self, cores = False):
         '''
-        Plots last 4096 samples. 
+        Plots last 2^14 samples. 
         '''
         t = self.snap_time()
-        p = plt.plot(t)
-        plt.xlim((0, t.size))
-        plt.xlabel('Frequency (MHz)')
-        plt.ylabel('Power (dB)')
+        if cores:
+            p = [plt.plot(t[i::4], label = 'Core ' + str(i+1)) for i in range(4)]
+            plt.xlim((0, t.size // 4))
+            plt.legend()
+        else:
+            p = plt.plot(t, label = 'All cores')
+            plt.xlim((0, t.size))
+            plt.legend()
+        plt.xlabel('Samples')
+        plt.ylabel('Amplitude (ADU)')
+        plt.grid(True, which = 'both')
         return p
 
     @property
