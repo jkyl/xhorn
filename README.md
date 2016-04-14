@@ -3,13 +3,17 @@ Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor co
 
 **Dependencies:**
  * [corr]
- * [adc5g] *
- * [fit_cores] *
+ * [adc5g]
+ * [fit_cores]+
  * [pyserial]
  * [ntplib]
  * [h5py]
  * [numpy]
  * [matplotlib]
+
+All can be installed with ```pip install <package>``` except:
+ * [adc5g]: run ```python setup.py install```
+ * [fit_cores]: manually add to python's ```sys.path``` (usually ```/usr/local/bin```)
 
 **Files:**
  * _spec.py_ - A class that initializes a 2048 channel spectrometer on the ROACH board.
