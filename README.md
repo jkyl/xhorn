@@ -11,8 +11,8 @@ Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor co
  * [numpy]
  * [matplotlib]
 
-All can be installed with ```pip install <package>``` except:
- * [adc5g]: run ```python setup.py install```
+All can be installed (as root) with ```pip install <package>``` except:
+ * [adc5g]: ```pip install git+git://github.com/sma-wideband/adc_tests.git```
  * [fit_cores]: manually add to python's ```sys.path``` (usually ```/usr/local/bin```)
 
 **Files:**
