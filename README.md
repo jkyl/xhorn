@@ -26,7 +26,7 @@ or in iPython:
 ```python
 In [1]: run scan.py 'path/fname.h5' go
 ```
-To execute a data run with non-default parameters, call go() directly:
+To execute a data run with non-default parameters, call ```go()``` directly:
 ```python
 In [1]: run scan.py
 
