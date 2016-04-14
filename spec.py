@@ -20,15 +20,12 @@ class Spec:
         self._n_chans = 2048
         print('Connecting to "{}"'.format(ip))
         self.connect(ip)
-        if deglitch:
-            print('Loading "adc5g_test_rev2.bof.gz"')
-            self.load_bof('adc5g_test_rev2.bof.gz')
-            print('Deglitching')
-            self.deglitch()
-        else:
-            print('Skipping deglitching')
+        print('Loading "adc5g_test_rev2.bof.gz"')
+        self.load_bof('test')
+        print('Deglitching')
+        self.deglitch()
         print('Loading "simple_spec.bof"')
-        self.load_bof('simple_spec.bof')
+        self.load_bof('spec')
         if samp_rate != None:
             print('Setting sample rate to {} MHz'.format(samp_rate))
         self.set_clock(samp_rate)
@@ -56,8 +53,12 @@ class Spec:
         '''
         Setter for boffile.
         '''
-        self.roach.progdev(boffile)
         self._boffile = boffile
+        if boffile == 'test':
+            boffile = 'adc5g_test_rev2.bof.gz'
+        elif boffile == 'spec':
+            boffile = 'simple_spec.bof'
+        self.roach.progdev(boffile)
         time.sleep(0.5)
         
     def deglitch(self):
@@ -65,7 +66,7 @@ class Spec:
         For use with adc5g test boffile. Calibrates phase of clock eye to see peaks 
         and troughs, not zero crossings. 
         '''
-        assert(self.boffile == "adc5g_test_rev2.bof.gz")
+        assert(self.boffile == 'test')
         adc.set_test_mode(self.roach, 0)
         adc.sync_adc(self.roach)
         opt0, glitches0 = adc.calibrate_mmcm_phase(self.roach, 0,
@@ -108,7 +109,7 @@ class Spec:
         parameters for each core s.t. the residuals are minimized with a least squares
         fit. 
         '''
-        assert(self.boffile == "adc5g_test_rev2.bof.gz")
+        assert(self.boffile == 'test')
         snap = np.array(adc.get_snapshot(self.roach, 'scope_raw_0_snap', 
                                          man_trig=True, wait_period=2))
         for i in (0, 1):
