@@ -1,6 +1,6 @@
 # X-band elevation tipping radiometer at KICP/UChicago
 
-Code to interface between CASPER's ROACH2 board, a VXM motor controller, and Python 2.7.
+Code to interface between CASPER's ROACH2 board, a Velmex B59 rotary table and VXM controller, and Python 2.7.
 
 Dependencies:
  * [adc5g]
