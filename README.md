@@ -20,11 +20,11 @@ Files:
 # Usage
 To execute a data run with the default parameters and write the results to an arbitrary path, run:
 ```sh
-python scan.py <path/file.hdf5> go
+python scan.py <path/fname.hdf5> go
 ```
 or in iPython,
 ```python
-run scan.py <path/file.hdf5> go
+run scan.py <path/fname.hdf5> go
 ```
 
 
