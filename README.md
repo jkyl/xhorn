@@ -23,7 +23,7 @@ To execute a data run with the default parameters and write the results to an ar
 $ python scan.py <path/fname.h5> go
 ```
 or in iPython,
-```python
+```ipython
 >>> run scan.py <path/fname.hdf5> go
 ```
 
