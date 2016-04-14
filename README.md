@@ -23,11 +23,11 @@ To execute a data run with the default parameters and write the results to an ar
 $ python scan.py <path/fname.h5> go
 ```
 or in iPython:
-```ipython
+```python
 In [1] run scan.py <path/fname.h5> go
 ```
 To execute a data run with non-default parameters, call go() directly:
-```ipython
+```python
 In [2]: run scan.py
 ```
 
