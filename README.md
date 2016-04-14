@@ -3,7 +3,7 @@ Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor co
 
 **Dependencies:**
  * [corr]
- * [adc5g]
+ * [adc5g] including [fit_cores]
  * [fit_cores]
  * [pyserial]
  * [ntplib]
@@ -12,8 +12,7 @@ Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor co
  * [matplotlib]
 
 All can be installed (as root) with ```pip install <packagename>``` except:
- * [adc5g]: ```pip install git+git://github.com/sma-wideband/adc_tests.git```
- * [fit_cores]: manually add to python's ```sys.path``` (usually ```/usr/local/bin```)
+ * [adc5g] and [fit_cores]: ```pip install git+git://github.com/sma-wideband/adc_tests.git```
 
 **Files:**
  * _spec.py_ - A class that initializes a 2048 channel spectrometer on the ROACH board.
