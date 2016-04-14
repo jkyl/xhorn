@@ -22,7 +22,7 @@ All can be installed (as root) with ```pip install <packagename>``` except:
  * _scan.py_ - A routine that combines the above methods to perform integrations over a range of angles on the sky. 
 
 # Usage
-To execute a data run with the default parameters and write the results to disk:
+To execute a data run with the default parameters:
 ```sh
 $ python scan.py go
 ```
