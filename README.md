@@ -40,7 +40,9 @@ In [2]: go(acc_len = 0.1, n_accs = 200, port = '/dev/ttyUSB0')
 ```
 
 #Acknowledgements
-The ```Spec()``` class is heavily derivitave of Jack Hickish's [simple_spec].
+In addition to the [sma_wideband] code that we import verbatim:
+ * The ```Spec``` class is derivitave of Jack Hickish's [simple_spec]
+ * The OGP fitting methods in ```Spec``` are derived from Rurik Primiani's [rww_tools].
 
 
 [adc5g]: <https://github.com/sma-wideband/adc_tests/tree/master/adc5g>
@@ -49,6 +51,9 @@ The ```Spec()``` class is heavily derivitave of Jack Hickish's [simple_spec].
 [ntplib]: <https://github.com/Tipoca/ntplib>
 [h5py]: <https://github.com/h5py/h5py>
 [numpy]: <https://github.com/numpy/numpy>
+[scipy]: <https://github.com/scipy/scipy>
 [matplotlib]: <https://github.com/matplotlib/matplotlib>
 [fit_cores]: <https://github.com/sma-wideband/adc_tests/blob/master/fit_cores.py>
 [simple_spec]: <https://github.com/jack-h/ami_correlator_sw/blob/master/ami/scripts/simple_spec/spec_init.py>
+[rww_tools]: <https://github.com/sma-wideband/adc_tests/blob/master/rww_tools.py>
+[sma_wideband]: <https://github.com/sma-wideband>
