@@ -3,7 +3,7 @@ Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor co
 
 **Dependencies:**
  * [corr]
- * [adc5g] including [fit_cores]
+ * [adc5g] and [fit_cores]
  * [fit_cores]
  * [pyserial]
  * [ntplib]
