@@ -119,6 +119,7 @@ class Motor:
                          "S1M600, I1M-0, I1M4000, I1M-0, IA1M-0, R") == '^'
     
     def incr(self, degs, accl = 1, speed = 20):
+        assert(degs != 0)
         degs = round(degs, 2)
         cmd = INIT + ACCL + str(accl)+ ',' + SPEED + str(speed * 100)\
               + ',' + INCR + str(degs * 100) + ',' + RUN
