@@ -30,9 +30,9 @@ To execute a data run with non-default parameters, call ```go()``` directly:
 ```python
 In [1]: run scan.py
 
-Usage: "python scan.py <path/fname.h5> go"
+Usage: "python scan.py go"
 
-In [2]: go(acc_len = 0.1, n_accs = 200, fname = "output/example.h5")
+In [2]: go(acc_len = 0.1, n_accs = 200, port = '/dev/ttyUSB0')
 ```
 
 
