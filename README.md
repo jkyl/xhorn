@@ -46,4 +46,4 @@ The ```Spec()``` class and associated boffile is heavily derivitave of Jack Hick
 [h5py]: <https://github.com/h5py/h5py>
 [numpy]: <https://github.com/numpy/numpy>
 [matplotlib]: <https://github.com/matplotlib/matplotlib>
-[simple_spec] <https://github.com/jack-h/ami_correlator_sw/blob/master/ami/scripts/simple_spec/spec_init.py>
+[simple_spec]: <https://github.com/jack-h/ami_correlator_sw/blob/master/ami/scripts/simple_spec/spec_init.py>
