@@ -52,12 +52,10 @@ def send_command(ser, cmd):
         
 class Motor:
     '''
-    Class that combines the previous functions for quick use. Takes optional
-    /dev directory and baudrate args. 
+    Class that uses the previous functions for homing, moving, and querying. Takes 
+    optional /dev directory and baudrate args. 
 
         - position() method returns float of current position. 
-
-        - baudrate property returns integer of current baudrate.
 
         - status() method returns 'busy', 'ready', or 'jog mode'.
 
@@ -66,16 +64,21 @@ class Motor:
           Recommended that you then use the save_settings() method so the vxm 
           wont re-initialize to the the old br when you turn it on again. 
 
-        - save_settings() method saves the current settings, returns True if 
-          succesful. 
+        - save_settings() method saves the current settings, returns bool of 
+          success. 
 
         - home() method takes no args and executes sequence for returning home.
-          Returns True if succesful.
+          Returns bool of success.
 
-        - move() method takes optional accl and speed args, and just one of 
-          required abst or incr args. Returns bool of move success.
+        - incr() method increments the motor by a degree amount (must be a multiple
+          of 0.01 degs), and returns bool of success. 
+
+        - abst() method moves the motor to an absolute degree position (must be a 
+          multiple of 0.01 degs), and returns bool of success. 
 
         - send() method takes any command string and returns the raw writeback.
+
+        - baudrate property returns integer of current baudrate.
 
     '''
     def __init__(self, port = '/dev/ttyUSB0', baudrate = 38400):
@@ -116,11 +119,13 @@ class Motor:
                          "S1M600, I1M-0, I1M4000, I1M-0, IA1M-0, R") == '^'
     
     def incr(self, degs, accl = 1, speed = 20):
+        assert((degs % 0.01) == 0)
         cmd = INIT + ACCL + str(accl)+ ',' + SPEED + str(speed * 100)\
               + ',' + INCR + str(degs * 100) + ',' + RUN
         return self.send(cmd) == '^'
         
     def abst(self, degs, accl = 1, speed = 20):
+        assert((degs % 0.01) == 0)
         cmd = INIT + ACCL + str(accl)+ ',' + SPEED + str(speed * 100)\
               + ',' + ABS + str(degs * 100) + ',' + RUN
         return self.send(cmd) == '^'
