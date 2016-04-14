@@ -64,7 +64,7 @@ def send_command(ser, cmd):
     except (KeyboardInterrupt, SystemExit):
         send_command(ser, "D")
         print('\nMotor stopped.')
-        sys.exit()
+        raise
         
 
 class Motor:
@@ -72,7 +72,7 @@ class Motor:
     Class that combines the previous functions for quick use. Takes optional
     /dev directory and baudrate args. 
 
-        - position() method returns integer of current position. 
+        - position() method returns float of current position. 
 
         - baudrate property returns integer of current baudrate.
 
@@ -100,7 +100,7 @@ class Motor:
         self._ser.open()
         
     def position(self):
-        return int(self.send("X").replace("X", '')[:-1]) / 100.
+        return self.send("X").replace("X", '')[:-1] / 100.
 
     @property
     def baudrate(self):
