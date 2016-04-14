@@ -1,7 +1,7 @@
 # xhorn
 Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor controller + B59 rotary table, and Python 2.7.
 
-*Dependencies:*
+**Dependencies:**
  * [adc5g]
  * [corr]
  * [pyserial]
@@ -10,7 +10,7 @@ Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor co
  * [numpy]
  * [matplotlib]
 
-*Files:*
+**Files:**
  * spec.py - A class that initializes a 2048 channel spectrometer on the ROACH board.
  * motor.py - A class capable of stepping and reading back the position of the rotary table.
  * time_sync.py - Contains functions that determine the system time's offset from UTC using [ntplib].
