@@ -18,13 +18,26 @@ Files:
  * scan.py - A routine that combines the above methods to perform integrations over a range of angles on the sky. 
 
 # Usage
-To execute a data run with the default parameters and write the results to an arbitrary path, run:
+To execute a data run with the default parameters and write the results to an arbitrary path:
 ```sh
 $ python scan.py <path/fname.h5> go
 ```
-or in iPython,
+or in iPython:
 ```ipython
 >>> run scan.py <path/fname.hdf5> go
+```
+To execute a data run with non-default parameters, call go() directly:
+```python
+run scan.py
+```
+
+    
+    Usage: "python scan.py <output/fname.hdf5> go"
+
+
+
+```python
+go(acc_len = 0.1, n_accs = 200)
 ```
 
 
