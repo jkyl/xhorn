@@ -1,7 +1,7 @@
 # xhorn
 X-band elevation tipping radiometer at KICP/UChicago
 
-Written for python 2.7
+Code to interface between CASPER's ROACH2 board, a VXM motor controller, and Python 2.7.
 
 Dependencies:
  * [adc5g]
