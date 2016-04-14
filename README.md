@@ -17,6 +17,19 @@ Files:
  * in_out.py - Contains functions that read and write numpy arrays of the measured spectra along with their associated metadata to and from hdf5 files on disk.
  * scan.py - A routine that combines the above methods to perform integrations over a range of angles on the sky. 
 
+# Usage
+To execute a data run with the default parameters and write the results to an arbitrary path, run:
+```sh
+python scan.py <path/file.hdf5> go
+```
+or in iPython,
+```python
+run scan.py <path/file.hdf5> go
+```
+
+
+
+
 [adc5g]: <https://github.com/sma-wideband/adc_tests/tree/master/adc5g>
 [corr]: <https://github.com/ska-sa/corr>
 [pyserial]: <https://github.com/pyserial/pyserial>
