@@ -20,7 +20,7 @@ Files:
 # Usage
 To execute a data run with the default parameters and write the results to an arbitrary path:
 ```sh
-$ python scan.py <path/fname.h5> go
+$ python scan.py path/fname.h5 go
 ```
 or in iPython:
 ```python
@@ -28,15 +28,11 @@ In [1]: run scan.py 'path/fname.h5' go
 ```
 To execute a data run with non-default parameters, call go() directly:
 ```python
-In [2]: run scan.py
+In [1]: run scan.py
 
+Usage: "python scan.py <path/fname.h5> go"
 
-    
-    Usage: "python scan.py <path/fname.h5> go"
-
-
-
-In [3]: go(acc_len = 0.1, n_accs = 200, fname = 'output/example.h5')
+In [2]: go(acc_len = 0.1, n_accs = 200, fname = 'output/example.h5')
 ```
 
 
