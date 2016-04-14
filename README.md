@@ -13,7 +13,7 @@ Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor co
 **Files:**
  * _spec.py_ - A class that initializes a 2048 channel spectrometer on the ROACH board.
  * _motor.py_ - A class capable of stepping and reading back the position of the rotary table.
- * _time_sync.py_ - Contains functions that determine the system time's offset from UTC using [ntplib].
+ * _time_sync.py_ - Contains functions that determine the system time's offset from UTC using the nearest NTP server.
  * _in_out.py_ - Contains functions that read and write numpy arrays of the measured spectra along with their associated metadata to and from hdf5 files on disk.
  * _scan.py_ - A routine that combines the above methods to perform integrations over a range of angles on the sky. 
 
