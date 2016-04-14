@@ -24,11 +24,11 @@ $ python scan.py <path/fname.h5> go
 ```
 or in iPython:
 ```ipython
->>> run scan.py <path/fname.hdf5> go
+In [1] run scan.py <path/fname.h5> go
 ```
 To execute a data run with non-default parameters, call go() directly:
-```python
-run scan.py
+```ipython
+In [2]: run scan.py
 ```
 
     
@@ -37,7 +37,7 @@ run scan.py
 
 
 ```python
-go(acc_len = 0.1, n_accs = 200)
+In [3]: go(acc_len = 0.1, n_accs = 200)
 ```
 
 
