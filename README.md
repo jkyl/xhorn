@@ -2,8 +2,9 @@
 Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor controller + B59 rotary table, and Python 2.7.
 
 **Dependencies:**
- * [adc5g]
  * [corr]
+ * [adc5g] /*
+ * [fit_cores] /*
  * [pyserial]
  * [ntplib]
  * [h5py]
