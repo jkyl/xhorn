@@ -41,7 +41,7 @@ In [2]: go(acc_len = 0.1, n_accs = 200, port = '/dev/ttyUSB0')
 ```
 
 #Acknowledgements
-The ```Spec()``` class and associated boffile is heavily derivitave of Jack Hickish's [simple_spec].
+The ```Spec()``` class is heavily derivitave of Jack Hickish's [simple_spec].
 
 
 [adc5g]: <https://github.com/sma-wideband/adc_tests/tree/master/adc5g>
