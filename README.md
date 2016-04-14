@@ -1,6 +1,6 @@
 # xhorn: x-band elevation tipping radiometer at KICP/UChicago
 
-Code to interface between CASPER's ROACH2 board, a Velmex B59 rotary table + VXM controller, and Python 2.7.
+Code for communicating between CASPER's ROACH2 board via TCP/IP, a Velmex B59 rotary table + VXM controller via serial, and Python 2.7.
 
 Dependencies:
  * [adc5g]
