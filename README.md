@@ -35,7 +35,8 @@ Usage: "python scan.py go"
 In [2]: go(acc_len = 0.1, n_accs = 200, port = '/dev/ttyUSB0')
 ```
 
-
+#Acknowledgements
+The ```Spec()``` class and associated boffile is heavily derivitave of Jack Hickish's [simple_spec].
 
 
 [adc5g]: <https://github.com/sma-wideband/adc_tests/tree/master/adc5g>
@@ -45,3 +46,4 @@ In [2]: go(acc_len = 0.1, n_accs = 200, port = '/dev/ttyUSB0')
 [h5py]: <https://github.com/h5py/h5py>
 [numpy]: <https://github.com/numpy/numpy>
 [matplotlib]: <https://github.com/matplotlib/matplotlib>
+[simple_spec] <https://github.com/jack-h/ami_correlator_sw/blob/master/ami/scripts/simple_spec/spec_init.py>
