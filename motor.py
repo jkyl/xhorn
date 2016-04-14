@@ -6,22 +6,7 @@ ACCL  = 'A1M'     # acceleration (1 - 127)
 SPEED = 'S1M'     # speed (1 - 6000 steps/sec)
 INCR  = 'I1M'     # increment steps
 ABS   = 'IA1M'    # set absolute position
-POS   = 'X'       #
-
-
-def gen_command(accl = 1, speed = 2000, incr = 0, abst = 0):
-    '''
-    Generates a string that specifies speed, acceleration, and whether
-    to move incrementally or absolutely. 
-    '''
-    if incr == 0:
-        move = ABS+str(abst)
-    elif abst == 0 and incr != 0:
-        move = INCR+str(incr)
-    else:
-        print('Not a valid move: must specify incr or abst.\n')
-        sys.exit()
-    return INIT+ACCL+str(accl)+','+SPEED+str(speed)+','+move+','+RUN
+POS   = 'X'       # query position
 
 
 def gen_serial_obj(port = '/dev/ttyUSB0', baudrate = 38400):
@@ -41,7 +26,6 @@ def gen_serial_obj(port = '/dev/ttyUSB0', baudrate = 38400):
     ser.dsrdtr = False                  # disable hardware (DSR/DTR) flow ctrl
     ser.writeTimeout = 2                # timeout for write
     return ser
-
 
 def send_command(ser, cmd):
     '''
@@ -66,7 +50,6 @@ def send_command(ser, cmd):
         print('\nMotor stopped.')
         raise
         
-
 class Motor:
     '''
     Class that combines the previous functions for quick use. Takes optional
@@ -132,10 +115,12 @@ class Motor:
         return self.send("C S1M600, I1M-0, I1M4000, I1M-0,  IA1M-0, R C"+\
                          "S1M600, I1M-0, I1M4000, I1M-0, IA1M-0, R") == '^'
     
-    def move(self, accl = 1, speed = 20, incr = 0, abst = 0):
-        c = gen_command(accl, speed * 100, incr * 100, abst * 100)
-        return self.send(c) == '^'
+    def incr(self, degs, accl = 1, speed = 20):
+        cmd = INIT + ACCL + str(accl)+ ',' + SPEED + str(speed * 100)\
+              + ',' + INCR + str(degs * 100) + ',' + RUN
+        return self.send(cmd) == '^'
         
-        
-    
-    
+    def abst(self, degs, accl = 1, speed = 20):
+        cmd = INIT + ACCL + str(accl)+ ',' + SPEED + str(speed * 100)\
+              + ',' + ABS + str(degs * 100) + ',' + RUN
+        return self.send(cmd) == '^'

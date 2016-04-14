@@ -29,7 +29,7 @@ def snap_and_move(m, s, f, pos, acc_len = 1, step = 1, n_accs = 10, dt = 0):
                                    'utc_time': true_time,
                                    'samp_rate_mhz': s.samp_rate})
     print('Moving {} deg'.format(step))
-    if m.move(incr = step):
+    if m.incr(step):
         print('Sleeping {}s'.format(acc_len))
         time.sleep(acc_len)
         return m.position()
@@ -58,7 +58,7 @@ def go(step = 1, home = 0, bound = 60, samp_rate = 4800, acc_len = 1, n_accs = 1
         dt = ts.offset()
         print('Determined UTC offset to be {} seconds'.format(round(dt, 6)))
         print('Homing to absolute position of {} deg'.format(home))
-        if m.move(abst = home):
+        if m.abst(home):
             pos = 0
             while True:
                 while pos < bound:
