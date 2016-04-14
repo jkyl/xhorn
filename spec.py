@@ -1,5 +1,6 @@
 import numpy as np
 import adc5g as adc
+import fit_cores as fit
 import matplotlib.pyplot as plt
 import corr
 import time
@@ -47,7 +48,8 @@ class Spec:
         if roach.is_connected():
             self._roach = roach
         else:
-            print('Roach not connected.')
+            print('Roach not connected, retrying...')
+            self.connect(ip)
             sys.exit()
   
     def load_bof(self, boffile):
@@ -60,15 +62,70 @@ class Spec:
         
     def deglitch(self):
         '''
-        For use with adc5g test boffile. 
+        For use with adc5g test boffile. Calibrates phase of clock eye to see peaks 
+        and troughs, not zero crossings. 
         '''
-        zdok = 0
-        snap_name = 'scope_raw_0_snap'
-        adc.set_test_mode(self.roach, zdok)
+        assert(self.boffile == "adc5g_test_rev2.bof.gz")
+        adc.set_test_mode(self.roach, 0)
         adc.sync_adc(self.roach)
-        opt0, glitches0 = adc.calibrate_mmcm_phase(self.roach, zdok, [snap_name,])
-        adc.unset_test_mode(self.roach, zdok)
+        opt0, glitches0 = adc.calibrate_mmcm_phase(self.roach, 0,
+                                                   ['scope_raw_0_snap',])
+        adc.unset_test_mode(self.roach, 0)
+
+    def is_calibrated(self):
+        '''
+        Returns False if every element of the OGP matrix is 0, True otherwise. 
+        '''
+        return not np.all(self.get_ogp() == 0)
+
+    def clear_ogp(self):
+        '''
+        Clears the OGP registers on the ADC.
+        '''
+        for core in range(1, 5):
+            adc.set_spi_gain(self.roach, 0, core, 0)
+            adc.set_spi_offset(self.roach, 0, core, 0)
+            adc.set_spi_phase(self.roach, 0, core, 0)
             
+    def get_ogp(self):
+        '''
+        Returns the OGP matrix (4 rows of 3 values). 
+        '''
+        ogp = np.zeros((12), dtype='float')
+        indx = 0
+        for chan in range(1,5):
+            ogp[indx] = adc.get_spi_offset(self.roach, 0, chan)
+            indx += 1
+            ogp[indx] = adc.get_spi_gain(self.roach, 0, chan)
+            indx += 1
+            ogp[indx] = adc.get_spi_phase(self.roach, 0, chan)
+            indx += 1
+        return ogp.reshape(4, 3)
+
+    def fit_ogp(self, freq):
+        '''
+        Takes a test tone (works best with low frequencies ~10 MHz) and adjusts OGP
+        parameters for each core s.t. the residuals are minimized with a least squares
+        fit. 
+        '''
+        assert(self.boffile == "adc5g_test_rev2.bof.gz")
+        snap = np.array(adc.get_snapshot(self.roach, 'scope_raw_0_snap', 
+                                         man_trig=True, wait_period=2))
+        for i in (0, 1):
+            ogp_fit, sinad = fit.fit_snap(snap, freq, self.samp_rate, "if0", 
+                                          clear_avgs = (not i), prnt = True)
+        ogp_fit = np.array(ogp_fit)[3:].reshape(4, 3)
+        cur_ogp = self.get_ogp()
+        t = cur_ogp + ogp_fit
+        offs = t[:, 0]
+        gains = t[:, 1]
+        phase = t[:, 2]
+        phase = (phase - phase.min())*.65
+        for i in range(len(offs)):
+             adc.set_spi_offset(self.roach, 0, i+1, offs[i])
+             adc.set_spi_gain(self.roach, 0, i+1, gains[i])
+             adc.set_spi_phase(self.roach, 0, i+1, phase[i])
+             
     def set_clock(self, samp_rate = None):
         '''
         Setter for sample rate / estimates if none given.

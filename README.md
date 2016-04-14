@@ -19,7 +19,7 @@ All can be installed (as root) with ```pip install <packagename>``` except:
  * _motor.py_ - A class capable of stepping and reading back the position of the rotary table.
  * _time_sync.py_ - Contains functions that determine the system time's offset from UTC using the nearest NTP server.
  * _in_out.py_ - Contains functions that read and write numpy arrays of the measured spectra along with their associated metadata to and from hdf5 files on disk.
- * _scan.py_ - A routine that combines the above methods to measure and record integrations over a range of elevations. 
+ * _scan.py_ - A routine that combines the above methods to measure and record spectra over a range of elevations. 
 
 # Usage
 To execute a data run with the default parameters:
