@@ -68,9 +68,10 @@ def go(step = 1, home = 0, bound = 60, samp_rate = 4800, acc_len = 1, n_accs = 1
                     pos = snap_and_move(m, s, f, pos, step = -step,
                                         acc_len = acc_len, n_accs = n_accs, dt = dt)
     except (KeyboardInterrupt, SystemExit):
-        print('\nKeyboardInterrupt / SystemExit')
+        print('\nKeyboardInterrupt / SystemExit\n')
     except Exception as e1:
-        print('\nExiting with unexpected exception "{}"'.format(e1))
+        print('\nExiting with unexpected exception:\n')
+        raise e1
     f.close()
         
     
