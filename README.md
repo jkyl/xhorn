@@ -1,5 +1,4 @@
-# xhorn
-X-band elevation tipping radiometer at KICP/UChicago
+# xhorn - X-band elevation tipping radiometer at KICP/UChicago
 
 Code to interface between CASPER's ROACH2 board, a VXM motor controller, and Python 2.7.
 
