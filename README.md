@@ -41,7 +41,7 @@ In [2]: go(acc_len = 0.1, n_accs = 200, port = '/dev/ttyUSB0')
 
 #Acknowledgements
 In addition to the [sma_wideband] code that we import verbatim:
- * The ```Spec``` class is derivitave of Jack Hickish's [simple_spec]
+ * The initialization and snapping methods in the ```Spec``` class are derived from Jack Hickish's [simple_spec].
  * The OGP fitting methods in ```Spec``` are derived from Rurik Primiani's [rww_tools].
 
 
