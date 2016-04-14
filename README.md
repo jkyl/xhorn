@@ -18,13 +18,13 @@ Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor co
  * _scan.py_ - A routine that combines the above methods to perform integrations over a range of angles on the sky. 
 
 # Usage
-To execute a data run with the default parameters and write the results to an arbitrary path:
+To execute a data run with the default parameters and write the results to disk:
 ```sh
-$ python scan.py path/fname.h5 go
+$ python scan.py go
 ```
 or in iPython:
 ```python
-In [1]: run scan.py "path/fname.h5" go
+In [1]: run scan.py go
 ```
 To execute a data run with non-default parameters, call ```go()``` directly:
 ```python

@@ -36,12 +36,13 @@ def snap_and_move(m, s, f, pos, acc_len = 1, step = 1, n_accs = 10, dt = 0):
     else:
         sys.exit()
         
-def go(step = 1, home = 0, bound = 60, samp_rate = 4800, acc_len = 1, n_accs = 10,
-       port = '/dev/tty.usbserial-AD01XAOK', fname = 'output/test.h5', ip = '128.135.52.192'):
+def go(step = 1, home = 0, bound = 60, samp_rate = 4800, acc_len = 1, n_accs = 20,
+       port = '/dev/tty.usbserial-AD01XAOK', ip = '128.135.52.192'):
     '''
     Main function that creates motor, spec, and hdf5 objects, calculates the computer's offset
     from true time, and calls snap_and_move() in order to sweep the horn through a range of
-    elevations and write accumulations and metadata to disk. 
+    elevations and write accumulations and metadata to disk. Closes file and creates a new file
+    after each return to home.
 
     Inputs:
         Step size in degrees, home angle in degrees, upper bound angle in degrees, sample rate in MHz, 
@@ -49,14 +50,15 @@ def go(step = 1, home = 0, bound = 60, samp_rate = 4800, acc_len = 1, n_accs = 1
         output filename, and ip address of roach board. 
 
     Outputs: 
-        None, writes to file. Fails safe by closing the file. 
+        None, but writes to file. Fails safe by closing the file. 
     '''
     try:
+        dt = ts.offset()
+        fname = 'output/' + ts.true_time(dt) + '.h5'
         f = h5py.File(fname, 'w')
+        print('Opened file "{}"'.format(fname))
         m = Motor(port = port)
         s = Spec(ip = ip, samp_rate = samp_rate, acc_len = acc_len)
-        dt = ts.offset()
-        print('Determined UTC offset to be {} seconds'.format(round(dt, 6)))
         print('Homing to absolute position of {} deg'.format(home))
         if m.abst(home):
             pos = 0
@@ -67,6 +69,13 @@ def go(step = 1, home = 0, bound = 60, samp_rate = 4800, acc_len = 1, n_accs = 1
                 while pos > 0:
                     pos = snap_and_move(m, s, f, pos, step = -step,
                                         acc_len = acc_len, n_accs = n_accs, dt = dt)
+                f.close()
+                print('Closed file "{}"'.format(fname))
+                dt = ts.offset()
+                fname = 'output/' + ts.true_time(dt) + '.h5'
+                f = h5py.File(fname, 'w')
+                print('Opened file "{}"'.format(fname))
+                
     except (KeyboardInterrupt, SystemExit):
         print('\nKeyboardInterrupt / SystemExit\n')
     except Exception as e1:
@@ -77,22 +86,21 @@ def go(step = 1, home = 0, bound = 60, samp_rate = 4800, acc_len = 1, n_accs = 1
     
 if __name__ == '__main__':
     args = sys.argv
-    if len(args) == 3 and args[2] == 'go':
+    if len(args) == 2 and args[1] == 'go':
         
     ### edit defaults here ###
         go(
             step = 1, 
             home = 0,
             bound = 60,
-            fname = args[1],
-            ip = '128.135.52.192',
-            port = '/dev/tty.usbserial-AD01XAOK'
             samp_rate = 4800,
             acc_len = 1,
-            n_accs = 20
+            n_accs = 20,
+            port = '/dev/tty.usbserial-AD01XAOK',
+            ip = '128.135.52.192',      
         )
     else:
-        print('\nUsage: "python scan.py <output/fname.h5> go"')
+        print('\nUsage: "python scan.py go"')
     
     
 

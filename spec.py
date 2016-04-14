@@ -17,7 +17,7 @@ class Spec:
         length, setting FFT shift, and arming PPS. 
         '''
         self._n_chans = 2048
-        print('\nConnecting to "{}"'.format(ip))
+        print('Connecting to "{}"'.format(ip))
         self.connect(ip)
         if deglitch:
             print('Loading "adc5g_test_rev2.bof.gz"')

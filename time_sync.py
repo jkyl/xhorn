@@ -23,5 +23,8 @@ def utc_to_epoch(iso):
     utc_dt = datetime.strptime(iso, '%Y-%m-%dT%H:%M:%S.%f')
     return (utc_dt - datetime(1970, 1, 1)).total_seconds()
 
+def set_sys_time(offset):
+    '''
     
+    '''
     
