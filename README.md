@@ -1,5 +1,5 @@
 # xhorn
-Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex B59 rotary table + VXM controller, and Python 2.7.
+Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor controller + B59 rotary table, and Python 2.7.
 
 Dependencies:
  * [adc5g]
