@@ -38,7 +38,6 @@ In [2]: s = Spec(samp_rate = 4400, acc_len = 1, ip = '128.135.52.192')
 	Setting fft shift
 	Arming PPS
 ```
-```python
 
 Upon rebooting the board, the offset, gain, and phase registers for each of the four cores on the ADC will be cleared. It is recommended that you subsequently run
 ```
