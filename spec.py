@@ -30,7 +30,11 @@ class Spec:
         print('Setting fft shift')
         self.set_fft_shift()
         print('Arming PPS')
-        self.arm_pps()    
+        self.arm_pps() 
+        print('Fitting offset, gain, and phase -')
+        f = raw_input('Enter frequency of test tone in MHz:')
+        if f != '':
+            self.fit_ogp(int(f))   
         
     def connect(self, ip = '128.135.52.192'):
         '''
@@ -204,13 +208,14 @@ class Spec:
         '''
         t = self.snap_time()
         if cores:
-            p = [plt.plot(t[i::4], label = 'Core ' + str(i+1)) for i in range(4)]
-            plt.xlim((0, t.size // 4))
-            plt.legend()
+            p = [plt.plot(range(i, t.size + i, 4), t[i::4], 'o--', ms = 4,
+                          label = 'Core ' + str(i+1)) for i in range(4)]
+            plt.xlim((0, 512))
+            plt.legend(loc = 'best')
         else:
             p = plt.plot(t, label = 'All cores')
-            plt.xlim((0, t.size))
-            plt.legend()
+            plt.xlim((0, 512))
+            plt.legend(loc = 'best')
         plt.xlabel('Samples')
         plt.ylabel('Amplitude (ADU)')
         plt.grid(True, which = 'both')
