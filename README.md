@@ -104,7 +104,7 @@ m = Motor(port = '/dev/ttyUSB0', baudrate = 38400) # default args
 
 You can save settings to the VXM controller with `m.save_settings()` - this is how we can initialize the class to a baudrate of 38400, even though the controller's factory baudrate is 9600.
 
-The `home()` method makes use of the B59 rotary table's magnetic limit switch to acheive 0.01 degrees of angular precision. This method, along with `incr()` and `abst()`, all return boolean values of their move's success rather than the raw writeback. If raw writeback is desired, use the `send()` method.
+The `home()` method makes use of the B59 rotary table's magnetic limit switch to acheive 0.01 degrees of angular precision. This method, along with `incr()` and `abst()` returns a boolean value of its success, rather than the raw writeback. If raw writeback is desired, use the `send()` method.
 
 For safety reasons, a `KeyboardInterrupt` or `SystemExit` during `send_command()` will trigger the command `"D"`, which decelerates the motor to a stop.
 Acceleration and speed arguments of `abst()` and `incr()` in general should not be changed. 
