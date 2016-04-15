@@ -14,9 +14,11 @@ Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor co
 
 All can be installed (as root) with `$ pip install <packagename>` except:
  * [adc5g]:
+
  ```
  $ pip install git+git://github.com/sma-wideband/adc_tests.git
  ```
+ 
  * [fit_cores]:
  ```
  $ wget https://raw.githubusercontent.com/sma-wideband/adc_tests/master/fit_cores.py
