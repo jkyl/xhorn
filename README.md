@@ -39,7 +39,7 @@ In [1]: run scan.py
 
 Usage: "python scan.py go"
 
-In [2]: go(acc_len = 1, n_accs = 20, step = 1, bound = 60, port = '/dev/ttyUSB0') # default args
+In [2]: go(acc_len = 1, n_accs = 20, step = 1, bound = 60, home = 0, port = '/dev/ttyUSB0') # default args
 ```
 
 `go()` initializes `Spec`, `Motor`, and `h5py.File` objects in order write `n_accs` accumulations to disk at each angle separated by `step` degrees, each one `acc_len` seconds long, from 0 to `bound` degrees away from the `home` absolute position of the motor. 
