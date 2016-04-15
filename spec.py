@@ -25,7 +25,7 @@ class Spec:
         if samp_rate != None:
             print('Setting sample rate to {} MHz'.format(samp_rate))
         self.set_clock(samp_rate)
-        print('Setting accumulation length to {} s'.format(acc_len))
+        print('Setting accumulation length to {}s'.format(acc_len))
         self.set_acc_len(acc_len)
         print('Setting fft shift')
         self.set_fft_shift()

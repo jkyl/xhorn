@@ -39,8 +39,8 @@ The `__init__` block prints its progress:
 Connecting to "128.135.52.192"
 Loading "simple_spec.bof"
 Deglitching
-Setting sample rate to 4600 MHz
-Setting accumulation length to 1 s
+Setting sample rate to 4400 MHz
+Setting accumulation length to 1s
 Setting fft shift
 Arming PPS
 ```
