@@ -51,7 +51,7 @@ Upon rebooting the board, the offset, gain, and phase registers for each of the 
 s.fit_ogp(10) # frequency of test tone in MHz
 ```
 
-Which prints the best-fit values of offset, gain and phase in the form:
+Which prints the best-fit values for OGP as determined by a least-squares fit to a sine function at the provided frequency:
 
 ```
 # 10.00  zero(mV) amp(%)  dly(ps) (adj by .4, .14, .11)
@@ -70,6 +70,12 @@ core C   0.2916 -0.0505 -68.5566
 core D  -0.3448  0.2905 172.0485
 ```
 
+You can then plot the time series data with each core highlighted to verify that the fit was succesful:
+
+```python
+plt.ion()
+s.plot_time(cores = True)
+```
 
 ## ```scan.py```
 To execute a data run with the default parameters:
