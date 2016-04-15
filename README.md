@@ -38,7 +38,7 @@ Setting fft shift
 Arming PPS
 ```
 Upon rebooting the board, the offset, gain, and phase registers for each of the four cores on the ADC will be cleared. It is recommended that you subsequently run
-```python
+```
 In [3]: s.fit_ogp(10) # frequency of test tone in MHz
 # 10.00  zero(mV) amp(%)  dly(ps) (adj by .4, .14, .11)
 #avg     0.4043 125.1753 44615.4005
@@ -67,11 +67,11 @@ core D   0.8709 -1.3746  14.6191
 
 ## ```scan.py```
 To execute a data run with the default parameters:
-```sh
+```
 $ python scan.py go
 ```
 or in IPython:
-```python
+```
 In [1]: run scan.py go
 ```
 To execute a data run with non-default parameters, call ```go()``` directly:
