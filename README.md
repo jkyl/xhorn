@@ -9,6 +9,7 @@ Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor co
  * [ntplib]
  * [h5py]
  * [numpy]
+ * [scipy]
  * [matplotlib]
 
 All can be installed (as root) with ```pip install <packagename>``` except:
