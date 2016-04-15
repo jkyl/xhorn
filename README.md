@@ -19,7 +19,7 @@ All can be installed (as root) with `$ pip install <packagename>` except:
  * `spec.py` - A class that initializes a 2048 channel spectrometer on the ROACH board.
  * `motor.py` - A class capable of stepping and reading back the position of the rotary table.
  * `time_sync.py` - Contains functions that determine the system time's offset from UTC using the nearest NTP server.
- * `in_out.py` - Contains functions that read and write numpy arrays of the measured spectra along with their associated metadata to and from hdf5 files on disk.
+ * `in_out.py` - Contains functions that read and write arrays of measured spectra along with their associated metadata to and from hdf5 files on disk.
  * `scan.py` - A routine that combines the above methods to measure and record spectra over a range of elevations. 
 
 # Usage
