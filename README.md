@@ -58,7 +58,7 @@ In [2]: go(step = 1, home = 0, bound = 60, samp_rate = 4400, acc_len = 1, n_accs
 
 `go()` initializes `Spec`, `Motor`, and `h5py.File` objects in order write `n_accs` accumulations to files in the `output` directory at angles separated by `step` degrees, each one `acc_len` seconds long, from 0 to `bound` degrees away from the `home` position of the motor.
 
-Each time the motor returns to `home`, the script closes the current file and opens a new one. All files are automatically named with the current UTC time, which is calculated at each return to `home` by querying an NTP server for the system time's offset from UTC. File I/O and time syncronization operations are accomplished with functions in `in_out.py` and `time_sync.py`. 
+Each time the motor returns to `home`, the script closes the current output file and opens a new one. All output files are automatically named with the current UTC time, which is calculated at each return to `home` by querying an NTP server for the system time's offset from UTC. File I/O and time syncronization operations are accomplished with functions in `in_out.py` and `time_sync.py`. 
 
 ##`Spec`
 
