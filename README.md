@@ -26,7 +26,7 @@ All can be installed (as root) with ```pip install <packagename>``` except:
 
 ##```Spec``` class
 
-To create a spectrometer instance by itself, in the interpreter run:
+To create a spectrometer instance by itself, run:
 
 ```python
 from spec import Spec
