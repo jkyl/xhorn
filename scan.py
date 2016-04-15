@@ -36,7 +36,7 @@ def snap_and_move(m, s, f, pos, acc_len = 1, step = 1, n_accs = 10, dt = 0):
     else:
         sys.exit()
         
-def go(step = 1, home = 0, bound = 60, samp_rate = 4800, acc_len = 1, n_accs = 20,
+def go(step = 1, home = 0, bound = 60, samp_rate = 4400, acc_len = 1, n_accs = 20,
        port = '/dev/ttyUSB0', ip = '128.135.52.192'):
     '''
     Main function that creates motor, spec, and hdf5 objects, calculates the computer's offset
@@ -93,7 +93,7 @@ if __name__ == '__main__':
             step = 1, 
             home = 0,
             bound = 60,
-            samp_rate = 4800,
+            samp_rate = 4400,
             acc_len = 1,
             n_accs = 20,
             port = '/dev/ttyUSB0',
