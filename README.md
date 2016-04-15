@@ -42,7 +42,7 @@ Usage: "python scan.py go"
 In [2]: go(acc_len = 0.1, n_accs = 200, port = '/dev/ttyUSB0')
 ```
 
-##`Spec` class
+##`Spec`
 
 To create a standalone spectrometer instance, run:
 
@@ -95,7 +95,7 @@ plt.ion()
 s.plot_time(cores = True)
 ```
 
-##`Motor` class
+##`Motor`
 To create an instance of the `Motor` class, run:
 ```python
 from motor import Motor
