@@ -24,11 +24,11 @@ All can be installed (as root) with ```pip install <packagename>``` except:
 
 # Usage
 ##```Spec``` class
-To create a spectrometer instance by itself, in IPython run:
+To create a spectrometer instance by itself, in the interpreter run:
 ```
-In [1]: from spec import Spec
+>>> from spec import Spec
 
-In [2]: s = Spec(samp_rate = 4400, acc_len = 1, ip = '128.135.52.192')
+>>> s = Spec(samp_rate = 4400, acc_len = 1, ip = '128.135.52.192')
 ```
 ```
 Connecting to "128.135.52.192"
@@ -43,7 +43,7 @@ Arming PPS
 
 Upon rebooting the board, the offset, gain, and phase registers for each of the four cores on the ADC will be cleared. It is recommended that you subsequently run
 ```
-In [3]: s.fit_ogp(10) # frequency of test tone in MHz
+>>> s.fit_ogp(10) # frequency of test tone in MHz
 ```
 ```
 # 10.00  zero(mV) amp(%)  dly(ps) (adj by .4, .14, .11)
