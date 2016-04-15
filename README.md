@@ -82,8 +82,8 @@ To execute a data run with the default parameters:
 ```
 $ python scan.py go
 ```
-or in IPython:
-```
+or in an IPython terminal:
+```python
 In [1]: run scan.py go
 ```
 To execute a data run with non-default parameters, call ```go()``` directly:
