@@ -30,6 +30,7 @@ To create a spectrometer instance by itself, in the interpreter run:
 
 >>> s = Spec(samp_rate = 4400, acc_len = 1, ip = '128.135.52.192')
 ```
+The `__init__` block will print its progress as shown:
 ```
 Connecting to "128.135.52.192"
 Loading "simple_spec.bof"
