@@ -25,10 +25,10 @@ All can be installed (as root) with ```pip install <packagename>``` except:
 # Usage
 ##```Spec``` class
 To create a spectrometer instance by itself, in IPython run:
-```
-In [1]: from spec import Spec
+```python
+> from spec import Spec
 
-In [2]: s = Spec(samp_rate = 4400, acc_len = 1, ip = '128.135.52.192')
+> s = Spec(samp_rate = 4400, acc_len = 1, ip = '128.135.52.192')
 Connecting to "128.135.52.192"
 Loading "simple_spec.bof"
 Deglitching
