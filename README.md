@@ -12,15 +12,15 @@ Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor co
  * [scipy]
  * [matplotlib]
 
-All can be installed (as root) with ```pip install <packagename>``` except:
- * [adc5g] and [fit_cores]: ```pip install git+git://github.com/sma-wideband/adc_tests.git```
+All can be installed (as root) with `$ pip install <packagename>` except:
+ * [adc5g] and [fit_cores]: `$ pip install git+git://github.com/sma-wideband/adc_tests.git`
 
 **Files:**
  * `spec.py` - A class that initializes a 2048 channel spectrometer on the ROACH board.
  * `motor.py` - A class capable of stepping and reading back the position of the rotary table.
  * `time_sync.py` - Contains functions that determine the system time's offset from UTC using the nearest NTP server.
  * `in_out.py` - Contains functions that read and write numpy arrays of the measured spectra along with their associated metadata to and from hdf5 files on disk.
- * ```scan.py` - A routine that combines the above methods to measure and record spectra over a range of elevations. 
+ * `scan.py` - A routine that combines the above methods to measure and record spectra over a range of elevations. 
 
 # Usage
 
@@ -33,7 +33,7 @@ from spec import Spec
 s = Spec(samp_rate = 4400, acc_len = 1, ip = '128.135.52.192') # default args
 ```
 
-The `__init__` block prints its progress as shown:
+The `__init__` block prints its progress:
 
 ```
 Connecting to "128.135.52.192"
@@ -51,7 +51,7 @@ Upon rebooting the board, the offset, gain, and phase registers for each of the 
 s.fit_ogp(10) # frequency of test tone in MHz
 ```
 
-Which prints the best-fit values for OGP as determined by a least-squares fit to a sine function at the provided frequency:
+which prints the best-fit values for OGP as determined by a least-squares fit to a sine function at the provided frequency:
 
 ```
 # 10.00  zero(mV) amp(%)  dly(ps) (adj by .4, .14, .11)
