@@ -31,19 +31,21 @@ In [1]: from spec import Spec
 In [2]: s = Spec(samp_rate = 4400, acc_len = 1, ip = '128.135.52.192')
 ```
 ```
-	Connecting to "128.135.52.192"
-	Loading "simple_spec.bof"
-	Deglitching
-	Setting sample rate to 4600 MHz
-	Setting accumulation length to 1 s
-	Setting fft shift
-	Arming PPS
+Connecting to "128.135.52.192"
+Loading "simple_spec.bof"
+Deglitching
+Setting sample rate to 4600 MHz
+Setting accumulation length to 1 s
+Setting fft shift
+Arming PPS
 ```
 
 
 Upon rebooting the board, the offset, gain, and phase registers for each of the four cores on the ADC will be cleared. It is recommended that you subsequently run
 ```
 In [3]: s.fit_ogp(10) # frequency of test tone in MHz
+```
+```
 # 10.00  zero(mV) amp(%)  dly(ps) (adj by .4, .14, .11)
 #avg     0.4043 125.1753 44615.4005
 core A   0.2953 -0.6481  13.1496
