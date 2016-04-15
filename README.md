@@ -26,16 +26,18 @@ All can be installed (as root) with ```pip install <packagename>``` except:
 ##```Spec``` class
 To create a spectrometer instance by itself, in IPython run:
 ```python
-> from spec import Spec
+In [1]: from spec import Spec
 
-> s = Spec(samp_rate = 4400, acc_len = 1, ip = '128.135.52.192')
-Connecting to "128.135.52.192"
-Loading "simple_spec.bof"
-Deglitching
-Setting sample rate to 4600 MHz
-Setting accumulation length to 1 s
-Setting fft shift
-Arming PPS
+In [2]: s = Spec(samp_rate = 4400, acc_len = 1, ip = '128.135.52.192')
+```
+	Connecting to "128.135.52.192"
+	Loading "simple_spec.bof"
+	Deglitching
+	Setting sample rate to 4600 MHz
+	Setting accumulation length to 1 s
+	Setting fft shift
+	Arming PPS
+```python
 ```
 Upon rebooting the board, the offset, gain, and phase registers for each of the four cores on the ADC will be cleared. It is recommended that you subsequently run
 ```
