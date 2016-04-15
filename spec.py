@@ -105,7 +105,7 @@ class Spec:
         snap = self.snap_time()
         for i in (0, 1):
             ogp_fit, sinad = fit.fit_snap(snap, freq, self.samp_rate, 'calibration/if0', 
-                                          clear_avgs = (not i), prnt = True)
+                                          clear_avgs = (not i), prnt = i)
         ogp_fit = np.array(ogp_fit)[3:].reshape(4, 3)
         cur_ogp = self.get_ogp()
         t = cur_ogp + ogp_fit

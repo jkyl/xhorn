@@ -30,10 +30,10 @@ To create a spectrometer instance by itself, run:
 
 ```python
 from spec import Spec
-s = Spec(samp_rate = 4400, acc_len = 1, ip = '128.135.52.192')
+s = Spec(samp_rate = 4400, acc_len = 1, ip = '128.135.52.192') # default args
 ```
 
-The `__init__` block will print its progress as shown:
+The `__init__` block prints its progress as shown:
 
 ```
 Connecting to "128.135.52.192"
@@ -45,37 +45,29 @@ Setting fft shift
 Arming PPS
 ```
 
-Upon rebooting the board, the offset, gain, and phase registers for each of the four cores on the ADC will be cleared. It is recommended that you subsequently run:
+Upon rebooting the board, the offset, gain, and phase registers for each of the four cores on the ADC will be cleared. It is recommended that you run:
 
 ```python
 s.fit_ogp(10) # frequency of test tone in MHz
 ```
 
-Which will print in the form:
+Which prints the best-fit values of offset, gain and phase in the form:
 
 ```
 # 10.00  zero(mV) amp(%)  dly(ps) (adj by .4, .14, .11)
-#avg     0.4043 125.1753 44615.4005
-core A   0.2953 -0.6481  13.1496
-core B   1.4599  1.5546 -24.6254
-core C  -1.0089  0.4681  -3.1432
-core D   0.8709 -1.3746  14.6191
+#avg    -0.1680 125.1196 49038.3687
+core A  -0.1939 -0.0382 -29.7747
+core B  -0.4248 -0.2018 -73.7172
+core C   0.2916 -0.0505 -68.5566
+core D  -0.3448  0.2905 172.0485
 
-sinad = 36.14
-# 10.00  zero(mV) amp(%)  dly(ps) (adj by .4, .14, .11)
-#avg     0.4043 125.1753 44615.4005
-core A   0.2953 -0.6481  13.1496
-core B   1.4599  1.5546 -24.6254
-core C  -1.0089  0.4681  -3.1432
-core D   0.8709 -1.3746  14.6191
-
-sinad = 36.14
+sinad = 34.37
 average of 2 measurements
-#avg     0.4043 125.1753   0.0000
-core A   0.2953 -0.6481  13.1496
-core B   1.4599  1.5546 -24.6254
-core C  -1.0089  0.4681  -3.1432
-core D   0.8709 -1.3746  14.6191
+#avg    -0.1680 125.1196   0.0000
+core A  -0.1939 -0.0382 -29.7747
+core B  -0.4248 -0.2018 -73.7172
+core C   0.2916 -0.0505 -68.5566
+core D  -0.3448  0.2905 172.0485
 ```
 
 
