@@ -31,10 +31,6 @@ class Spec:
         self.set_fft_shift()
         print('Arming PPS')
         self.arm_pps() 
-        print('Fitting offset, gain, and phase -')
-        f = raw_input('Enter frequency of test tone in MHz:')
-        if f != '':
-            self.fit_ogp(int(f))   
         
     def connect(self, ip = '128.135.52.192'):
         '''
@@ -44,6 +40,7 @@ class Spec:
         time.sleep(1)
         if roach.is_connected():
             self._roach = roach
+            self._ip = ip
         else:
             print('Roach not connected, retrying...')
             self.connect(ip)

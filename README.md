@@ -23,12 +23,27 @@ All can be installed (as root) with ```pip install <packagename>``` except:
  * _scan.py_ - A routine that combines the above methods to measure and record spectra over a range of elevations. 
 
 # Usage
-## scan.py
+##```Spec``` class
+To create a spectrometer instance by itself, in IPython run:
+```python
+In [1]: run spec.py
+
+In [2]: s = Spec(samp_rate = 4400, acc_len = 1, ip = '128.135.52.192')
+Connecting to "128.135.52.192"
+Loading "simple_spec.bof"
+Deglitching
+Setting sample rate to 4600 MHz
+Setting accumulation length to 1 s
+Setting fft shift
+Arming PPS
+```
+
+## ```scan.py```
 To execute a data run with the default parameters:
 ```sh
 $ python scan.py go
 ```
-or in iPython:
+or in IPython:
 ```python
 In [1]: run scan.py go
 ```
