@@ -24,9 +24,27 @@ All can be installed (as root) with `$ pip install <packagename>` except:
 
 # Usage
 
-##```Spec``` class
+## `scan.py`
+To execute a data run with the default parameters:
+```
+$ python scan.py go
+```
+or in an IPython terminal:
+```python
+In [1]: run scan.py go
+```
+To execute a data run with non-default parameters, call ```go()``` directly:
+```python
+In [1]: run scan.py
 
-To create a spectrometer instance by itself, run:
+Usage: "python scan.py go"
+
+In [2]: go(acc_len = 0.1, n_accs = 200, port = '/dev/ttyUSB0')
+```
+
+##`Spec` class
+
+To create a standalone spectrometer instance, run:
 
 ```python
 from spec import Spec
@@ -70,34 +88,30 @@ core C   0.2916 -0.0505 -68.5566
 core D  -0.3448  0.2905 172.0485
 ```
 
-You can then plot the time series data with each core highlighted to verify that the fit was succesful:
+You can plot the time series data with each core denoted seperately to verify that the fit was succesful:
 
 ```python
 plt.ion()
 s.plot_time(cores = True)
 ```
 
-## ```scan.py```
-To execute a data run with the default parameters:
-```
-$ python scan.py go
-```
-or in an IPython terminal:
+##`Motor` class
+To create an instance of the `Motor` class, run:
 ```python
-In [1]: run scan.py go
+from motor import Motor
+m = Motor(port = '/dev/ttyUSB0', baudrate = 38400) # default args
 ```
-To execute a data run with non-default parameters, call ```go()``` directly:
-```python
-In [1]: run scan.py
 
-Usage: "python scan.py go"
+You can save settings to the VXM controller with `m.save_settings()` - this is how we can initialize the class to a baudrate of 38400, even though the controller's factory baudrate is 9600.
 
-In [2]: go(acc_len = 0.1, n_accs = 200, port = '/dev/ttyUSB0')
-```
+The `home()` method makes use of the B59 rotary table's magnetic limit switch to acheive 0.01 degrees of angular precision. This method, along with `incr()` and `abst()`, all return boolean values of their move's success rather than the raw writeback. If raw writeback is desired, use the `send()` method.
+
+For safety reasons, a `KeyboardInterrupt` or `SystemExit` during `send_command()` will trigger the command `"D"`, which decelerates the motor to a stop.
+Acceleration and speed arguments of `abst()` and `incr()` in general should not be changed. 
 
 #Acknowledgements
 In addition to the [sma_wideband] code that we import verbatim:
- * The initialization and snapping methods in the ```Spec``` class are derived from Jack Hickish's [simple_spec].
+ * The initialization and snapping methods in `Spec` are derived from Jack Hickish's [simple_spec].
  * The OGP fitting methods in ```Spec``` are derived from Rurik Primiani's [rww_tools].
 
 
