@@ -53,6 +53,8 @@ def send_command(ser, cmd):
 class Motor:
     def __init__(self, port = '/dev/ttyUSB0', baudrate = 38400):
         '''
+        Calls gen_serial_obj() to open the given port and baudrate, 
+        and sets acceleration and speed to 1 and 20 deg/s
         '''
         self._ser = gen_serial_obj(port, baudrate)
         self.accl = 1
