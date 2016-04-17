@@ -24,7 +24,7 @@ class Spec:
         self.deglitch()
         if samp_rate != None:
             print('Setting sample rate to {} MHz'.format(samp_rate))
-        self.set_clock(samp_rate)
+        self.set_samp_rate(samp_rate)
         print('Setting accumulation length to {}s'.format(acc_len))
         self.set_acc_len(acc_len)
         print('Setting fft shift')
@@ -51,7 +51,7 @@ class Spec:
         '''
         if boffile == 'test':
             boffile = 'adc5g_test_rev2.bof.gz'
-        self.roach.progdev(boffile)
+        self._roach.progdev(boffile)
         self._boffile = boffile
         time.sleep(0.5)
         
@@ -60,11 +60,11 @@ class Spec:
         For use with adc5g test boffile. Calibrates phase of clock eye to see peaks 
         and troughs, not zero crossings. 
         '''
-        adc.set_test_mode(self.roach, 0)
-        adc.sync_adc(self.roach)
-        opt0, glitches0 = adc.calibrate_mmcm_phase(self.roach, 0,
+        adc.set_test_mode(self._roach, 0)
+        adc.sync_adc(self._roach)
+        opt0, glitches0 = adc.calibrate_mmcm_phase(self._roach, 0,
                                                    ['snapshot_adc0',])
-        adc.unset_test_mode(self.roach, 0)
+        adc.unset_test_mode(self._roach, 0)
         
     def is_calibrated(self):
         '''
@@ -77,9 +77,9 @@ class Spec:
         Clears the OGP registers on the ADC.
         '''
         for core in range(1, 5):
-            adc.set_spi_gain(self.roach, 0, core, 0)
-            adc.set_spi_offset(self.roach, 0, core, 0)
-            adc.set_spi_phase(self.roach, 0, core, 0)
+            adc.set_spi_gain(self._roach, 0, core, 0)
+            adc.set_spi_offset(self._roach, 0, core, 0)
+            adc.set_spi_phase(self._roach, 0, core, 0)
             
     def get_ogp(self):
         '''
@@ -88,11 +88,11 @@ class Spec:
         ogp = np.zeros((12), dtype='float')
         indx = 0
         for chan in range(1,5):
-            ogp[indx] = adc.get_spi_offset(self.roach, 0, chan)
+            ogp[indx] = adc.get_spi_offset(self._roach, 0, chan)
             indx += 1
-            ogp[indx] = adc.get_spi_gain(self.roach, 0, chan)
+            ogp[indx] = adc.get_spi_gain(self._roach, 0, chan)
             indx += 1
-            ogp[indx] = adc.get_spi_phase(self.roach, 0, chan)
+            ogp[indx] = adc.get_spi_phase(self._roach, 0, chan)
             indx += 1
         return ogp.reshape(4, 3)
 
@@ -104,21 +104,27 @@ class Spec:
         '''
         snap = self.snap_time()
         for i in (0, 1):
-            ogp_fit, sinad = fit.fit_snap(snap, freq, self.samp_rate, 'calibration/if0', 
+            ogp_fit, sinad = fit.fit_snap(snap, freq, self._samp_rate, 'calibration/if0', 
                                           clear_avgs = (not i), prnt = i)
         ogp_fit = np.array(ogp_fit)[3:].reshape(4, 3)
         cur_ogp = self.get_ogp()
-        t = cur_ogp + ogp_fit
-        offs = t[:, 0]
-        gains = t[:, 1]
-        phase = t[:, 2]
-        phase = (phase - phase.min())*.65
+        new_ogp = cur_ogp + ogp_fit
+        new_ogp[:, 2] = (new_ogp[:, 2] - new_ogp[:, 2].min()) * 0.65 # magic multiplier
+        self.set_ogp(new_ogp)
+
+    def set_ogp(self, ogp):
+        '''
+        Sets the OGP registers on the ADC. Input shape must be (4, 3). 
+        '''
+        offs = ogp[:, 0]
+        gains = ogp[:, 1]
+        phase = ogp[:, 2]
         for i in range(len(offs)):
-             adc.set_spi_offset(self.roach, 0, i+1, offs[i])
-             adc.set_spi_gain(self.roach, 0, i+1, gains[i])
-             adc.set_spi_phase(self.roach, 0, i+1, phase[i])
+             adc.set_spi_offset(self._roach, 0, i+1, offs[i])
+             adc.set_spi_gain(self._roach, 0, i+1, gains[i])
+             adc.set_spi_phase(self._roach, 0, i+1, phase[i])
              
-    def set_clock(self, samp_rate = None):
+    def set_samp_rate(self, samp_rate = None):
         '''
         Setter for sample rate / estimates if none given.
         '''
@@ -126,7 +132,7 @@ class Spec:
             self._samp_rate = samp_rate
         else:
             print('No sample rate given, estimating...')
-            board_clock = self.roach.est_brd_clk()
+            board_clock = self._roach.est_brd_clk()
             time.sleep(0.5)
             self._samp_rate = int(board_clock * 16)
             print('Estimated sample rate: {} MHz.'.format(self._samp_rate))
@@ -143,27 +149,27 @@ class Spec:
         '''
         Setter for fft bitshift.
         '''
-        self._fft_shift_int = int(bitstring, 2)
-        self.roach.write_int('fft_shift0', self._fft_shift_int)
+        self._fft_shift = int(bitstring, 2)
+        self._roach.write_int('fft_shift0', self._fft_shift)
    
     def arm_pps(self):
         '''
         Setter for pps register on roach board.
         '''
-        ctrl = self.roach.read_uint('control')
+        ctrl = self._roach.read_uint('control')
         ctrl = ctrl | (1<<2)
-        self.roach.write_int('control', ctrl)
+        self._roach.write_int('control', ctrl)
         ctrl = ctrl & ((2**32 - 1) - (1<<2))
-        self.roach.write_int('control', ctrl)
+        self._roach.write_int('control', ctrl)
 
     
     def _snap(self, name, fmt = 'L', man_trig = True):
         '''
         General snap function (can snap time or frequency domain). 
         '''
-        wait_period = 2 * self._acc_len
+        wait_period = max(0.5, self._acc_len * 2)
         n_bytes = struct.calcsize('=%s'%fmt)
-        d = self.roach.snapshot_get(name, man_trig = man_trig, wait_period = wait_period)
+        d = self._roach.snapshot_get(name, man_trig = man_trig, wait_period = wait_period)
         return np.array(struct.unpack('>%d%s'%(d['length'] / n_bytes, fmt), d['data']))
                 
     def snap_spec(self):
@@ -176,7 +182,7 @@ class Spec:
         '''
         Snaps the last 2^14 samples. 
         '''
-        if self.boffile == 'simple_spec.bof':
+        if self._boffile == 'simple_spec.bof':
             return self._snap('snapshot_adc0', fmt = 'b', man_trig = True)
         else:
             return self._snap('scope_raw_0_snap', fmt = 'b', man_trig = True)
@@ -220,30 +226,51 @@ class Spec:
 
     @property
     def roach(self):
+        '''
+        Getter for self._roach.
+        '''
         return self._roach
     
     @property
     def n_chans(self):
+        '''
+        Getter for self._n_chans.
+        '''
         return self._n_chans
 
     @property
     def boffile(self):
+        '''
+        Getter for self._boffile.
+        '''
         return self._boffile
 
     @property
     def fft_shift(self):
+        '''
+        Getter for self._fft_shift
+        '''
         return self._fft_shift
 
     @property
     def ip(self):
+        '''
+        Getter for self._ip.
+        '''
         return self._ip
     
     @property
     def samp_rate(self):
+        '''
+        Getter for self._samp_rate.
+        '''
         return self._samp_rate
 
     @property
     def acc_len(self):
+        '''
+        Getter for self._acc_len.
+        '''
         return self._acc_len
 
     
