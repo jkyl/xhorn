@@ -24,6 +24,7 @@ def gen_serial_obj(port = '/dev/ttyUSB0', baudrate = 38400):
     ser.rtscts = False                  # disable hardware (RTS/CTS) flow ctrl
     ser.dsrdtr = False                  # disable hardware (DSR/DTR) flow ctrl
     ser.writeTimeout = 2                # timeout for write
+    ser.open()
     return ser
 
 def send_command(ser, cmd):
@@ -54,7 +55,6 @@ class Motor:
         '''
         '''
         self._ser = gen_serial_obj(port, baudrate)
-        self._ser.open()
         self.accl = 1
         self.speed = 20
     
@@ -143,16 +143,4 @@ class Motor:
         '''
         return self._ser.baudrate
 
-    @property
-    def accl(self):
-        '''
-        Setter/getter for acceleration (1 - 127).
-        '''
-        return self.accl
-
-    @property
-    def speed(self):
-        '''
-        Setter/getter for speed (deg/s).
-        '''
-        return self.speed
+    
