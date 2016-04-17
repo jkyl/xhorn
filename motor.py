@@ -65,7 +65,7 @@ class Motor:
         Queries the motor and returns a float of its position in degrees (rounded to 
         two decimal places).
         '''
-        return round(int(self.send("X").replace("X", '')[:-1]) / 100.), 2)
+        return round(int(self.send("X").replace("X", '')[:-1]) / 100., 2)
 
     def status(self):
         '''
