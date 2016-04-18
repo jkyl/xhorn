@@ -114,7 +114,7 @@ class Motor:
         if incr:
             TYPE = INCR
         elif abst:
-            TYPE = ABST
+            TYPE = ABS
         if accl is None:
             accl = self._accl
         if speed is None:
