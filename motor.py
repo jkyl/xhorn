@@ -42,8 +42,6 @@ def send_command(ser, cmd, timeout = 2):
             response = ser.readline()
             if response != '':
                 return response
-            elif time.time() - t0 > timeout:
-                raise RuntimeError, 'Timed out at {} seconds'.format(timeout)
         
     except (KeyboardInterrupt, SystemExit):
         print('\nCommand aborted')
@@ -149,7 +147,7 @@ class Motor:
         '''
         Setter for default speed (deg/s).
         '''
-        self.speed = s
+        self._speed = s
 
     @property
     def baudrate(self):
