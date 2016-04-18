@@ -27,27 +27,28 @@ def gen_serial_obj(port = '/dev/ttyUSB0', baudrate = 38400):
     ser.open()
     return ser
 
-def send_command(ser, cmd):
+def send_command(ser, cmd, timeout = 2):
     '''
     Writes a command, sleeps for 2 ms, attempts to read, and repeats if no response.
     Failsafe is to send "D" in the event of keyboard interrupt. 
     '''
     try:
-        try:
-            ser.flushInput() 
-            ser.flushOutput()
-            ser.write(cmd)
-            while True:
-                time.sleep(.02)
-                response = ser.readline()
-                if response != '':
-                    break
-            return response
-        except Exception, e1:
-            print("Error communicating: " + str(e1))          
+        ser.flushInput() 
+        ser.flushOutput()
+        ser.write(cmd)
+        t0 = time.time()
+        while True:
+            time.sleep(.02)
+            response = ser.readline()
+            if response != '':
+                return response
+            elif time.time() - t0 > timeout:
+                raise RuntimeError, 'Timed out at {} seconds'.format(timeout)
+        
     except (KeyboardInterrupt, SystemExit):
+        print('\nCommand aborted')
         send_command(ser, "D")
-        print('\nMotor stopped.')
+        print('Motor stopped')
         raise
         
 class Motor:
@@ -57,8 +58,8 @@ class Motor:
         and sets acceleration and speed to 1 and 20 deg/s
         '''
         self._ser = gen_serial_obj(port, baudrate)
-        self.accl = 1
-        self.speed = 20
+        self.set_accl(1)
+        self.set_speed(1)
     
     def position(self):
         '''
@@ -138,6 +139,18 @@ class Motor:
         '''
         return self._move(degs, incr = True, accl = accl, speed = speed)
 
+    def set_accl(self, a):
+        '''
+        Setter for default acceleration (1 - 127).
+        '''
+        self._accl = a
+
+    def set_speed(self, s):
+        '''
+        Setter for default speed (deg/s).
+        '''
+        self.speed = s
+
     @property
     def baudrate(self):
         '''
@@ -145,4 +158,16 @@ class Motor:
         '''
         return self._ser.baudrate
 
-    
+    @property
+    def accl(self):
+        '''
+        Getter for default acceleration (1 - 127).
+        '''
+        return self._accl
+
+    @property
+    def speed(self):
+        '''
+        Getter for default speed (deg/s).
+        '''
+        return self._speed
