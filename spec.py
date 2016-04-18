@@ -1,4 +1,4 @@
-import numpy as np
+ouimport numpy as np
 import adc5g as adc
 import fit_cores as fit
 import matplotlib.pyplot as plt
@@ -9,7 +9,7 @@ import struct
 
 class Spec:
     
-    def __init__(self, acc_len = 1, samp_rate = None, ip = '128.135.52.192'):
+    def __init__(self, acc_len = 1, samp_rate = 4400, ip = '128.135.52.192'):
         '''
         Initializes a 2048 channel spectrometer by connecting to the given IP, loading 
         simple_spec.bof, deglitching, setting the sample rate (or estimating if none 
@@ -22,8 +22,7 @@ class Spec:
         self.load_bof()
         print('Deglitching')
         self.deglitch()
-        if samp_rate != None:
-            print('Setting sample rate to {} MHz'.format(samp_rate))
+        print('Setting sample rate to {} MHz'.format(samp_rate))
         self.set_samp_rate(samp_rate)
         print('Setting accumulation length to {}s'.format(acc_len))
         self.set_acc_len(acc_len)
