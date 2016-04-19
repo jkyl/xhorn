@@ -47,9 +47,9 @@ def read_to_arrays(fnames):
             f = h5py.File(f, 'r')
             for val in f.values():
                 data['spec'].append(val[:])
-                for k, v in f[val].attrs():
+                for k, v in val.attrs.items():
                     if not k in data:
-                        data[k] = []
+                        data[str(k)] = []
                     data[k].append(v)
         return {k: np.vstack(v) for k, v in data.items()}
     else:
