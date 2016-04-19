@@ -13,7 +13,7 @@ def write_to_hdf5(fname, array, metadict):
         Writes to an .hdf5 file whose dataset names correspond to utc times. The datasets 
         contain numpy arrays of spectra, and also attributes passed via the metadict variable. 
     '''
-    f = h5py.File(fname, 'w')
+    f = h5py.File(fname)
     d = f.create_dataset(str(metadict['utc']), data = array)
     for key, val in metadict.items():
         d.attrs.create(key, val)
