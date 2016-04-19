@@ -41,17 +41,17 @@ def read_to_dict(fname):
 def read_to_arrays(fnames):
     '''
     '''
-    spec, ang, clk, utc, mjd = [], [], [], [], []
+    data = {'spec': []}
     if len(fnames) != 0:
         for f in list(fnames):
             f = h5py.File(f, 'r')
             for val in f.values():
-                spec.append(val[:])
-                ang.append(val.attrs['angle_degs'])
-                clk.append(val.attrs['samp_rate_mhz'])
-                utc.append(val.attrs['utc'])
-                mjd.append(val.attrs['mjd'])
-        return [np.vstack(i) for i in (spec, ang, clk, utc, mjd)]
+                data['spec'].append(val[:])
+                for k, v in f[val].attrs():
+                    if not k in data:
+                        data[k] = []
+                    data[k].append(v)
+        return {k: np.vstack(v) for k, v in data.items()}
     else:
         raise IOError
     
