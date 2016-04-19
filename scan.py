@@ -1,3 +1,4 @@
+#!/usr/bin/python2.7
 from spec import Spec
 from motor import Motor
 import time_sync as ts
@@ -5,8 +6,7 @@ import in_out as io
 import numpy as np
 import sys, csv, time, h5py
 
-    
-def snap_and_move(m, s, f, zenith = 0, acc_len = 1, step = 1, n_accs = 10, dt = 0):
+def snap_and_move(m, s, fname, zenith = 0, acc_len = 1, step = 1, n_accs = 10, dt = 0):
     '''
     Function that gets called recursively in go(). Takes a snapshot, calculates true time 
     based on offset, queries the motor position, calls io.write_to_hdf5 on the hdf5 file 
@@ -24,15 +24,15 @@ def snap_and_move(m, s, f, zenith = 0, acc_len = 1, step = 1, n_accs = 10, dt = 
     for i in range(n_accs):
         print(i + 1)
         spec = s.snap_spec()
-        true_time = ts.true_time(dt)
+        utc = ts.true_time(dt)
         pos = m.position() - zenith
-        io.write_to_hdf5(f, spec, {'angle_degs': pos,
-                                   'utc_time': true_time,
-                                   'samp_rate_mhz': s.samp_rate})
+        mjd = ts.iso_to_mjd(utc)
+        io.write_to_hdf5(fname, spec, {'angle_degs': pos,
+                                       'utc': utc,
+                                       'mjd': mjd,
+                                       'samp_rate_mhz': s.samp_rate})
     print('Moving {} deg'.format(step))
-    if not m.incr(step):
-        print('Move failed')
-        sys.exit()
+    m.incr(step)
         
 def go(step = 1, min = 0, max = 60, zenith = 0, samp_rate = 4400, acc_len = 1, n_accs = 20,
        port = '/dev/ttyUSB0', ip = '128.135.52.192', home = True):
@@ -54,36 +54,24 @@ def go(step = 1, min = 0, max = 60, zenith = 0, samp_rate = 4400, acc_len = 1, n
     s = Spec(ip = ip, samp_rate = samp_rate, acc_len = acc_len)
     dt = ts.offset()
     fname = 'output/' + ts.true_time(dt) + '.h5'
-    try:
-        f = h5py.File(fname, 'w')
-        print('Opened file "{}"'.format(fname))
+    if home:
         print('Homing')
-        if home:
-            m.home()
-        print('Moving to zenith ({} degs relative to zero)'.format(zenith))
-        m.abst(zenith)
-        while True:
-            while m.position() - zenith + step <= max:
-                snap_and_move(m, s, f, zenith = zenith, acc_len = acc_len,
-                              step = step, n_accs = n_accs, dt = dt)
-            while m.position() - zenith - step >= min:
-                snap_and_move(m, s, f, zenith = zenith, acc_len = acc_len,
-                              step = -step, n_accs = n_accs, dt = dt)   
-            f.close()
-            print('Closed file "{}"'.format(fname))
-            dt = ts.offset()
-            fname = 'output/' + ts.true_time(dt) + '.h5'
-            f = h5py.File(fname, 'w')
-            print('Opened file "{}"'.format(fname))
-    except:
-        f.close()
-        raise
-        
+        m.home()
+    print('Moving to zenith ({} degs relative to zero)'.format(zenith))
+    m.abst(zenith)
+    while True:
+        while m.position() - zenith + step <= max:
+            snap_and_move(m, s, fname, zenith = zenith, acc_len = acc_len,
+                          step = step, n_accs = n_accs, dt = dt)
+        while m.position() - zenith - step >= min:
+            snap_and_move(m, s, fname, zenith = zenith, acc_len = acc_len,
+                          step = -step, n_accs = n_accs, dt = dt)   
+        dt = ts.offset()
+        fname = 'output/' + ts.true_time(dt) + '.h5'
     
 if __name__ == '__main__':
     args = sys.argv
-    if len(args) == 2 and args[1] == 'go':
-        
+    if len(args) == 2 and args[1] == 'go':        
     ### edit defaults here ###
         go(
             step = 1, 

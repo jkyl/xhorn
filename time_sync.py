@@ -15,12 +15,34 @@ def true_time(offset):
     '''
     return datetime.utcfromtimestamp(time.time() + offset).isoformat().encode('utf-8')
 
-def utc_to_epoch(iso):
+def iso_to_dt(iso):
     '''
-    Takes an isoformatted string and returns the corresponding time in seconds past
-    the epoch (float). 
+    Converts isoformat string to datetime object.
     '''
-    utc_dt = datetime.strptime(iso, '%Y-%m-%dT%H:%M:%S.%f')
-    return (utc_dt - datetime(1970, 1, 1)).total_seconds()
+    return datetime.strptime(iso, '%Y-%m-%dT%H:%M:%S.%f')
 
-    
+def dt_to_epoch(dt):
+    '''
+    Converts datetime object to seconds since the epoch. 
+    '''
+    return (dt - datetime(1970, 1, 1)).total_seconds()
+
+def dt_to_mjd(dt):
+    '''
+    Converts datetime object to modified julian date.
+    '''
+    return (dt - datetime(1858, 11, 17)).total_seconds() / (60. * 60. * 24.)
+
+def iso_to_epoch(iso):
+    '''
+    Converts isoformat string to seconds since the epoch.
+    '''
+    return dt_to_epoch(iso_to_dt(iso))
+
+def iso_to_mjd(iso):
+    '''
+    Converts isoformat string to modified julian date. 
+    '''
+    return dt_to_mjd(iso_to_dt(iso))
+
+

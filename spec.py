@@ -1,4 +1,4 @@
-ouimport numpy as np
+import numpy as np
 import adc5g as adc
 import fit_cores as fit
 import matplotlib.pyplot as plt
