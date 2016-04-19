@@ -68,7 +68,7 @@ def read_time_range(dt_0 = None, dt_f = None):
     inrange = []
     for i in os.listdir('output'):
         if '.h5' in i:
-            epoch = ts.utc_to_epoch(i[:-3])
+            epoch = ts.iso_to_epoch(i[:-3])
             if dt_0 <= epoch <= dt_f:
                 inrange.append('output/'+i)
     try:
