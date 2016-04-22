@@ -122,7 +122,19 @@ class Spec:
              adc.set_spi_offset(self._roach, 0, i+1, offs[i])
              adc.set_spi_gain(self._roach, 0, i+1, gains[i])
              adc.set_spi_phase(self._roach, 0, i+1, phase[i])
-             
+
+    def save_ogp(self):
+        '''
+        Saves the current OGP settings to calibration/ogp.npy.
+        '''
+        np.save('calibration/ogp.npy', self.get_ogp())
+
+    def load_ogp(self):
+        '''
+        Loads the OGP settings saved in calibration/ogp.npy.
+        '''
+        self.set_ogp(np.load('calibration/ogp.npy'))
+        
     def set_samp_rate(self, samp_rate = None):
         '''
         Setter for sample rate / estimates if none given.
