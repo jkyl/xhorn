@@ -204,16 +204,17 @@ class Spec:
         '''
         return np.arange(0, self._samp_rate / 2., self._samp_rate / 2. / self._n_chans)
 
-    def plot_spec(self):
+    def plot_spec(self, label = None):
         '''
         Plots power spectrum over last accumulation. 
         '''
         f, db = self.freq_axis(), 10 * np.log10(self.snap_spec())
-        p = plt.plot(f, db, linewidth = 0.4)
+        p = plt.plot(f, db, linewidth = 0.4, label = label)
         plt.xlim((0, f[-1]))
         plt.xlabel('Frequency (MHz)')
         plt.ylabel('Power (dB)')
         plt.grid(True, which = 'both')
+        plt.legend()
         return p
         
     def plot_time(self, cores = False):
