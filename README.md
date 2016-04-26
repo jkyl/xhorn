@@ -56,9 +56,9 @@ In [2]: go(step = 1, home = 0, bound = 60, samp_rate = 4400, acc_len = 1, n_accs
            port = '/dev/ttyUSB0', ip = '128.135.52.192') # default args
 ```
 
-`go()` initializes `Spec`, `Motor`, and `h5py.File` objects in order write `n_accs` accumulations to files in the `output` directory at angles separated by `step` degrees, each one `acc_len` seconds long, from 0 to `bound` degrees away from the `home` position of the motor.
+`go()` initializes `Spec`, `Motor`, and `h5py.File` objects in order write `n_accs` accumulations to files in the `output` directory at angles separated by `step` degrees, each one `acc_len` seconds long, from `min` to `max` degrees away from the `zenith` position of the motor.
 
-Each time the motor returns to `home`, the script closes the current output file and opens a new one. All output files are automatically named with the current UTC time, which is calculated at each return to `home` by querying an NTP server for the system time's offset from UTC. File I/O and time syncronization operations are accomplished with functions in `in_out.py` and `time_sync.py`. 
+Each time the motor returns to `zenith`, the script closes the current output file and opens a new one. All output files are automatically named with the current UTC time, which is calculated at each return to `home` by querying an NTP server for the system time's offset from UTC. File I/O and time syncronization operations are accomplished with functions in `in_out.py` and `time_sync.py`. 
 
 ##`Spec`
 
@@ -124,8 +124,7 @@ You can save settings to the VXM controller with `m.save_settings()` - this is h
 
 The `home()` method makes use of the B59 rotary table's magnetic limit switch to acheive 0.01 degrees of angular precision. This method, along with `incr()` and `abst()` returns a boolean value of its success, rather than the raw writeback. If raw writeback is desired, use the `send()` method.
 
-For safety reasons, a `KeyboardInterrupt` or `SystemExit` during `send_command()` will trigger the command `"D"`, which decelerates the motor to a stop.
-Acceleration and speed arguments of `abst()` and `incr()` in general should not be changed. 
+For safety reasons, a `KeyboardInterrupt` or `SystemExit` during `send_command()` will trigger the command `"D"`, which decelerates the motor to a stop. Default acceleration and speed are set to 1 and 20, and can be changed with `m.accl` and `m.speed`, or else specified with optional arguments in `incr()` and `abst()`.
 
 #Acknowledgements
 In addition to the [sma_wideband] code that we import verbatim:
