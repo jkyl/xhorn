@@ -57,7 +57,7 @@ class Motor:
         '''
         self._ser = gen_serial_obj(port, baudrate)
         self.set_accl(1)
-        self.set_speed(1)
+        self.set_speed(0.5)
     
     def position(self):
         '''
