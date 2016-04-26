@@ -112,7 +112,11 @@ You can plot the time series data with each core denoted seperately to verify th
 plt.ion()
 s.plot_time(cores = True)
 ```
-
+If the fit was succesful, you can save the OGP settings to ```output/ogp.npy``` and load them again using
+```python
+s.save_ogp()
+s.load_ogp()
+```
 ##`Motor`
 To create an instance of the `Motor` class, run:
 ```python
