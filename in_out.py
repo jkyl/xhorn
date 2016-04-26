@@ -19,31 +19,15 @@ def write_to_hdf5(fname, array, metadict):
         d.attrs.create(key, val)
     f.close()
 
-def read_to_dict(fname):
-    '''
-    Inputs:
-        .hdf5 file path
-    Outputs:
-        Dictionary of data organized by utc time, where each point contains a numpy array of a 
-        spectrum and any metadata like angle, sample rate, and time (more can be added). 
-    '''
-    f = h5py.File(fname, 'r')
-    d = {}
-    for key, val in f.items():
-        key = str(key)
-        d[key] = {}
-        d[key]['spec'] = val[:]
-        for k, v in val.attrs.items():
-            d[key][str(k)] = v
-    f.close()
-    return d
-
 def read_to_arrays(fnames):
     '''
+    Reads a file or list of files into arrays stored in a dictionary whose keys 
+    correspond to the measured quantities. 
     '''
     data = {'spec': []}
+    fnames = list(fnames)
     if len(fnames) != 0:
-        for f in list(fnames):
+        for f in fnames:
             f = h5py.File(f, 'r')
             for val in f.values():
                 data['spec'].append(val[:])
