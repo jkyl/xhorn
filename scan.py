@@ -27,10 +27,13 @@ def snap_and_move(m, s, fname, zenith = 0, acc_len = 1, step = 1, n_accs = 10, d
         utc = ts.true_time(dt)
         pos = m.position() - zenith
         mjd = ts.iso_to_mjd(utc)
-        io.write_to_hdf5(fname, spec, {'angle_degs': pos,
-                                       'utc': utc,
-                                       'mjd': mjd,
-                                       'samp_rate_mhz': s.samp_rate})
+        io.write_to_hdf5(fname, spec, {
+            'angle_degs': pos,
+            'utc': utc,
+            'mjd': mjd,
+            'samp_rate_mhz': s.samp_rate,
+            'acc_len_secs': s.acc_len,
+        })
     print('Moving {} deg'.format(step))
     m.incr(step)
         
