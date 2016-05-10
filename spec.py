@@ -204,7 +204,7 @@ class Spec:
         '''
         return np.arange(0, self._samp_rate / 2., self._samp_rate / 2. / self._n_chans)
 
-    def plot_spec(self, label = None):
+    def plot_spec(self, label = ''):
         '''
         Plots power spectrum over last accumulation. 
         '''
