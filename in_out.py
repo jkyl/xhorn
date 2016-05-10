@@ -25,7 +25,8 @@ def read_to_arrays(fnames):
     correspond to the measured quantities. 
     '''
     data = {'spec': []}
-    fnames = list(fnames)
+    if type(fnames) == str:
+        fnames = [fnames]
     if len(fnames) != 0:
         for f in fnames:
             f = h5py.File(f, 'r')
