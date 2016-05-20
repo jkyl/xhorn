@@ -52,8 +52,8 @@ In [1]: run scan.py
 
 Usage: "python scan.py go"
 
-In [2]: go(step = 1, home = 0, bound = 60, samp_rate = 4400, acc_len = 1, n_accs = 20,
-           port = '/dev/ttyUSB0', ip = '128.135.52.192') # default args
+In [2]: go(step = 1, home = True, min = 0, max = 45, zenith = 0, samp_rate = 4400, acc_len = 1,
+           n_accs = 20, port = '/dev/ttyUSB0', ip = '128.135.52.192') # default args
 ```
 
 `go()` initializes `Spec`, `Motor`, and `h5py.File` objects in order write `n_accs` accumulations to files in the `output` directory at angles separated by `step` degrees, each one `acc_len` seconds long, from `min` to `max` degrees away from the `zenith` position of the motor.

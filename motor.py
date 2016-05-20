@@ -8,6 +8,8 @@ INCR  = 'I1M'     # increment steps
 ABS   = 'IA1M'    # set absolute position
 POS   = 'X'       # query position
 
+SPD = 1000. #steps per degrees
+
 def gen_serial_obj(port = '/dev/ttyUSB0', baudrate = 38400):
     '''
     Creates a serial object with the specified baudrate and /dev location. 
@@ -27,10 +29,11 @@ def gen_serial_obj(port = '/dev/ttyUSB0', baudrate = 38400):
     ser.open()
     return ser
 
-def send_command(ser, cmd, timeout = 2):
+def send_command(ser, cmd, n = 0):
     '''
-    Writes a command, sleeps for 2 ms, attempts to read, and repeats if no response.
-    Failsafe is to send "D" in the event of keyboard interrupt. 
+    Writes a command, sleeps for 20 ms, attempts to read, and repeats if no response.
+    Sends "D" to stop motor in the event of keyboard interrupt. If the stop command
+    also fails, assumes a bad connection and fails out rather than trying again. 
     '''
     try:
         ser.flushInput() 
@@ -41,12 +44,13 @@ def send_command(ser, cmd, timeout = 2):
             time.sleep(.02)
             response = ser.readline()
             if response != '':
-                return response
-        
+                return response        
     except (KeyboardInterrupt, SystemExit):
         print('\nCommand aborted')
-        send_command(ser, "D")
-        print('Motor stopped')
+        if n < 1:
+            send_command(ser, "D", n = n + 1)
+            print('Motor stopped')
+            raise
         raise
         
 class Motor:
@@ -56,15 +60,15 @@ class Motor:
         and sets acceleration and speed to 1 and 20 deg/s
         '''
         self._ser = gen_serial_obj(port, baudrate)
-        self.set_accl(1)
-        self.set_speed(0.5)
+        self.accl = 1
+        self.speed = 0.5
     
     def position(self):
         '''
         Queries the motor and returns a float of its position in degrees (rounded to 
-        two decimal places).
+        four decimal places).
         '''
-        return round(int(self.send("X").replace("X", '')[:-1]) / 100., 2)
+        return round(int(self.send("X").replace("X", '')[:-1]) / SPD, 4)
 
     def status(self):
         '''
@@ -96,7 +100,7 @@ class Motor:
 
     def save_settings(self):
         '''
-        Saves the motor's settings like baudrate. 
+        Saves the controller's settings. 
         '''
         return self.send('rsm') == '^'
             
@@ -116,11 +120,11 @@ class Motor:
         elif abst:
             TYPE = ABS
         if accl is None:
-            accl = self._accl
+            accl = self.accl
         if speed is None:
-            speed = self._speed
+            speed = self.speed
         cmd = ','.join((INIT + ACCL + '{}', SPEED + '{}', TYPE  + '{}', RUN))\
-                 .format(int(accl), int(speed * 100), int(degs * 100))
+                 .format(int(accl), int(speed * SPD), int(degs * SPD))
         return self.send(cmd) == '^'
         
     def abst(self, degs, accl = None, speed = None):
@@ -137,35 +141,23 @@ class Motor:
         '''
         return self._move(degs, incr = True, accl = accl, speed = speed)
 
-    def set_accl(self, a):
-        '''
-        Setter for default acceleration (1 - 127).
-        '''
-        self._accl = a
-
-    def set_speed(self, s):
-        '''
-        Setter for default speed (deg/s).
-        '''
-        self._speed = s
-
     @property
     def baudrate(self):
         '''
-        Getter for serial baudrate. 
+        Serial baudrate. 
         '''
         return self._ser.baudrate
 
     @property
     def accl(self):
         '''
-        Getter for default acceleration (1 - 127).
+        Default acceleration (1 - 127).
         '''
         return self._accl
 
     @property
     def speed(self):
         '''
-        Getter for default speed (deg/s).
+        Default speed (deg/s).
         '''
         return self._speed
