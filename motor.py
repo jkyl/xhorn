@@ -32,8 +32,8 @@ def gen_serial_obj(port = '/dev/ttyUSB0', baudrate = 38400):
 def send_command(ser, cmd, n = 0):
     '''
     Writes a command, sleeps for 20 ms, attempts to read, and repeats if no response.
-    Sends "D" to stop motor in the event of keyboard interrupt. If the stop command
-    also fails, assumes a bad connection and fails out rather than trying again. 
+    Sends "D" to stop motor in the event of KeyboardInterrupt. If the stop command
+    also fails, assumes a bad connection and exits on the next KeyboardInterrupt.
     '''
     try:
         ser.flushInput() 

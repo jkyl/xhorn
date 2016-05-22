@@ -4,16 +4,16 @@ from motor import Motor
 import time_sync as ts
 import in_out as io
 import numpy as np
-import sys, csv, time, h5py
+import sys, time, h5py
 
 def snap_and_move(m, s, fname, zenith = 0, acc_len = 1, step = 1, n_accs = 10, dt = 0):
     '''
-    Function that gets called recursively in go(). Takes a snapshot, calculates true time 
-    based on offset, queries the motor position, calls io.write_to_hdf5 on the hdf5 file 
-    object, then moves the motor.
+    Function that gets called in the while loop in go(). Takes a snapshot, calculates true 
+    time based on offset, queries the motor position, calls io.write_to_hdf5 on the hdf5 
+    filename, then moves the motor.
 
     Inputs:
-        Required - Motor, Spec, and  hdf5 file objects.
+        Required - Motor, Spec, and  hdf5 filename.
         Optional - zenith angle relative to 0 (degs), accumulation length in secs, step size 
                    in degrees, number of accumulations, computer's offset from true utc time 
                    in secs.
@@ -51,26 +51,24 @@ def go(step = 1, min = 0, max = 60, zenith = 0, samp_rate = 4400, acc_len = 1, n
         motor controller, output filename, and ip address of roach board. 
 
     Outputs: 
-        None,  writes to disk. Fails safe by closing the file. 
+        None,  writes to disk.
     '''
     m = Motor(port = port)
     s = Spec(ip = ip, samp_rate = samp_rate, acc_len = acc_len)
-    dt = ts.offset()
-    fname = 'output/' + ts.true_time(dt) + '.h5'
     if home:
         print('Homing')
         m.home()
-    print('Moving to zenith ({} degs relative to zero)'.format(zenith))
+    print('Moving to zenith ({} degs wrt. zero)'.format(zenith))
     m.abst(zenith)
     while True:
+        dt = ts.offset()
+        fname = 'output/' + ts.true_time(dt) + '.h5'
         while m.position() - zenith + step <= max:
             snap_and_move(m, s, fname, zenith = zenith, acc_len = acc_len,
                           step = step, n_accs = n_accs, dt = dt)
         while m.position() - zenith - step >= min:
             snap_and_move(m, s, fname, zenith = zenith, acc_len = acc_len,
                           step = -step, n_accs = n_accs, dt = dt)   
-        dt = ts.offset()
-        fname = 'output/' + ts.true_time(dt) + '.h5'
     
 if __name__ == '__main__':
     args = sys.argv
@@ -79,14 +77,14 @@ if __name__ == '__main__':
         go(
             step = 1, 
             min = 0,
-            max = 60,
+            max = 45,
             zenith = 0,
             samp_rate = 4400,
             acc_len = 1,
             n_accs = 20,
             port = '/dev/ttyUSB0',
             ip = '128.135.52.192',
-            home = True
+            home = False
         )
     else:
         print('\nUsage: "python scan.py go"')

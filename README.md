@@ -52,7 +52,7 @@ In [1]: run scan.py
 
 Usage: "python scan.py go"
 
-In [2]: go(step = 1, home = True, min = 0, max = 45, zenith = 0, samp_rate = 4400, acc_len = 1,
+In [2]: go(step = 1, home = False, min = 0, max = 45, zenith = 0, samp_rate = 4400, acc_len = 1,
            n_accs = 20, port = '/dev/ttyUSB0', ip = '128.135.52.192') # default args
 ```
 
