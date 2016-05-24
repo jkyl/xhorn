@@ -60,8 +60,8 @@ class Motor:
         and sets acceleration and speed to 1 and 20 deg/s
         '''
         self._ser = gen_serial_obj(port, baudrate)
-        self.accl = 1
-        self.speed = 0.5
+        self._accl = 1
+        self._speed = 0.5
     
     def position(self):
         '''
