@@ -108,8 +108,8 @@ class Motor:
         '''
         Executes a homing sequence using the magnetic limit switch. 
         '''
-        return self.send("F C S1M50, I1M-0, I1M4000, I1M-0, IA1M-0, R C"+\
-                         "S1M50, I1M-0, I1M4000, I1M-0, IA1M-0, R") == '^'
+        return self.send("F C S1M500, I1M-0, I1M4000, I1M-0, IA1M-0, R C"+\
+                         "S1M500, I1M-0, I1M4000, I1M-0, IA1M-0, R") == '^'
         
     def _move(self, degs, incr = None, abst = None, accl = None, speed = None):
         '''
