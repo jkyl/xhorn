@@ -4,7 +4,7 @@ from motor import Motor
 import time_sync as ts
 import in_out as io
 import numpy as np
-import sys, time, h5py, os
+import sys, time, h5py, os, tqdm
 
 CALIBRATOR_POSITION = -70
 
@@ -33,8 +33,7 @@ def move_and_snap(m, s, fname, zenith = 0, destination = 0, acc_len = 1, n_accs 
     print('Moving to {} deg ZA'.format(destination))
     m.abst(destination + zenith)
     print('Integrating...')
-    for i in range(n_accs):
-        print(i + 1)
+    for i in tqdm.trange(n_accs, unit='steps'):
         spec = s.snap_spec()
         utc = ts.true_time(dt)
         pos = m.position()
@@ -77,8 +76,8 @@ def go(min = 0, max = 45, n_steps = 10, zenith = 0, samp_rate = 4400, acc_len = 
         #calibrator stare
         move_and_snap(m, s, fname, zenith, CALIBRATOR_POSITION + zenith, acc_len, n_accs, dt)
         #air scan
-        for destination in angles:
-            move_and_snap(m, s, fname, zenith, destination, acc_len, n_accs, dt)   
+        for destination in tqdm.tqdm(angles, unit = 'accs'):
+            move_and_snap(m, s, fname, zenith, destination, acc_len, n_accs, dt)
         
 if __name__ == '__main__':
     args = sys.argv
