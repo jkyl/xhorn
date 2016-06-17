@@ -4,7 +4,7 @@ from motor import Motor
 import time_sync as ts
 import in_out as io
 import numpy as np
-import sys, time, h5py
+import sys, time, h5py, os
 
 CALIBRATOR_POSITION = -70
 
@@ -68,8 +68,9 @@ def go(min = 0, max = 45, n_steps = 10, zenith = 0, samp_rate = 4400, acc_len = 
     s = Spec(ip = ip, samp_rate = samp_rate, acc_len = acc_len)
     angles = scan_range(min, max, n_steps)
     while True:
-        dt = 0 #ts.offset() #uncomment once we get internet
-        fname = '/'.join(io.__file__.split('/')[:-2]+['output']) + ts.true_time(dt) + '.h5'
+        dt = ts.offset()
+        fname = '/'.join(os.path.abspath(io.__file__).split('/')[:-2])\
+                + '/output/' + ts.true_time(dt) + '.h5'
         print('Homing')
         m.abst(0)
         m.home()
