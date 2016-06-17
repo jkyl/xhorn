@@ -6,20 +6,32 @@ import in_out as io
 import numpy as np
 import sys, time, h5py
 
-def snap_and_move(m, s, fname, zenith = 0, acc_len = 1, step = 1, n_accs = 10, dt = 0):
+CALIBRATOR_POSITION = -70
+
+def scan_range(min, max, n):
     '''
-    Function that gets called in the while loop in go(). Takes a snapshot, calculates true 
-    time based on offset, queries the motor position, calls io.write_to_hdf5 on the hdf5 
-    filename, then moves the motor.
+    Calculates a secant-spaced array of n angles from min to max and back to min in degrees.
+    '''
+    am_min, am_max = (1 / np.cos(np.pi * a / 180.) for a in (min, max))
+    angs = 180 * np.arccos(1 / np.linspace(am_min, am_max, n)) / np.pi
+    return [round(a, 2) for a in np.append(angs, angs[-2::-1])]
+
+def move_and_snap(m, s, fname, zenith = 0, destination = 0, acc_len = 1, n_accs = 10, dt = 0):
+    '''
+    Function that gets called over a range of airmasses in go(). Moves to the destination, 
+    takes a snapshot, calculates true time based on offset, queries the motor position, then 
+    calls io.write_to_hdf5 on the hdf5 filename.
 
     Inputs:
         Required - Motor, Spec, and  hdf5 filename.
-        Optional - zenith angle relative to 0 (degs), accumulation length in secs, step size 
-                   in degrees, number of accumulations, computer's offset from true utc time 
-                   in secs.
+        Optional - zenith angle wrt. 0 on the motor (degs), destination wrt. zenith (degs), 
+                   accumulation length in secs, step size in degrees, number of accumulations, 
+                   computer's offset from true utc time in secs.
     Outputs:
         None, writes to disk. 
     '''
+    print('Moving to {} deg ZA'.format(destination))
+    m.abst(destination + zenith)
     print('Integrating...')
     for i in range(n_accs):
         print(i + 1)
@@ -35,14 +47,12 @@ def snap_and_move(m, s, fname, zenith = 0, acc_len = 1, step = 1, n_accs = 10, d
             'acc_len_secs': s.acc_len,
             'zenith_degs': zenith
         })
-    print('Moving {} deg'.format(step))
-    m.incr(step)
-        
-def go(step = 5, min = 0, max = 45, zenith = 0, samp_rate = 4400, acc_len = 1, n_accs = 10,
-       port = '/dev/ttyUSB0', ip = '128.135.52.192', home = True):
+
+def go(min = 0, max = 45, n_steps = 10, zenith = 0, samp_rate = 4400, acc_len = 1, n_accs = 10,
+       port = '/dev/ttyUSB0', ip = '128.135.52.192'):
     '''
     Main function that creates motor, spec, and hdf5 objects, calculates the computer's offset
-    from true time, and calls snap_and_move() in order to sweep the horn through a range of
+    from ntp time, and calls snap_and_move() in order to sweep the horn through a range of
     elevations and write accumulations and metadata to disk. Closes file and creates a new file
     after each return to zenith.
 
@@ -52,29 +62,22 @@ def go(step = 5, min = 0, max = 45, zenith = 0, samp_rate = 4400, acc_len = 1, n
         motor controller, output filename, and ip address of roach board. 
 
     Outputs: 
-        None,  writes to disk.
+        None,  writes to disk and std out.
     '''
     m = Motor(port = port)
     s = Spec(ip = ip, samp_rate = samp_rate, acc_len = acc_len)
+    angles = scan_range(min, max, n_steps)
     while True:
-        #s = Spec(ip = ip, samp_rate = samp_rate, acc_len = acc_len)
-        if home:
-            print('Homing')
-            m.abst(0)
-            m.home()
-        dt = 0 #ts.offset()
-        fname = 'output/' + ts.true_time(dt) + '.h5'
-        print('Moving to -70 degs (calibrator)')
-        m.abst(zenith - 70)
-        snap_and_move(m, s, fname, zenith = zenith, acc_len = acc_len, 
-                      step = 70, n_accs = n_accs, dt = dt)
-        while m.position() + zenith + step <= max:
-            snap_and_move(m, s, fname, zenith = zenith, acc_len = acc_len,
-                          step = step, n_accs = n_accs, dt = dt)
-        while m.position() + zenith - step >= min:
-            snap_and_move(m, s, fname, zenith = zenith, acc_len = acc_len,
-                          step = -step, n_accs = n_accs, dt = dt)   
-        
+        dt = 0 #ts.offset() #uncomment once we get internet
+        fname = '/'.join(io.__file__.split('/')[:-2]+['output']) + ts.true_time(dt) + '.h5'
+        print('Homing')
+        m.abst(0)
+        m.home()
+        #calibrator stare
+        move_and_snap(m, s, fname, zenith, CALIBRATOR_POSITION + zenith, acc_len, n_accs, dt)
+        #air scan
+        for destination in angles:
+            move_and_snap(m, s, fname, zenith, destination, acc_len, n_accs, dt)   
         
 if __name__ == '__main__':
     args = sys.argv
@@ -82,6 +85,5 @@ if __name__ == '__main__':
         go()
     else:
         print('\nUsage: "python scan.py go"')
-    
     
 
