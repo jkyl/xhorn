@@ -25,7 +25,7 @@ def snap_and_move(m, s, fname, zenith = 0, acc_len = 1, step = 1, n_accs = 10, d
         print(i + 1)
         spec = s.snap_spec()
         utc = ts.true_time(dt)
-        pos = m.position() - zenith
+        pos = m.position()
         mjd = ts.iso_to_mjd(utc)
         io.write_to_hdf5(fname, spec, {
             'angle_degs': pos,
@@ -33,11 +33,12 @@ def snap_and_move(m, s, fname, zenith = 0, acc_len = 1, step = 1, n_accs = 10, d
             'mjd': mjd,
             'samp_rate_mhz': s.samp_rate,
             'acc_len_secs': s.acc_len,
+            'zenith_degs': zenith
         })
     print('Moving {} deg'.format(step))
     m.incr(step)
         
-def go(step = 1, min = 0, max = 60, zenith = 0, samp_rate = 4400, acc_len = 1, n_accs = 20,
+def go(step = 5, min = 0, max = 45, zenith = 0, samp_rate = 4400, acc_len = 1, n_accs = 10,
        port = '/dev/ttyUSB0', ip = '128.135.52.192', home = True):
     '''
     Main function that creates motor, spec, and hdf5 objects, calculates the computer's offset
@@ -55,37 +56,30 @@ def go(step = 1, min = 0, max = 60, zenith = 0, samp_rate = 4400, acc_len = 1, n
     '''
     m = Motor(port = port)
     s = Spec(ip = ip, samp_rate = samp_rate, acc_len = acc_len)
-    if home:
-        print('Homing')
-        m.home()
-    print('Moving to zenith ({} degs wrt. zero)'.format(zenith))
-    m.abst(zenith)
     while True:
-        dt = ts.offset()
+        #s = Spec(ip = ip, samp_rate = samp_rate, acc_len = acc_len)
+        if home:
+            print('Homing')
+            m.abst(0)
+            m.home()
+        dt = 0 #ts.offset()
         fname = 'output/' + ts.true_time(dt) + '.h5'
-        while m.position() - zenith + step <= max:
+        print('Moving to -70 degs (calibrator)')
+        m.abst(zenith - 70)
+        snap_and_move(m, s, fname, zenith = zenith, acc_len = acc_len, 
+                      step = 70, n_accs = n_accs, dt = dt)
+        while m.position() + zenith + step <= max:
             snap_and_move(m, s, fname, zenith = zenith, acc_len = acc_len,
                           step = step, n_accs = n_accs, dt = dt)
-        while m.position() - zenith - step >= min:
+        while m.position() + zenith - step >= min:
             snap_and_move(m, s, fname, zenith = zenith, acc_len = acc_len,
                           step = -step, n_accs = n_accs, dt = dt)   
-    
+        
+        
 if __name__ == '__main__':
     args = sys.argv
-    if len(args) == 2 and args[1] == 'go':        
-    ### edit defaults here ###
-        go(
-            step = 1, 
-            min = 0,
-            max = 45,
-            zenith = 0,
-            samp_rate = 4400,
-            acc_len = 1,
-            n_accs = 20,
-            port = '/dev/ttyUSB0',
-            ip = '128.135.52.192',
-            home = False
-        )
+    if len(args) == 2 and args[1] == 'go':
+        go()
     else:
         print('\nUsage: "python scan.py go"')
     
