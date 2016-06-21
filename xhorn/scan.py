@@ -32,7 +32,7 @@ def move_and_snap(m, s, fname, zenith = 0, destination = 0, acc_len = 1, n_accs 
     '''
     print('Moving to {} deg ZA'.format(destination))
     m.abst(destination + zenith)
-    print('Integrating...')
+    print('Integrating')
     for i in tqdm.trange(n_accs, unit='steps'):
         spec = s.snap_spec()
         utc = ts.true_time(dt)
@@ -47,8 +47,8 @@ def move_and_snap(m, s, fname, zenith = 0, destination = 0, acc_len = 1, n_accs 
             'zenith_degs': zenith
         })
 
-def go(min = 0, max = 45, n_steps = 10, zenith = 0, samp_rate = 4400, acc_len = 1, n_accs = 10,
-       port = '/dev/ttyUSB0', ip = '128.135.52.192'):
+def go(min = 0, max = 50, n_steps = 5, zenith = 0, samp_rate = 4400, acc_len = 1, n_accs = 10,
+       port = '/dev/ttyUSB0', ip = '128.135.52.192', home=True, docal=True, indef=True):
     '''
     Main function that creates motor, spec, and hdf5 objects, calculates the computer's offset
     from ntp time, and calls snap_and_move() in order to sweep the horn through a range of
@@ -67,18 +67,20 @@ def go(min = 0, max = 45, n_steps = 10, zenith = 0, samp_rate = 4400, acc_len = 
     s = Spec(ip = ip, samp_rate = samp_rate, acc_len = acc_len)
     angles = scan_range(min, max, n_steps)
     while True:
-        dt = ts.offset()
+        dt = 0 #ts.offset()
         fname = '/'.join(os.path.abspath(io.__file__).split('/')[:-2])\
                 + '/output/' + ts.true_time(dt) + '.h5'
-        print('Homing')
-        m.abst(0)
-        m.home()
-        #calibrator stare
-        move_and_snap(m, s, fname, zenith, CALIBRATOR_POSITION + zenith, acc_len, n_accs, dt)
-        #air scan
+        if home:
+            print('Homing')
+            m.abst(0)
+            m.home()
+        if docal:
+            move_and_snap(m, s, fname, zenith, CALIBRATOR_POSITION + zenith, acc_len, n_accs, dt)
         for destination in tqdm.tqdm(angles, unit = 'accs'):
             move_and_snap(m, s, fname, zenith, destination, acc_len, n_accs, dt)
-        
+        if not indef:
+            break
+            
 if __name__ == '__main__':
     args = sys.argv
     if len(args) == 2 and args[1] == 'go':
