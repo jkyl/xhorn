@@ -6,8 +6,7 @@ import numpy as np
 def write_to_hdf5(fname, array, metadict):
     '''
     Inputs:
-        "filename.hdf5", np.ndarray, and metadata dictionary that must contain "utc_time",
-        "angle_degs", and "samp_rate_mhz" keys. 
+        "filename.h5", np.ndarray, and metadata dictionary.
 
     Outputs:
         Writes to an .hdf5 file whose dataset names correspond to utc times. The datasets 
@@ -27,8 +26,10 @@ def read_to_arrays(fnames):
     data = {'spec': []}
     if type(fnames) == str:
         fnames = [fnames]
+        
     if len(fnames) != 0:
         for f in fnames:
+            print(f)
             f = h5py.File(f, 'r')
             for val in f.values():
                 data['spec'].append(val[:])
@@ -51,15 +52,17 @@ def read_time_range(dt_0 = None, dt_f = None):
         dt_f = (3000, 1, 1)
     dt_0, dt_f = (ts.dt_to_epoch(datetime(*i)) for i in (dt_0, dt_f))
     inrange = []
-    for i in os.listdir('output'):
+    path = '/'.join(os.path.abspath(ts.__file__).split('/')[:-2]) + '/output/'
+   
+    for i in os.listdir(path):
         if '.h5' in i:
             epoch = ts.iso_to_epoch(i[:-3])
             if dt_0 <= epoch <= dt_f:
-                inrange.append('output/'+i)
+                inrange.append(path + i)
     try:
         return read_to_arrays(sorted(inrange))
     except IOError:
-        raise IOError, 'No data in the provided range.'
+        raise 
     
     
     
