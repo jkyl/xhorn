@@ -258,7 +258,7 @@ class data:
                             self.spec[s:e,m]=yy # replace data
 
                     
-    def fitam(self,zarange=[20,35]):
+    def fitam(self,zarange=[20,50]):
         """Fit a line to P(am)"""
         
         # Loop over scan blocks and fit each 
@@ -328,7 +328,10 @@ class data:
         """SVD filter"""
 
         self.fspec=np.zeros(self.spec.shape)
-        
+        self.u=[]
+        self.s=[]
+        self.v=[]
+
         for k in range(self.nscan):
             sind=self.getscanind(k)
             x=self.spec[sind]
@@ -346,7 +349,10 @@ class data:
             #    y=z[k];ind=np.arange(500,1000);p=np.polyfit(self.f[ind],y[ind],deg=3);
             #    z[k]=y-np.poly1d(p)(self.f);
             self.fspec[sind]=z
-                
+            self.u.append(u)
+            self.s.append(s)
+            self.v.append(v)
+
         return u,s,v,self.fspec
 
     def atmgaincal(self,flim=[10000,10500]):
