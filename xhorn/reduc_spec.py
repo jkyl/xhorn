@@ -124,7 +124,7 @@ class data:
         """Identify start/stop indices of cal and scanning"""
         
         # Cal zenith angle
-        zacal = -70;
+        zacal = -80;
 
         # Calibration stare indices
         calind = np.where(self.za==zacal)[0]
@@ -178,13 +178,13 @@ class data:
                 ss=self.ind['ss'][val] # Scan start
                 se=self.ind['se'][val] # Scan stop
                 # Find leading cal stare 
-                ind=np.where(ce<ss)[0]
+                ind=np.where(ce<=ss)[0]
                 if ind.size>0:
                     # If it exists, append it
                     cblk=np.append(cblk,ind[-1])
 
                 # Find trailing cal stare 
-                ind=np.where(cs>se)[0]
+                ind=np.where(cs>=se)[0]
                 if ind.size>0:
                     # If it exists, append it
                     cblk=np.append(cblk,ind[0])
@@ -196,7 +196,8 @@ class data:
     def calccalmean(self,blk):
         """Calculate mean of lead/trail cal stare for each scan block"""
         calind=self.getcalind(blk)
-        return self.spec[calind,:].mean(axis=0)
+        x=self.spec[calind,:]
+        return np.nanmean(x,axis=0)
             
     def getmask(self):
         """ Get NtxNf mask"""
