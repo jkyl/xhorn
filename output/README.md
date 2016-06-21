@@ -1,1 +1,0 @@
-Directory containing .h5 files created by scan.py
