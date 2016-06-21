@@ -1,10 +1,14 @@
 import in_out
+import os
 import numpy as np
 from copy import deepcopy as dc
 from IPython.core.debugger import Tracer; debug_here=Tracer()
 import reduc_spec 
 import am_model as am
 import planck
+
+def getampath():
+    return os.getenv('AM_PATH')
 
 def gettraj():
     d=reduc_spec.data((2016,05,25,14,0,0),(2016,05,25,15,0,0))        
@@ -51,7 +55,7 @@ class skymodel:
 
     def atm(self):
         # Atmospheric model
-        p=am.readamcfile('/Users/csheehy/am/generic/generic_mid.amc')
+        p=am.readamcfile('{0}/generic/generic_mid.amc'.format(getampath()))
 
         # Total atm signal
         p.Nscale['h2o']=20.0/19.25 # nscale=1 is 19.25 mm pwv
@@ -60,7 +64,7 @@ class skymodel:
 
     def recomb(self):
         # Recomb signal
-        xx=np.loadtxt('/Users/csheehy/python/xhorn/recomb_spec/HI.HeI.HeII.dat');
+        xx=np.loadtxt('recomb_spec/HI.HeI.HeII.dat');
 
         # Convert to K
         f=xx[:,0]*1000 # frequency in MHz
@@ -156,12 +160,37 @@ class gensig:
         # Input sky map, assume in galactic coords
         print(fname)
 
+def addTrx(din,Trx=150):
+    """Add nosie in K"""
+    d=dc(din)
+    fac=Trx/np.sqrt(d.acc_len*(d.f[1]-d.f[0])*1e6)
+    n=fac*np.random.randn(d.t.size,d.nf)+Trx
+    d.spec=d.spec+n
+    d.nsim=n
+    return d
 
-def addgn:
+def multgain(din):
+    """Multiply by gain in V^2 / K"""
+    d=dc(din)
+    # Sine wave
+    g = 1e6*(np.sin(d.f/100)+1.25);
+    g = g*((9500-d.f)/3000 + 1)
+    
+    d.gsim=g
+    d.spec=d.spec*np.tile(g,(d.spec.shape[0],1))
+    return d
 
-    def __init__(self):
-    """Add in gain and noise"""
-    return
+def makecal(din):
+    """Mock cal scans"""
+    d=dc(din)
+    d.spec[d.getcalind()]=(290+d.nsim[d.getcalind()])*d.gsim
+    return d
 
-
-
+def addnonlin(din):
+    """Add in non-linearity"""
+    d=dc(din)
+    fac=0.01 # 1 percent random non-linearity
+    beta=1+fac*np.random.randn(d.nf)
+    d.beta=beta
+    d.spec=d.spec**np.tile(beta,(d.t.size,1))
+    return d
