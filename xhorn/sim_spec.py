@@ -160,7 +160,7 @@ class gensig:
 def addgn:
 
     def __init__(self):
-    """Add noise and multiply by gain"""
+    """Add in gain and noise"""
     return
 
 
