@@ -7,6 +7,33 @@ import reduc_spec
 import am_model as am
 import planck
 
+def runsim():
+    # Dummy trajectory
+    d=reduc_spec.data((2016,06,17,23,27,41),(2016,06,18,0,0,0))
+
+    # Sky model, only atmosphere and CMB (included as T0 param to am) for now
+    sm=skymodel(comp=['atm'])
+
+    # Signal only (in K)
+    d=gensig().run(d,sm)
+
+    # Add noise
+    #d=addTrx(d,Trx=150)
+
+    # Multiply by gain
+    d=multgain(d)
+    
+    # Mock ambient temp cal stares
+    d=makecal(d);
+
+    # Add non-linearity
+    d=addnonlin(d,0.001)
+
+    # Fit gain and airmass
+    d.fitam()
+
+    return d
+
 def getampath():
     return os.getenv('AM_PATH')
 
@@ -116,7 +143,10 @@ class gensig:
                 # Sky map (not yet implemented)
                 fname=m[mtype]
                 self.genfromhmap(self,fname)
-                
+
+        # spec will be manipulated further, so store it
+        d.Tsig = d.spec
+
         return d
 
     def genatm(self,d,p,nf,nt):
@@ -183,13 +213,18 @@ def multgain(din):
 def makecal(din):
     """Mock cal scans"""
     d=dc(din)
-    d.spec[d.getcalind()]=(290+d.nsim[d.getcalind()])*d.gsim
+    if hasattr(d,'nsim'):
+        n=d.nsim
+    else:
+        n=np.zeros(d.spec.shape)
+    
+    d.spec[d.getcalind()]=(290+n[d.getcalind()])*d.gsim
     return d
 
-def addnonlin(din):
-    """Add in non-linearity"""
+def addnonlin(din,fac=0.01):
+    """Add in non-linearity, fac is non-linearity
+    as in V ~ T^(1+fac*randn(Nfreq))"""
     d=dc(din)
-    fac=0.01 # 1 percent random non-linearity
     beta=1+fac*np.random.randn(d.nf)
     d.beta=beta
     d.spec=d.spec**np.tile(beta,(d.t.size,1))
