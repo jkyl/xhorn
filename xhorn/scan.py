@@ -33,7 +33,7 @@ def move_and_snap(m, s, fname, zenith = 0, destination = 0, acc_len = 1, n_accs 
     #print('Moving to {} deg ZA'.format(destination))
     m.abst(destination + zenith)
     #print('Integrating')
-    for i in tqdm.trange(n_accs, unit='steps'):
+    for i in tqdm.trange(n_accs, unit='accs'):
         spec = s.snap_spec()
         utc = ts.true_time(dt)
         pos = m.position()
@@ -76,7 +76,7 @@ def go(min = 20, max = 50, n_steps = 5, zenith = 0, samp_rate = 4400, acc_len = 
             m.home()
         if docal:
             move_and_snap(m, s, fname, zenith, CALIBRATOR_POSITION + zenith, acc_len, n_accs, dt)
-        for destination in tqdm.tqdm(angles, unit = 'accs'):
+        for destination in tqdm.tqdm(angles, unit = 'steps'):
             move_and_snap(m, s, fname, zenith, destination, acc_len, n_accs, dt)
         if not indef:
             break
