@@ -6,11 +6,11 @@ import in_out as io
 import numpy as np
 import sys, time, h5py, os, tqdm
 
-CALIBRATOR_POSITION = -70
+CALIBRATOR_POSITION = -80
 
 def scan_range(min, max, n):
     '''
-    Calculates a secant-spaced array of n angles from min to max and back to min in degrees.
+    Calculates a secant-spaced array of angles from min to max and back to min in degrees.
     '''
     am_min, am_max = (1 / np.cos(np.pi * a / 180.) for a in (min, max))
     angs = 180 * np.arccos(1 / np.linspace(am_min, am_max, n)) / np.pi
@@ -30,9 +30,9 @@ def move_and_snap(m, s, fname, zenith = 0, destination = 0, acc_len = 1, n_accs 
     Outputs:
         None, writes to disk. 
     '''
-    print('Moving to {} deg ZA'.format(destination))
+    #print('Moving to {} deg ZA'.format(destination))
     m.abst(destination + zenith)
-    print('Integrating')
+    #print('Integrating')
     for i in tqdm.trange(n_accs, unit='steps'):
         spec = s.snap_spec()
         utc = ts.true_time(dt)
@@ -47,7 +47,7 @@ def move_and_snap(m, s, fname, zenith = 0, destination = 0, acc_len = 1, n_accs 
             'zenith_degs': zenith
         })
 
-def go(min = 0, max = 50, n_steps = 5, zenith = 0, samp_rate = 4400, acc_len = 1, n_accs = 10,
+def go(min = 20, max = 50, n_steps = 5, zenith = 0, samp_rate = 4400, acc_len = 1, n_accs = 10,
        port = '/dev/ttyUSB0', ip = '128.135.52.192', home=True, docal=True, indef=True):
     '''
     Main function that creates motor, spec, and hdf5 objects, calculates the computer's offset
@@ -71,7 +71,7 @@ def go(min = 0, max = 50, n_steps = 5, zenith = 0, samp_rate = 4400, acc_len = 1
         fname = '/'.join(os.path.abspath(io.__file__).split('/')[:-2])\
                 + '/output/' + ts.true_time(dt) + '.h5'
         if home:
-            print('Homing')
+            #print('Homing')
             m.abst(0)
             m.home()
         if docal:
