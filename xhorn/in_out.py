@@ -53,7 +53,7 @@ def read_time_range(dt_0 = None, dt_f = None):
     dt_0, dt_f = (ts.dt_to_epoch(datetime(*i)) for i in (dt_0, dt_f))
     inrange = []
     path = '/'.join(os.path.abspath(ts.__file__).split('/')[:-2]) + '/output/'
-   
+    print(path)
     for i in os.listdir(path):
         if '.h5' in i:
             epoch = ts.iso_to_epoch(i[:-3])

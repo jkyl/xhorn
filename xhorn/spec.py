@@ -6,6 +6,7 @@ import corr
 import time
 import sys
 import struct
+import tqdm
 
 class Spec:
     
@@ -15,21 +16,23 @@ class Spec:
         simple_spec.bof, deglitching, setting the sample rate (or estimating if none 
         given), setting the accumulation length, setting FFT shift, and arming PPS. 
         '''
-        self._n_chans = 2048
-        print('Connecting to "{}"'.format(ip))
-        self.connect(ip)
-        print('Loading "simple_spec.bof"')
-        self.load_bof()
-        print('Deglitching')
-        self.deglitch()
-        print('Setting sample rate to {} MHz'.format(samp_rate))
-        self.set_samp_rate(samp_rate)
-        print('Setting accumulation length to {}s'.format(acc_len))
-        self.set_acc_len(acc_len)
-        print('Setting fft shift')
-        self.set_fft_shift()
-        print('Arming PPS')
-        self.arm_pps() 
+        start = [
+            'self._n_chans = 2048',
+            'self.connect(ip)',
+            'self.load_bof()',
+            'self.deglitch()',
+            'self.set_samp_rate(samp_rate)',
+            'self.set_acc_len(acc_len)',
+            'self.set_fft_shift()',
+            'self.arm_pps()',
+            'time.sleep(5)',
+            '']
+        bar = tqdm.tqdm(start[:-1])
+        i = 1
+        for s in bar:
+            bar.set_description(start[i])
+            exec s
+            i += 1
         
     def connect(self, ip = '128.135.52.192'):
         '''
