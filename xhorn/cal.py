@@ -2,12 +2,16 @@ import in_out as io
 import numpy as np
 
 def mask(specs, angles):
-    a = angles.ravel()
-    u = np.unique(a)
-    n = a.size / u.size
-    n = n*2 - 1
-    s = np.array_split(specs, n)
-    a = np.array_split(a, n)
+    a = angles.reshape(a.size)
+    n=0
+    for i, e in enumerate(a):
+        if e != a[0]:
+            n = i
+            break
+        else:
+            n += 1
+    cal = 
+    
     return s, a
     
 def tsys(specs, angles):
