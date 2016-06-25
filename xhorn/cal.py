@@ -5,6 +5,7 @@ def mask(specs, angles):
     a = angles.ravel()
     u = np.unique(a)
     n = a.size / u.size
+    n = n*2 - 1
     s = np.split(specs, n)
     return s, a
     
