@@ -2,15 +2,7 @@ import in_out as io
 import numpy as np
 
 def mask(specs, angles):
-    a = angles.reshape(a.size)
-    n=0
-    for i, e in enumerate(a):
-        if e != a[0]:
-            n = i
-            break
-        else:
-            n += 1
-    cal = 
+    cal_specs, cal_angs = (i[np.where(angles==CAL_ANG)] for i in specs, angles)
     
     return s, a
     
