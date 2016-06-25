@@ -6,7 +6,7 @@ def mask(specs, angles):
     u = np.unique(a)
     n = a.size / u.size
     n = n*2 - 1
-    s = np.split(specs, n)
+    s = np.array_split(specs, n)
     return s, a
     
 def tsys(specs, angles):
