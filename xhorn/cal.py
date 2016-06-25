@@ -2,9 +2,12 @@ import in_out as io
 import numpy as np
 
 def mask(specs, angles):
-    a = np.unique(angles)
+    a = angles.ravel()
+    u = np.unique(a)
+    n = a.size / u.size
+    s = np.split(specs, n)
+    return s
     
-    s = np.split(specs, 
-        
 def tsys(specs, angles):
+    pass
     
