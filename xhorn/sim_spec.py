@@ -79,7 +79,7 @@ class skymodel:
 
         if 'cmb' in comp:
             self.cmb()
-
+            
     def atm(self):
         # Atmospheric model
         p=am.readamcfile('{0}/generic/generic_mid.amc'.format(getampath()))
