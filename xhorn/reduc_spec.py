@@ -2,6 +2,8 @@ import in_out
 import numpy as np
 from copy import deepcopy as dc
 from IPython.core.debugger import Tracer; debug_here=Tracer()
+from matplotlib.pyplot import *
+import planck
 
 # Useful trig functions
 def asind(x):
@@ -94,31 +96,40 @@ class data:
         self.nscan=self.ind['ss'].size
         self.nf=self.f.size
 
+
         ##################
         # Do the reduction
         ##################
-        zarange=[20,35]
-        self.reduc(zarange)
+        #zarange=[20,50]
+        #self.reduc(zarange)
 
     def za2am(self,x):
         """Zenith angle in degrees to airmass"""
         return 1/cosd(x)
 
         
-    def reduc(self,zarange):
+    def reduc(self,zarange=[20,50]):
         """Main reduction script. Elrange is two element list or tuple over
         which to perform airmass regression (inclusive)"""
-
+        
+        # Convert P-> T RJ
+        self.P2T()
 
         # First, take out a secular gain drift for each constant elevation
         # stare. Fit P(t) to each channel in a contiguous elevation stare,
         # normalize fit to mean=1, and normalize each chan to this.
-        deg=4
+        #deg=10
         #self.removedrift(deg)
 
         # Now fit a line to P(am) in each scan and store the results.
         self.fitam(zarange)
 
+    def P2T(self):
+        """Scale by P->TRJ factor"""
+        # Convert to RJ temperature
+        fac=planck.I2Ta(self.f*1e6,1).value
+        fac=fac/fac[0]
+        self.spec=self.spec*np.tile(fac,(self.spec.shape[0],1))
         
     def _getscanind(self):
         """Identify start/stop indices of cal and scanning"""
@@ -213,7 +224,7 @@ class data:
         """Set spec values to 0 where mask is zero"""
         self.spec[mask==0]=np.nan
 
-    def removedrift(self,deg=3):
+    def removedrift(self,deg=10):
         """Fit and remove a polynomial from P(t) for each frequency channel for
         a block of contiguous, constant elevation stares"""
 
@@ -225,6 +236,8 @@ class data:
             y=self.spec[:,k]
             if not np.any(np.isnan(y)):
                 p=np.polyfit(x[scanind],y[scanind],deg=deg)
+                # Don't remove mean 
+                p[-1]=0
                 self.spec[:,k]=self.spec[:,k]-np.poly1d(p)(x)
 
         return
@@ -269,9 +282,9 @@ class data:
         Trx=np.zeros([self.nscan,self.nf]) # noise temperature
 
         Th=290 # hot load
-        Tz=8 # Zenith temperature
+        Tz=20 # Zenith temperature
+        Tiso=2.7
 
-        
         for k in range(self.nscan):
             # Pull out scanning data for this block
             ind=self.getscanind(k)
@@ -291,7 +304,7 @@ class data:
                     p=np.polyfit(x,yy,deg=1);
                     m[k,j]=p[0]
                     b[k,j]=p[1]
-            
+
             # Try to get gain
             # Mean of lead/trail cal stare
             c[k,:] = self.calccalmean(k)
@@ -300,7 +313,7 @@ class data:
             # Noise temperature
             Trx0=np.linspace(0,500,1000);
 
-            rhs = (Trx0+Th)/(Trx0+Tz)
+            rhs = (Trx0+Th)/(Trx0+Tiso)
             for j in range(self.nf):
                 Ph=c[k,j] # hot load
                 Pc=b[k,j] # cold load
@@ -386,6 +399,3 @@ class data:
         ym=np.sum(y*w,axis=0)/np.sum(w,axis=0)
         return ym
 
-            
-        
-    
