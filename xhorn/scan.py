@@ -75,7 +75,7 @@ def go(min = 20, max = 50, n_steps = 5, zenith = 0, samp_rate = 4400, acc_len = 
             m.abst(0)
             m.home()
         if docal:
-            move_and_snap(m, s, fname, zenith, CALIBRATOR_POSITION + zenith, acc_len, n_accs*2, dt)
+            move_and_snap(m, s, fname, zenith, CALIBRATOR_POSITION + zenith, acc_len, n_accs, dt)
         for destination in tqdm.tqdm(angles, unit = 'steps'):
             move_and_snap(m, s, fname, zenith, destination, acc_len, n_accs, dt)
         if not indef:

@@ -27,13 +27,14 @@ def tsys(f, cal, sky0, sky1, a0, a1, T=290):
     r_cal = sky1 / cal
     r_sky = sky1 / sky0
     t_cal = planck(f, T)
-    return (r_cal*t_cal / (r_cal - 1)) / (((r_sky*am1 - am1) / (am1 - r_sky*am0)) -1)
+    return (r_cal*t_cal / (r_cal - 1)) * (am1 - am0 * r_sky) / (am1 * (r_sky - 2) + am0 * r_sky)
 
-def tsky(f, cal, sky0, sky1, a0, a1, T=290):
-    r_cal = sky1 / cal
-    t_cal = planck(f, T)
-    t_sys = tsys(f, cal, sky0, sky1, a0, a1, T)
-    return r_cal*(t_cal + t_sys) - t_sys
+def tsky(f, r_cal, t_cal, t_sys):
+    '''
+    '''
+    return r_cal * (t_cal + t_sys) - t_sys
+
+
 
 class data:
     def __init__(self, ti=None, tf=None):
