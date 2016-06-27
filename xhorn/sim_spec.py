@@ -9,28 +9,28 @@ import planck
 
 def runsim():
     # Dummy trajectory
-    d=reduc_spec.data((2016,06,17,23,27,41),(2016,06,18,0,0,0))
+    d=reduc_spec.data((2016,6,25,5,13,45),(2016,6,25,5,45,0))
 
     # Sky model, only atmosphere and CMB (included as T0 param to am) for now
-    sm=skymodel(comp=['atm'])
+    sm=skymodel(comp=['atm','cmb'])
 
     # Signal only (in K)
     d=gensig().run(d,sm)
 
     # Add noise
-    #d=addTrx(d,Trx=150)
+    d=addTrx(d,Trx=150)
+    
+    # Mock ambient temp cal stares
+    d=makecal(d)
+
+    # Convert to power units    
+    d=T2I(d)
 
     # Multiply by gain
     d=multgain(d)
-    
-    # Mock ambient temp cal stares
-    d=makecal(d);
 
     # Add non-linearity
-    d=addnonlin(d,0.001)
-
-    # Fit gain and airmass
-    d.fitam()
+    d=addnonlin(d,0.01)
 
     return d
 
@@ -40,7 +40,14 @@ def getampath():
 def gettraj():
     d=reduc_spec.data((2016,05,25,14,0,0),(2016,05,25,15,0,0))        
     return d
-    
+
+def T2I(d):
+    """Scale by RJ T to power factor"""
+    fac=1/planck.I2Ta(d.f*1e6,1).value
+    fac=fac/fac[0]
+    d.spec=d.spec*np.tile(fac,(d.spec.shape[0],1))
+    return d
+
 def za2am(za, type=None):
     """Compute airmass for given input tau. Zenith angle in degrees.
     type = 'secant' (default), 'Young'"""
@@ -86,7 +93,6 @@ class skymodel:
 
         # Total atm signal
         p.Nscale['h2o']=20.0/19.25 # nscale=1 is 19.25 mm pwv
-        p.T0 = 2.7 # include CMB here
         self.m['atm']=p
 
     def recomb(self):
@@ -101,7 +107,7 @@ class skymodel:
 
     def cmb(self):
         # CMB
-        self.m['planck']=2.725
+        self.m['cmb']=2.725
 
 
 class gensig:
@@ -135,9 +141,10 @@ class gensig:
                 # Recombination line signal
                 self.genrecomb(d,model[mtype])
 
-            if mtype == 'planck':
+            if mtype == 'cmb':
                 # Thermal CMB
-                self.gencmb(d)
+                Tcmb = model[mtype]
+                self.gencmb(d,Tcmb)
 
             if hasattr(model[mtype],'endswith'):
                 # Sky map (not yet implemented)
@@ -146,6 +153,9 @@ class gensig:
 
         # spec will be manipulated further, so store it
         d.Tsig = d.spec
+
+        # Save sky model
+        d.sm=sm
 
         return d
 
@@ -157,14 +167,15 @@ class gensig:
         df=d.f[2]-d.f[1]
         fmin=np.min(d.f)/1000
         fmax=np.max(d.f)/1000
+        p.T0 = 0 # Cannot include CMB here because we scale by airmass below 
         m=am.am(prof=p,df=20,fmin=fmin*0.9,fmax=fmax*1.1,za=0)
         m.callam()
         m.parseresults()
-        
+
         airmass=za2am(d.za,'secant') # could use d.am
         T=np.interp(d.f,m.f*1000,m.Tb)
         
-        # Can take into account non-linearit
+        # Can take into account non-linearity
         #for l,aml in enumerate(airmass):
         #    v[:,l]=self.Iz2Iam(m.I,m.tau,aml)
         # Just scale linearly with airmass, add complication later
@@ -178,11 +189,9 @@ class gensig:
         v=np.tile(y,[1,nt])
         d.data.append(v,mtype)
 
-    def gencmb(self,d):
-        """Constant Planck curve for 2.725 blackbody"""
-        I=(planck.planck(d.data.f*1e9, 2.725))
-        v=np.tile(I.reshape(I.shape+(1,)),(1,nt))
-        d.data.append(v,mtype)
+    def gencmb(self,d,Tcmb):
+        """Perfect Blackbody"""
+        d.spec=d.spec+Tcmb
 
     def genfromhmap(self,d,fname):
         """Interpolate input healpix map along scan trajectory. Need to make
@@ -193,8 +202,9 @@ class gensig:
 def addTrx(din,Trx=150):
     """Add nosie in K"""
     d=dc(din)
-    fac=Trx/np.sqrt(d.acc_len*(d.f[1]-d.f[0])*1e6)
-    n=fac*np.random.randn(d.t.size,d.nf)+Trx
+    #fac=Trx/np.sqrt(d.acc_len*(d.f[1]-d.f[0])*1e6)
+    fac=0
+    n=fac*np.random.randn(d.t.size,d.nf)+Trx*(0.2*np.sin(d.f/50)+1)
     d.spec=d.spec+n
     d.nsim=n
     return d
@@ -203,7 +213,7 @@ def multgain(din):
     """Multiply by gain in V^2 / K"""
     d=dc(din)
     # Sine wave
-    g = 1e6*(np.sin(d.f/100)+1.25);
+    g = 1e6*(np.sin(d.f/10)+1.25);
     g = g*((9500-d.f)/3000 + 1)
     
     d.gsim=g
@@ -218,7 +228,7 @@ def makecal(din):
     else:
         n=np.zeros(d.spec.shape)
     
-    d.spec[d.getcalind()]=(290+n[d.getcalind()])*d.gsim
+    d.spec[d.getcalind()]=(290+n[d.getcalind()])
     return d
 
 def addnonlin(din,fac=0.01):
