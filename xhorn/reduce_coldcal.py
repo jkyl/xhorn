@@ -2,11 +2,27 @@ from xhorn import in_out
 from numpy import *
 import itertools
 
-dc=in_out.read_time_range((2016,06,17,22,56,45),(2016,06,17,23,8,0))
-dat=1.0*dc['spec']
+c=in_out.read_time_range((2016,06,17,22,56,45),(2016,06,17,23,8,0))
+dat=1.0*c['spec']
 nf=dat.shape[1]
 nt=dat.shape[0]
 
+u,s,v=linalg.svd(c['spec'])
+
+# Get scanning data
+d=reduc_spec.data((2016,06,17,23,27,41),(2016,06,18,0,27,41))
+x=d.f-d.f.mean()
+a=zeros((x.size,3))
+for k in range(a.shape[1]):
+    a[:,k]=x**k
+    a[:,k]=a[:,k]/a[-1,k]
+for k in range(20):
+    a=vstack((a.T,v[k,:])).T
+fitind=arange(500)+500
+
+y=d.spec[10]/d.g[0]-d.Trx[0]
+p=linalg.lstsq(a[fitind,:],y[fitind])[0]
+yfit=dot(a,p)
 
 
 
