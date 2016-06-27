@@ -298,7 +298,7 @@ class data:
             g[k,:]=(c[k,:]-b[k,:])/(Th-Tz)
 
             # Noise temperature
-            Trx0=np.linspace(0,200,1000);
+            Trx0=np.linspace(0,500,1000);
 
             rhs = (Trx0+Th)/(Trx0+Tz)
             for j in range(self.nf):
@@ -306,7 +306,7 @@ class data:
                 Pc=b[k,j] # cold load
                 lhs = Ph/Pc
                 Trx[k,j]=np.interp(0,lhs-rhs,Trx0)
-            
+
         self.c = c
         self.m = m
         self.b = b
