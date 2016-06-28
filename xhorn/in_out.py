@@ -55,6 +55,7 @@ def read_time_range(dt_0 = None, dt_f = None):
     print(path)
     for i in os.listdir(path):
         if '.h5' in i:
+            
             epoch = ts.iso_to_epoch(i[:-3])
             if epoch_0 <= epoch <= epoch_f:
                 inrange.append(path + i)
