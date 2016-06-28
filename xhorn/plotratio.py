@@ -8,19 +8,17 @@ def get_data(ti = (2016,6,24), tf = (2016,6,25)):
     d.reduc()
     return d
 
-def go(d, doplot=False):
+def go(d):
     scan_inds = d.getscanind()
     za = unique(d.za[scan_inds])
-    colors = ['b', 'g', 'r', 'c', 'orange']
-    clf()
-    rv = {}
+    rv = zeros((d.nscan, d.nf, za.size))
+    am = d.za2am(za)
+    mean_am = d.am[scan_inds].mean()
+    za2 = za[4]#                 <--- choose airmasses here
+    am2 = am[where(za==za2)]
     for i, a in enumerate(za):
-        za1 = za[0]#                 <--- choose airmasses here
-        za2 = a
-        am = d.za2am(za)
+        za1 = a
         am1 = am[where(za==za1)]
-        am2 = am[where(za==za2)]
-        mean_am = d.am[scan_inds].mean()
         for k in range(d.nscan):
             za_1_inds = where((d.scan==k) & (d.za==za1))[0]
             za_2_inds = where((d.scan==k) & (d.za==za2))[0]
@@ -28,18 +26,17 @@ def go(d, doplot=False):
             za_1_spec = d.spec[za_1_inds].mean(0)
             za_2_spec = d.spec[za_2_inds].mean(0)
             dif_ratio = (za_1_spec - mean_spec) / (za_2_spec - mean_spec)
-            try:
-                rv[a].append(dif_ratio)
-            except KeyError:
-                rv[a] = []
-                rv[a].append(dif_ratio)
-        v = array(rv[a]).mean(axis=0)
-        rv[a] = v
-        if doplot:
-            plot(v, '.', color = colors[i], label = 'za = {}'.format(a))
-            plot([0,2048], tile((am1 - mean_am) / (am2 - mean_am), (2)), color = colors[i])
-            ylim(-5, 5)
-            xlim(300, 2000)
-            legend()
-    return rv
+            rv[k, :, i] = dif_ratio
+    expect = (am - mean_am) / (am2 - mean_am)
+    return rv, expect
+
+def plot_rv(rv, expect):
+    gca().set_color_cycle(None)
+    plot(rv.mean(0), '.')
+    gca().set_color_cycle(None)
+    plot([0, 2048], tile(expect, (2, 1)))
+    ylim(-5, 5)
+    xlim(300, 2000)
+    legend()
+   
 
