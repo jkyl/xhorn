@@ -25,8 +25,7 @@ def read_to_arrays(fnames):
     '''
     data = {'spec': []}
     if type(fnames) == str:
-        fnames = [fnames]
-        
+        fnames = [fnames]    
     if len(fnames) != 0:
         for f in fnames:
             print(f)
@@ -39,7 +38,7 @@ def read_to_arrays(fnames):
                     data[k].append(v)
         return {k: np.vstack(v) for k, v in data.items()}
     else:
-        raise IOError
+        raise IOError, 'No filename provided'
     
 def read_time_range(dt_0 = None, dt_f = None):
     '''
@@ -50,19 +49,18 @@ def read_time_range(dt_0 = None, dt_f = None):
         dt_0 = (1970, 1, 1)
     if dt_f is None:
         dt_f = (3000, 1, 1)
-    dt_0, dt_f = (ts.dt_to_epoch(datetime(*i)) for i in (dt_0, dt_f))
+    epoch_0, epoch_f = (ts.dt_to_epoch(datetime(*i)) for i in (dt_0, dt_f))
     inrange = []
     path = '/'.join(os.path.abspath(ts.__file__).split('/')[:-2]) + '/output/'
-    print(path)
     for i in os.listdir(path):
         if '.h5' in i:
             epoch = ts.iso_to_epoch(i[:-3])
-            if dt_0 <= epoch <= dt_f:
+            if epoch_0 <= epoch <= epoch_f:
                 inrange.append(path + i)
     try:
         return read_to_arrays(sorted(inrange))
     except IOError:
-        raise 
+        raise IOError, 'No data in the range {} to {}'.format(dt_0, dt_f)
     
     
     

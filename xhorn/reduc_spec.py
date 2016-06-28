@@ -3,7 +3,8 @@ import numpy as np
 from copy import deepcopy as dc
 from IPython.core.debugger import Tracer; debug_here=Tracer()
 from matplotlib.pyplot import *
-import planck
+#import planck
+from cal import planck
 
 # Useful trig functions
 def asind(x):
@@ -127,7 +128,8 @@ class data:
     def P2T(self):
         """Scale by P->TRJ factor"""
         # Convert to RJ temperature
-        fac=planck.I2Ta(self.f*1e6,1).value
+        #fac=planck.I2Ta(self.f*1e6,1).value
+        fac = planck(self.f*1e6, 1)
         fac=fac/fac[0]
         self.spec=self.spec*np.tile(fac,(self.spec.shape[0],1))
         

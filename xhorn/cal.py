@@ -64,7 +64,7 @@ class data:
             self.sky_specs[ang[0]] = s
             self.sky_means[ang[0]] = m
         self.lo = 9.5e9 #Hz
-        
+
     @property
     def f(self):
         return np.linspace(0, 2.2e9, 2048) + self.lo
