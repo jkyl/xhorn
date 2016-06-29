@@ -40,7 +40,7 @@ def read_to_arrays(fnames):
     else:
         raise IOError, 'No filename provided'
     
-def read_time_range(dt_0 = None, dt_f = None):
+def read_time_range(dt_0 = None, dt_f = None, want_cal=False):
     '''
     Takes two tuples which are converted to datetime objects, and reads in all 
     data within that range to numpy arrays. 
@@ -55,14 +55,19 @@ def read_time_range(dt_0 = None, dt_f = None):
     print(path)
     for i in os.listdir(path):
         if '.h5' in i:
-            
-            epoch = ts.iso_to_epoch(i[:-3])
+            i = '.'.join(i.split('.')[:-1])
+            if not want_cal and '_cal' in i:
+                continue
+            elif '_cal' in i:
+                epoch = ts.iso_to_epoch(i.strip('_cal'))
+            else:
+                epoch = ts.iso_to_epoch(i)
             if epoch_0 <= epoch <= epoch_f:
-                inrange.append(path + i)
+                inrange.append(path + i + '.h5')
     try:
         return read_to_arrays(sorted(inrange))
     except IOError:
-        raise IOError, 'No data in the range {} to {}'.format(dt_0, dt_f)
+        raise 
     
     
     
