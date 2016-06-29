@@ -69,10 +69,10 @@ def weighted_mean(data, start=700, stop=1600):
     return array(ma.average(data.copy(), axis=0, weights=weights))
 
 def plot_data(lines, expect):
-    gca().set_color_cycle(None)
+    #gca().set_color_cycle(None)
     plot(lines, 'o', fillstyle='none', markersize=4)
     gca().set_color_cycle(None)
-    plot([0, lines.shape[1]], tile(expect, (2, 1)))
+    plot([0, lines.shape[0]], tile(expect, (2, 1)))
     ylim(-2, 2)
     xlim(300, 2000)
     grid(True)
