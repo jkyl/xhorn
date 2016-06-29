@@ -14,7 +14,7 @@ def scan_range(min, max, n):
     '''
     am_min, am_max = (1 / np.cos(np.pi * a / 180.) for a in (min, max))
     angs = 180 * np.arccos(1 / np.linspace(am_min, am_max, n)) / np.pi
-    return [round(a, 2) for a in np.append(angs, angs[-1::-1])]
+    return np.array([round(a, 2) for a in np.append(angs, angs[-1::-1])])
 
 def move_and_snap(m, s, fname, zenith = 0, destination = 0, acc_len = 1, n_accs = 10, dt = 0):
     '''
@@ -65,17 +65,24 @@ def go(min = 20, max = 50, n_steps = 5, zenith = 0, samp_rate = 4400, acc_len = 
     '''
     m = Motor(port = port)
     s = Spec(ip = ip, samp_rate = samp_rate, acc_len = acc_len)
-    angles = scan_range(min, max, n_steps)
+    angles = np.sign(min)*scan_range(min, max, n_steps)
+
+    # Flag calibration data if not scanning indefinitely
+    if not indef:
+        calext='_cal'
+    else:
+        calext='_scan'
+
     while True:
         dt = 0 #ts.offset()
         fname = '/'.join(os.path.abspath(io.__file__).split('/')[:-2])\
-                + '/output/' + ts.true_time(dt) + '.h5'
+                + '/output/' + ts.true_time(dt) + calext + '.h5'
         if home:
             #print('Homing')
             m.abst(0)
             m.home()
         if docal:
-            move_and_snap(m, s, fname, zenith, CALIBRATOR_POSITION + zenith, acc_len, n_accs*2, dt)
+            move_and_snap(m, s, fname, zenith, CALIBRATOR_POSITION + zenith, acc_len, n_accs, dt)
         for destination in tqdm.tqdm(angles, unit = 'steps'):
             move_and_snap(m, s, fname, zenith, destination, acc_len, n_accs, dt)
         if not indef:
