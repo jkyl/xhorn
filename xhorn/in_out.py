@@ -2,6 +2,7 @@ import h5py, os
 from datetime import datetime
 import time_sync as ts
 import numpy as np
+import glob
 
 def write_to_hdf5(fname, array, metadict):
     '''
@@ -40,7 +41,7 @@ def read_to_arrays(fnames):
     else:
         raise IOError, 'No filename provided'
     
-def read_time_range(dt_0 = None, dt_f = None):
+def read_time_range(dt_0 = None, dt_f = None, ext=None):
     '''
     Takes two tuples which are converted to datetime objects, and reads in all 
     data within that range to numpy arrays. 
@@ -49,16 +50,22 @@ def read_time_range(dt_0 = None, dt_f = None):
         dt_0 = (1970, 1, 1)
     if dt_f is None:
         dt_f = (3000, 1, 1)
+    if ext is None:
+        ext=['[0-9]','_scan']
     epoch_0, epoch_f = (ts.dt_to_epoch(datetime(*i)) for i in (dt_0, dt_f))
     inrange = []
     path = '/'.join(os.path.abspath(ts.__file__).split('/')[:-2]) + '/output/'
     print(path)
-    for i in os.listdir(path):
+    fn=[]
+    for k,val in enumerate(ext):
+        fn0=glob.glob(path+'*'+val+'.h5')
+        fn=fn+fn0
+    for i in fn:
         if '.h5' in i:
             
-            epoch = ts.iso_to_epoch(i[:-3])
+            epoch = ts.iso_to_epoch(os.path.basename(i[:-3]))
             if epoch_0 <= epoch <= epoch_f:
-                inrange.append(path + i)
+                inrange.append(i)
     try:
         return read_to_arrays(sorted(inrange))
     except IOError:
