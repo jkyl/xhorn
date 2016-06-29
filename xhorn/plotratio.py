@@ -3,19 +3,19 @@ from numpy import *
 from matplotlib.pyplot import *
 from IPython.core.debugger import Tracer; debug_here = Tracer()
 
-def get_data(ti = (2016,6,24), tf = (2016,6,25)):
+def get_data(ti=(2016,6,28), tf=(2016, 6, 29), want_cal=False):
     d=reduc_spec.data(ti, tf)
     d.reduc()
     return d
 
-def go(d):
+def go(d, za0_ind = -1):
     scan_inds = d.getscanind()
     za = unique(d.za[scan_inds])
     rv = zeros((d.nscan, d.nf, za.size))
     am = d.za2am(za)
     mean_am = d.am[scan_inds].mean()
-    za0 = za[4]#                 <--- choose airmasses here
-    am0 = am[where(za==za0)]
+    za0 = za[za0_ind]
+    am0 = am[za0_ind]
     for i, a in enumerate(za):
         za1 = a
         am1 = am[where(za==za1)]
@@ -37,13 +37,12 @@ def plot_rv(rv, expect):
     plot([0, rv.shape[1]], tile(expect, (2, 1)))
     ylim(-5, 5)
     xlim(300, 2000)
-    legend()
    
 def waterfall(rv, expect):
+    close('all')
     for index, prediction in enumerate(expect):
         figure(index + 1)
         img = rv[:, :, index].copy() - prediction
-        #img[isnan(img)] = 0
         imshow(img)
-        clim(-1, 1)
+        clim(-2, 2)
         
