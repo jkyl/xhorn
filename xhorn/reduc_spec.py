@@ -96,7 +96,6 @@ class data:
         self.nscan=self.ind['ss'].size
         self.nf=self.f.size
 
-
         ##################
         # Do the reduction
         ##################
@@ -112,14 +111,14 @@ class data:
         """Main reduction script. Elrange is two element list or tuple over
         which to perform airmass regression (inclusive)"""
         
-        # Convert P-> T RJ
-        self.P2T()
-
         # First, take out a secular gain drift for each constant elevation
         # stare. Fit P(t) to each channel in a contiguous elevation stare,
         # normalize fit to mean=1, and normalize each chan to this.
         #deg=10
         #self.removedrift(deg)
+
+        # Convert P-> T RJ
+        self.P2T()
 
         # Now fit a line to P(am) in each scan and store the results.
         self.fitam(zarange)
@@ -275,8 +274,9 @@ class data:
         """Fit a line to P(am)"""
         
         # Loop over scan blocks and fit each 
-        m=np.zeros([self.nscan,self.nf]) # slope of P(am) fit
+        m=np.zeros([self.nscan,self.nf]) # slope of P(agm) fit
         b=np.zeros([self.nscan,self.nf]) # intercept of P(am) fit
+        q=np.zeros([self.nscan,self.nf]) # quadratic term
         g=np.zeros([self.nscan,self.nf]) # gain
         c=np.zeros([self.nscan,self.nf]) # mean of cal stare
         Trx=np.zeros([self.nscan,self.nf]) # noise temperature
@@ -301,28 +301,34 @@ class data:
             for j in range(self.nf):
                 yy=y[:,j]
                 if not np.any(np.isnan(yy)):
-                    p=np.polyfit(x,yy,deg=1);
-                    m[k,j]=p[0]
-                    b[k,j]=p[1]
+                    p=np.polyfit(x,yy,deg=2);
+                    q[k,j]=p[0]
+                    m[k,j]=p[1]
+                    b[k,j]=p[2]
 
             # Try to get gain
             # Mean of lead/trail cal stare
             c[k,:] = self.calccalmean(k)
-            g[k,:]=(c[k,:]-b[k,:])/(Th-Tz)
 
             # Noise temperature
             Trx0=np.linspace(0,500,1000);
 
             rhs = (Trx0+Th)/(Trx0+Tiso)
+            #sm=s.mean(0)
             for j in range(self.nf):
                 Ph=c[k,j] # hot load
                 Pc=b[k,j] # cold load
+                #Pc=sm[j]
                 lhs = Ph/Pc
                 Trx[k,j]=np.interp(0,lhs-rhs,Trx0)
+
+            g[k,:]=(c[k,:]-b[k,:])/(Th-Tz)
+            #g[k,:]=(c[k,:]-sm)/(Th-Tz)
 
         self.c = c
         self.m = m
         self.b = b
+        self.q = q
         self.g = g
         self.Trx=Trx
 
