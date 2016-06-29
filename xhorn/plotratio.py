@@ -24,8 +24,7 @@ def reduce(d, za0_ind = -1):
     mean_am = d.am[scan_inds].mean()
     za0 = za[za0_ind]
     am0 = am[za0_ind]
-    for i, a in enumerate(za):
-        za1 = a
+    for i, za1 in enumerate(za):
         am1 = am[where(za==za1)]
         for k in range(d.nscan):
             za1_inds = where((d.scan==k) & (d.za==za1))[0]
@@ -38,46 +37,55 @@ def reduce(d, za0_ind = -1):
     expect = (am - mean_am) / (am0 - mean_am)
     return rv, expect
 
-def save_data(data, expect, fname='test'):
+def save_data(data, expect, fname='../reduc_data/test'):
     '''
     Saves the data cube and expectation values in a compressed .npz 
-    format. Assumes that a directory called "reduc_data/" lives in the 
-    xhorn root directory. 
+    format.
     '''
-    path = '/'.join(reduc_spec.__file__.split('/')[:-2]) + '/reduc_data/'
-    savez_compressed(path + fname, data=data, expect=expect)
+    savez_compressed(fname, data=data, expect=expect)
 
-def load_data(fname='test'):
+def load_data(fname='../reduc_data/test.npz'):
     '''
     Loads the data cube and expectation values from an .npz file in 
     xhorn/reduc_data/.
     '''
-    path = '/'.join(reduc_spec.__file__.split('/')[:-2]) + '/reduc_data/'
-    with load(path + fname + '.npz') as f:
+    with load(fname) as f:
         data = f['data']
         expect = f['expect']
     return data, expect
 
-def weighted_mean(data, start=700, stop=1600):
+def weighted_mean(data, start=700, stop=1600, weight_power=-1):
     '''
     Calculcates a weighted mean over scans based on the sigma in
-    the given range.
+    the given range of channels.
     '''
     weights = data.copy()[:, start:stop, :]
-    weights = 1 / nanstd(weights, axis=1)
+    weights = nanstd(weights, axis=1)**weight_power
     weights = tile(weights, (data.shape[1], 1, 1)).swapaxes(1, 0)
     return array(ma.average(data.copy(), axis=0, weights=weights))
 
+def mean_res(avgd_data, expect):
+    '''
+    Calculates the residuals between an averaged bunch of data
+    and a prediction. 
+    '''
+    return nanmean(avgd_data.copy() - tile(expect, (avgd_data.shape[0], 1)), 0)
+
 def plot_data(lines, expect):
+    '''
+    Accepts an (n_chans, n_zas)-shaped array of reduced data, and 
+    an (n_zas,)-shaped array of expectations, and plots them as 
+    (n_zas) populations alongside the corresponding prediction. 
+    '''
     #gca().set_color_cycle(None)
-    plot(lines, 'o', fillstyle='none', markersize=4)
+    plot(lines, '.')
     gca().set_color_cycle(None)
     plot([0, lines.shape[0]], tile(expect, (2, 1)))
-    ylim(-2, 2)
+    ylim(-1.5, 1.5)
     xlim(300, 2000)
     grid(True)
     
-def waterfall_residuals(data, expect):
+def waterfall_res(data, expect):
     close('all')
     for index, prediction in enumerate(expect):
         figure(index + 1)
