@@ -4,9 +4,19 @@ from matplotlib.pyplot import *
 from IPython.core.debugger import Tracer; debug_here = Tracer()
 
 def get_data(ti=(2016,6,28), tf=(2016, 6, 29)):
+    '''
+    Thin wrapper for reduc_spec.data. No need to call d.reduce().
+    '''
     return reduc_spec.data(ti, tf)
 
-def go(d, za0_ind = -1):
+def reduce(d, za0_ind = -1):
+    '''
+    Loops over each scan to calculate each za's spec's deviation 
+    from the mean over all za's specs, proportional to a given 
+    za's spec's deviation from the mean spec. Populates an (nscan
+    x nchannel x nza) array with the results. Also calculcates the 
+    expectation value for this quantity based on airmass alone. 
+    '''
     scan_inds = d.getscanind()
     za = unique(d.za[scan_inds])
     rv = zeros((d.nscan, d.nf, za.size))
@@ -28,20 +38,51 @@ def go(d, za0_ind = -1):
     expect = (am - mean_am) / (am0 - mean_am)
     return rv, expect
 
-def plot_rv(rv, expect):
+def save_data(data, expect, fname='test'):
+    '''
+    Saves the data cube and expectation values in a compressed .npz 
+    format. Assumes that a directory called "reduc_data/" lives in the 
+    xhorn root directory. 
+    '''
+    path = '/'.join(reduc_spec.__file__.split('/')[:-2]) + '/reduc_data/'
+    savez_compressed(path + fname, data=data, expect=expect)
+
+def load_data(fname='test'):
+    '''
+    Loads the data cube and expectation values from an .npz file in 
+    xhorn/reduc_data/.
+    '''
+    path = '/'.join(reduc_spec.__file__.split('/')[:-2]) + '/reduc_data/'
+    with load(path + fname + '.npz') as f:
+        data = f['data']
+        expect = f['expect']
+    return data, expect
+
+def weighted_mean(data, start=700, stop=1600):
+    '''
+    Calculcates a weighted mean over scans based on the sigma in
+    the given range.
+    '''
+    weights = data.copy()[:, start:stop, :]
+    weights = 1 / nanstd(weights, axis=1)
+    weights = tile(weights, (data.shape[1], 1, 1)).swapaxes(1, 0)
+    return array(ma.average(data.copy(), axis=0, weights=weights))
+
+def plot_data(lines, expect):
     gca().set_color_cycle(None)
-    plot(rv.mean(0), 'o', fillstyle='none', markersize=4)
+    plot(lines, 'o', fillstyle='none', markersize=4)
     gca().set_color_cycle(None)
-    plot([0, rv.shape[1]], tile(expect, (2, 1)))
-    ylim(-5, 5)
+    plot([0, lines.shape[1]], tile(expect, (2, 1)))
+    ylim(-2, 2)
     xlim(300, 2000)
-    grid()
+    grid(True)
     
-def waterfall(rv, expect):
+def waterfall_residuals(data, expect):
     close('all')
     for index, prediction in enumerate(expect):
         figure(index + 1)
-        img = rv[:, :, index].copy() - prediction
+        img = data[:, :, index].copy() - prediction
         imshow(img)
         clim(-2, 2)
-        
+        colorbar()
+
