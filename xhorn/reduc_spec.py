@@ -136,7 +136,7 @@ class data:
         """Identify start/stop indices of cal and scanning"""
         
         # Cal zenith angle
-        zacal = -80;
+        zacal = np.min(np.unique(self.za))
 
         # Calibration stare indices
         calind = np.where(self.za==zacal)[0]
