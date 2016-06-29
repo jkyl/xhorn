@@ -7,12 +7,16 @@ import reduc_spec
 import am_model as am
 import planck
 
-def runsim():
-    # Dummy trajectory
-    d=reduc_spec.data((2016,6,25,5,13,45),(2016,6,25,5,45,0))
+def runsim(din=None):
+
+    if din is None:
+        # Dummy trajectory
+        din=reduc_spec.data((2016,6,25,5,13,45),(2016,6,25,5,45,0))
+    d=dc(din)
 
     # Sky model, only atmosphere and CMB (included as T0 param to am) for now
-    sm=skymodel(comp=['atm','cmb'])
+    #sm=skymodel(comp=['atm','cmb'])
+    sm=skymodel(comp=['atm'])
 
     # Signal only (in K)
     d=gensig().run(d,sm)
@@ -28,7 +32,7 @@ def runsim():
 
     # Multiply by gain
     d=multgain(d)
-
+    
     # Add non-linearity
     d=addnonlin(d,0.01)
 
@@ -202,8 +206,8 @@ class gensig:
 def addTrx(din,Trx=150):
     """Add nosie in K"""
     d=dc(din)
-    #fac=Trx/np.sqrt(d.acc_len*(d.f[1]-d.f[0])*1e6)
-    fac=0
+    fac=Trx/np.sqrt(d.acc_len*(d.f[1]-d.f[0])*1e6)
+    #fac=0
     n=fac*np.random.randn(d.t.size,d.nf)+Trx*(0.2*np.sin(d.f/50)+1)
     d.spec=d.spec+n
     d.nsim=n
