@@ -1,0 +1,55 @@
+2016-06-30T20:57:25, Start scan. Replaced electronics lid screws with M4. Looked like rain so turned N2 on,JXK
+2016-06-30T19:21:56, Stop scan. Protractor reads 0.1 deg at zenith,JXK
+2016-06-29T23:52:07, Start overnight scan w/ new electronics order,JXK
+2016-06-29T23:38:11, Remove IF amp and 10dB atten,JXK
+2016-06-29T23:21:44, Horn > LNA > BP > 2nd amp > Mixer > 10dB atten > IF > out. Fewer connectors as well,JXK 
+2016-06-29T22:36:14, Remove 10dB from front of IF amp,JXK
+2016-06-29T22:27:23, Everything the same,JXK
+2016-06-29T22:03:04, Stop in order to rearrange electronics for some test runs,JXK
+2016-06-28T23:49:37, Leave on IF amp w/ 10dB attenuator + 1dB calibrated atten in front. Start scan,CDS
+2016-06-28T23:23:41, 9dB,CDS
+2016-06-28T23:39:38, 6dB,CDS
+2016-06-28T23:38:04, 10dB,CDS
+2016-06-28T23:36:31, 2dB,CDS
+2016-06-28T23:35:00, 20dB,CDS
+2016-06-28T23:33:28, Point at za=30 deg with IF amp and 10dB attenuator still in place. 1dB,CDS
+2016-06-28T23:15:19, 9dB,CDS
+2016-06-28T23:13:32, 6dB,CDS
+2016-06-28T23:11:53, 10dB,CDS
+2016-06-28T23:10:16, 2dB,CDS
+2016-06-28T23:08:41, 20dB,CDS
+2016-06-28T23:01:47, Hook up IF amp w/ 10dB attenuator. 1dB on cal,CDS
+2016-06-28T22:55:48, 1dB,CDS
+2016-06-28T22:54:21, 2dB,CDS
+2016-06-28T22:52:54, 6dB,CDS
+2016-06-28T22:51:32, 9dB,CDS
+2016-06-28T22:48:30, 20dB,CDS
+2016-06-28T22:47:10, 10dB,CDS
+2016-06-28T22:45:28, 6dB,CDS
+2016-06-28T22:43:52, 2dB,CDS
+2016-06-28T22:41:54, 1 dB on cal (30s),CDS
+2016-06-28T21:41:05, 10 min za=30 deg stare,CDS
+2016-06-28T21:27:22, >10 minute cal stare,CDS
+2016-06-28T20:28:57, Stop scan,CDS
+2016-06-27T21:27:44, Scanning. Back to half as many ints on cal but equal number per ZA,JXK
+2016-06-27T21:17:07, Stop scan,JXK
+2016-06-27T19:55:26, Scanning. Equal number of ints on each angle + cal,JXK
+2016-06-27T19:28:18, Stop scan,JXK
+2016-06-24T22:27:12, Overnight scan without IF amp or attenuator,JXK
+2016-06-24T21:33:36, Stop scan,JXK
+2016-06-23T23:17:28, Overnight scan with baffle and N2 line,JXK
+2016-06-23T22:42:47, 0dB,JXK
+2016-06-23T22:41:28, 1dB again,JXK
+2016-06-23T22:39:58, 20dB,JXK
+2016-06-23T22:38:09, 10dB,JXK
+2016-06-23T22:36:18, 9dB,JXK
+2016-06-23T22:34:01, 6dB,JXK
+2016-06-23T22:31:37, 2dB,JXK
+2016-06-23T22:29:17, 1dB,JXK
+2016-06-23T22:18:27, 2dB (bad connection),JXK
+2016-06-23T22:14:29, Measuring attenuators behind mixer - 1dB (bad connection),JXK
+2016-06-22T22:31:27, Calibrated attenuator trials contaminated by broken coax jacket,JXK
+2016-06-20T17:01:42, Stop scan,JXK
+2016-06-17T23:27:40, Overnight scan,JXK
+2016-06-17T22:56:43, LN2 ints,JXK
+2016-06-17T22:18:16, Heated calibration ints,JXK
