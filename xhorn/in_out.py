@@ -37,6 +37,7 @@ def read_to_arrays(fnames):
                     if not k in data:
                         data[str(k)] = []
                     data[k].append(v)
+            f.close()
         return {k: np.vstack(v) for k, v in data.items()}
     else:
         raise IOError, 'Filename not provided'
