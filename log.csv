@@ -1,4 +1,6 @@
 Time (UTC),Notes,Author
+2016-07-06T18:31:09, resume scan while i come up with rebalancing scheme.,JXK
+2016-07-06T18:14:59, stop scan. zenith read 0.2 deg but 50 deg read 49.1 deg. Inconsistent offsets - 30 & 40 are bang on but 20 is not. Need to rebalance.Slight condensation on inside of mylar - nitrogen shut off at some point. going to increase the flow rate to 1 scfh.,JXK
 2016-07-04T19:45:55, Resume scan - want to see if roach resetting changes spectrum,JXK
 2016-07-04T19:24:01, Stop scan protractor 0.4 deg at zenith turned N2 on,JXK
 2016-07-03T21:18:58, Resume scan with prior front end arrangement,JXK
