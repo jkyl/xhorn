@@ -3,8 +3,6 @@ import numpy as np
 from copy import deepcopy as dc
 from IPython.core.debugger import Tracer; debug_here=Tracer()
 from matplotlib.pyplot import *
-#import planck
-from cal import planck
 
 # Useful trig functions
 def asind(x):
@@ -15,6 +13,16 @@ def cosd(x):
     return np.cos(x*np.pi/180)
 def atand2(x,y):
     return np.arctan2(x,y)*180/np.pi
+
+#planck fxn lives here now
+def planck(f, T):
+    h = 6.62606957e-34
+    c = 2.99792458e8
+    k = 1.3806488e-23
+    x = 8 * h * np.pi / c**3
+    y = f**3
+    ex = np.exp(h * f / (k * T)) - 1
+    return x * y / ex
 
 def arr(x):
     if type(x) is int:
