@@ -48,13 +48,17 @@ def azel2radec(az,el,mjd,lat=47.8781,lon=-87.6298):
 
 class data:
 
-    def __init__(self, ts, tf):
+    def __init__(self, *args):
         '''
         Read in data, t0 and t1 as tuples, e.g. (2016,5,3,0,0,0)
         '''
-        
-        # Read data
-        d=in_out.read_time_range(dt_0=ts,dt_f=tf)
+        if all([((type(arg) is tuple) or (arg is None)) for arg in args]):
+            ts, tf = args[0], args[1]
+            d=in_out.read_time_range(dt_0=ts,dt_f=tf)
+        elif any(('.h5' in arg for arg in args)):
+            d=in_out.read_to_arrays([arg for arg in args if '.h5' in arg])
+        else:
+            raise ValueError
         
         # Modified Julian date
         self.mjd=d['mjd'][:,0]
