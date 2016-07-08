@@ -40,7 +40,7 @@ def read_to_arrays(fnames):
             f.close()
         return {k: np.vstack(v) for k, v in data.items()}
     else:
-        raise IOError, 'Filename not provided'
+        raise IOError, 'invalid filename'
     
 def read_time_range(dt_0 = None, dt_f = None, ext=None):
     '''
@@ -69,7 +69,4 @@ def read_time_range(dt_0 = None, dt_f = None, ext=None):
             epoch = ts.iso_to_epoch(isotime)
             if epoch_0 <= epoch <= epoch_f:
                 inrange.append(i)
-    try:
-        return read_to_arrays(sorted(inrange))
-    except IOError:
-        raise 
+    return read_to_arrays(sorted(inrange))

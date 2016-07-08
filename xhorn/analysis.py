@@ -129,7 +129,7 @@ def waterfall_res(data, expect, times, dosave=False):
     for index, prediction in enumerate(expect):
         fig, ax1 = subplots(figsize=(10, 10))
         img = data[:, :, index].copy() - prediction
-        imshow(img, vmin=-1, vmax=1)
+        imshow(img, vmin=-2, vmax=2)
         #colorbar()
         xticks(arange(2048)[::2048/22.], 
                [round(a, 2) for a in linspace(9.5, 11.7, 23)],
@@ -141,10 +141,37 @@ def waterfall_res(data, expect, times, dosave=False):
                [t[6:-7] for t in times[::50]], 
                size='x-small', va='top', rotation=-45)
         ylabel('Time (UTC)')
-        title(r'$T_{{sky}}$ ratio residuals, railed at $\pm1$, $\theta_z={}^\circ$'.format(zas[index]))
+        title(r'$T_{{sky}}$ ratio residuals, railed at $\pm2$, $\theta_z={}^\circ$'.format(zas[index]))
         tight_layout()
         if dosave:
-            savefig('../reduc_data/waterfall_{}.png'.format(index))
+            savefig('../reduc_data/fig_{}.png'.format(index))
+
+def waterfall_spec(data, times, dosave=False):
+    '''
+    Generates (n_ZA) images of the residuals of the reduced data
+    wrt. their expectation over time. 
+    '''
+    close('all')
+    zas = array([20., 32.6, 40.24, 45.74, 50.])
+    for index in range(data.shape[2]):
+        fig, ax1 = subplots(figsize=(10, 10))
+        img = data[:, :, index].copy()
+        imshow(img, vmin=nanmin(data), vmax=nanmax(data))
+        #colorbar()
+        xticks(arange(2048)[::2048/22.], 
+               [round(a, 2) for a in linspace(9.5, 11.7, 23)],
+               rotation=-90, ha='center')
+        xlabel('Frequency (GHz)')
+        ylabel('Scan number')
+        ax2 = ax1.twinx()
+        yticks(arange(times.size)[::-50], 
+               [t[6:-7] for t in times[::50]], 
+               size='x-small', va='top', rotation=-45)
+        ylabel('Time (UTC)')
+        title(r'$\overline{{V^{{\ 2}}}}, \,\theta_z=\ {}^\circ$'.format(zas[index]))
+        tight_layout()
+        if dosave:
+            savefig('../reduc_data/fig_{}.png'.format(index+5))
 
 def sigma(data, axis):
     return nanstd(data.copy(), axis=axis)
