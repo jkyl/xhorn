@@ -25,7 +25,7 @@ class data:
                     elif any(('.h5' in arg for arg in args)):
                         self._set_attrs(reduce(rs.data(*args), za0_ind))
                 elif type(args[0]) is tuple:
-                    self._set_attrs(reduce(rs.data(*args), za0_ind))
+                    self._set_attrs(reduce(rs.data(*args, **kwargs), za0_ind))
                 else:
                     raise TypeError
         except TypeError:

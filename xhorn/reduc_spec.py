@@ -48,13 +48,13 @@ def azel2radec(az,el,mjd,lat=47.8781,lon=-87.6298):
 
 class data:
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         '''
         Read in data, t0 and t1 as tuples, e.g. (2016,5,3,0,0,0)
         '''
         if all([((type(arg) is tuple) or (arg is None)) for arg in args]):
             ts, tf = args[0], args[1]
-            d=in_out.read_time_range(dt_0=ts,dt_f=tf)
+            d=in_out.read_time_range(dt_0=ts,dt_f=tf, ext=kwargs.get('ext'))
         elif any(('.h5' in arg for arg in args)):
             d=in_out.read_to_arrays([arg for arg in args if '.h5' in arg])
         else:
@@ -149,6 +149,8 @@ class data:
         
         # Cal zenith angle
         zacal = np.min(np.unique(self.za))
+        if zacal > 0:
+            zacal = None
 
         # Calibration stare indices
         calind = np.where(self.za==zacal)[0]
@@ -165,8 +167,11 @@ class data:
         # Define a scan block array
         self.scan=np.zeros(self.spec.shape[0])
         for k,val in enumerate(ss):
-            self.scan[cs[k]:se[k]]=k;
-
+            if not zacal is None:
+                self.scan[cs[k]:se[k]]=k;
+            else:
+                self.scan[ss:se[k]]=k
+                
     def getind(self,start,end,blk):
         """Return indices corresponding to start and end indices, strings as
         defined in self.ind"""
