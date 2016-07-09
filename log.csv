@@ -4,7 +4,7 @@ Time (UTC),Notes,Author
 2016-07-08T23:32:57, not any better with IF-2dB. now going to remove IF and do 1dB,JXK
 2016-07-08T23:25:04, that trial was worse than the long sma. going to add the IF amp before -2dB just a shot in the dark,JXK
 2016-07-08T23:13:32, Too much attenuation=more noise and much worse R. Now try with only -2dB keeping short sma,JXK 
-2016-07-08T23:04:16, R improved with shorter cable. judging by the std in the "good" range (inds 800 1600). now try with 10db attenuator before short sma,JXK
+2016-07-08T23:04:16, R improved with shorter cable. judging by the std in the good range (inds 800 1600). now try with 10db attenuator before short sma,JXK
 2016-07-08T22:52:12, looks like the last trial gave the smoothest R. Now a scan with that setup + secured shorter sma>roach also lots of cloud cover,JXK
 2016-07-08T22:30:23, horn>lna>bp>amp>mix>longsma>roach redo,JXK
 2016-07-08T22:25:43, horn>lna>bp>amp>mix>IFamp>longsma>roach redo,JXK
@@ -12,7 +12,7 @@ Time (UTC),Notes,Author
 2016-07-08T21:16:03, horn>lna>bp>amp>mix>IFamp>-10dB>longsma>roach,JXK
 2016-07-08T20:52:26, horn>lna>bp>amp>mix>-10dB>longsma>roach,JXK
 2016-07-08T20:50:04, horn>lna>bp>amp>mix>longsma>roach
-2016-07-08T20:23:56, stop scan, zenith@0.5 deg, 50@49.5. going to swap some cables and attenuators to try and smooth out R,JXK
+2016-07-08T20:23:56, stop scan. zenith@0.5 deg 50@49.5. going to swap some cables and attenuators to try and smooth out R,JXK
 2016-07-07T19:30:32, resume scan,JXK
 2016-07-07T19:16:14, stop scan - previous angle measurements have not changed. rebalanced by shifting position of large vice from south to north side of roach. everything looks dry despite rain. will maintain 10scfh flow rate.,JXK
 2016-07-06T18:31:09, resume scan while i come up with rebalancing scheme.,JXK
