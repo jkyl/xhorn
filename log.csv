@@ -1,4 +1,6 @@
 Time (UTC),Notes,Author
+2016-07-11T20:37:46, analysis code issues. setting scanning while i fix,JXK
+2016-07-11T20:30:34, Waited for everything to warm up again before taking a few cal trials,JXK
 2016-07-10T22:47:11, noticed that roach was changing state. added reset to scan.go() while loop. decided to redo the cal measurements from 2 days ago with some updated ratio plotting code. noticed that 2nd amp's output sma connector very loose and affecting spectrum. tightened connector but managed to snap off LO's +15v connector. redid the solder. caused a short bc new solder contacted the LO case. redid solder again. was too dark to work by the time i finished.,JXK
 2016-07-09T00:01:58, set scanning with short secured cable and without cal stares (n2 tube would interfere) will take pics also no IF or atten,JXK
 2016-07-08T23:40:27, unexpectadly bad. trying again without IF or any attenuators still short cable,JXK
