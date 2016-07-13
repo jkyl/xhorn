@@ -1,4 +1,7 @@
 Time (UTC),Notes,Author
+2016-07-13T22:09:39,implemented retry in spec reinit. if it continues to stop it is not bc of reinit failure,JXK
+2016-07-13T19:25:33, set scanning again after another mystery stop. will rain soon.,JXK
+2016-07-13T14:50:12, set scanning in AM after mystery stop yesterday afternoon. Seems to have weathered rain ok despite n2 shutoff (again). despite leakage its a good idea to open main valve all the way and throttle with regulator,JXK
 2016-07-12T22:13:56, set scanning (nocal nohome) with 6db on both sides of short cable after measuring total power(?) with SA and removing counterweight (seemed to be causing sticking),JXK
 2016-07-12T21:02:15, short cable + 6dB both retry,JXK
 2016-07-12T20:56:58, short cable + 6dB box + 9dB roach,JXK
