@@ -12,7 +12,9 @@ class data:
         Args can be either time tuples (including None), .npz filepaths,
         .h5 filepaths, or standalone reduc_spec.data objects. 
         '''
-        za0_ind = max(kwargs.get('za0_ind'), 0)
+        za0_ind = kwargs.get('za0_ind')
+        if za0_ind is None:
+            za0_ind = 0
         try:
             try:
                 if len(args) < 1:
@@ -21,35 +23,37 @@ class data:
             except AttributeError:
                 if type(args[0]) is str:
                     if '.np' in args[0]:
-                        self._load(args[0])
-                    elif any(('.h5' in arg for arg in args)):
+                        self.load(args[0])
+                    elif any('.h5' in a for a in args):
                         self._set_attrs(reduce(rs.data(*args), za0_ind))
-                elif type(args[0]) is tuple:
+                elif all(type(a) in (tuple, None) for a in args):
                     self._set_attrs(reduce(rs.data(*args, **kwargs), za0_ind))
                 else:
                     raise TypeError
         except TypeError:
             raise TypeError, '*args must be in of the following forms: '+\
                 'one reduc_spec.data object, two time tuples, '+\
-                'any number of .h5 filepaths, or one .np(z) filepath.'
+                'any number of .h5 filepaths, or one .npy/.npz filepath.'
         
     def _set_attrs(self, d):
-        '''
-        '''
         for k, v in d.items():
             setattr(self, k, v)
 
-    def _load(self, fname='../reduc_data/test.npz'):
-        '''
-        '''
+    def load(self, fname='../reduc_data/test.npz'):
         with load(fname) as f:
             self._set_attrs({k: v for k, v in f.items()})
         
     def save(self, fname='../reduc_data/test.npz'):
-        '''
-        '''
         savez_compressed(fname, **self.__dict__)
 
+    def plot_ratio(self, start=None, stop=None, d_za=1, dosave=False):
+        plot_ratio(self.ratio[start:stop], self.expect, self.za, self.za0_ind, d_za, dosave)
+
+    def waterfall_res(self, start=None, stop=None, dosave=False):
+        waterfall_res(self.ratio[start:stop], self.expect, self.times[start:stop], dosave)
+
+    def waterfall_spec(self, start=None, stop=None, dosave=False):
+        waterfall_spec(self.za1_spec[start:stop], self.times[start:stop], dosave)
     
 def reduce(d, za0_ind=0):
     '''
@@ -66,23 +70,21 @@ def reduce(d, za0_ind=0):
         for k in range(d.nscan):
             za1_inds, za0_inds = (where((d.scan==k) & (d.za==za_))[0] for za_ in (za1, za0))
             za1_spec, za0_spec = (d.spec[za_inds].mean(0) for za_inds in (za1_inds, za0_inds))
-            mean_spec = d.spec[d.getscanind(k)].mean(0) 
-            numerator = za1_spec - mean_spec
-            denominator = za0_spec - mean_spec
-            ratio = numerator / denominator
-            output = ['za1_spec', 'za0_spec', 'mean_spec', 'ratio']
+            mean_spec = d.spec[where(d.scan==k)[0]].mean(0)
+            ratio = (za1_spec - mean_spec) / (za0_spec - mean_spec)
+            output = ['za1_spec', 'mean_spec', 'ratio']
             for o in output :
                 if not o in containers:
                     containers[o] = zeros((d.nscan, d.nf, za.size))                 
                 containers[o][k,:,i] = eval(o)
     expect = (am - mean_am) / (am0 - mean_am)
-    n_per_scan = d.mjd.size / d.nscan
+    n_per_scan = int(round(d.mjd.size / float(d.nscan)))
     times = vectorize(ts.mjd_to_iso)(d.mjd)[::n_per_scan]
     for i in ['am', 'mean_am', 'expect', 'times', 'za', 'za0_ind']:
         containers[i] = eval(i)
     return containers
 
-def plot_ratio(ratio, expect, zas, d_za=1, za0_ind=0):
+def plot_ratio(ratio, expect, zas, za0_ind, d_za=1, dosave=False):
     '''
     Accepts an (n_chans, n_ZAs)-shaped array of reduced data, and 
     an (n_ZAs,)-shaped array of expectations, and plots them as 
@@ -106,9 +108,9 @@ def plot_ratio(ratio, expect, zas, d_za=1, za0_ind=0):
                      facecolor = 'gray', edgecolor='gray', alpha=.3)
         plot([],[],c,label = 'za={}$^\circ \pm 1\sigma$'.format(zas[i]), 
              linewidth=10)
-        plot(f, mu(ratio, 0)[:, i], 'k.', ms=.8)
+        plot(f, mu(ratio, 0)[:, i], 'k.', ms=2)
         plot([f[0], f[-1]], [expect[i], expect[i]], 'k')
-    ylim(-1.5, 1.5)
+    ylim(-2, 2)
     xlim(9.75, 11.7)
     xticks(arange(9.75, 11.75, .25), rotation=-90, ha='center')
     grid(True)
@@ -137,14 +139,14 @@ def waterfall_res(data, expect, times, dosave=False):
         xlabel('Frequency (GHz)')
         ylabel('Scan number')
         ax2 = ax1.twinx()
-        yticks(arange(times.size)[::-50], 
-               [t[6:-7] for t in times[::50]], 
-               size='x-small', va='top', rotation=-45)
+        yticks(arange(times.size)[::-10], 
+               [t[6:-7] for t in times[::10]], 
+               size='xx-small', va='top', rotation=-45)
         ylabel('Time (UTC)')
         title(r'$T_{{sky}}$ ratio residuals, railed at $\pm2$, $\theta_z={}^\circ$'.format(zas[index]))
         tight_layout()
         if dosave:
-            savefig('../reduc_data/fig_{}.png'.format(index))
+            savefig('{}/../reduc_data/fig_{}.png'.format(io.__file__[:-11], index))
 
 def waterfall_spec(data, times, dosave=False):
     '''
@@ -164,14 +166,14 @@ def waterfall_spec(data, times, dosave=False):
         xlabel('Frequency (GHz)')
         ylabel('Scan number')
         ax2 = ax1.twinx()
-        yticks(arange(times.size)[::-50], 
-               [t[6:-7] for t in times[::50]], 
+        yticks(arange(times.size)[::-10], 
+               [t[6:-7] for t in times[::10]], 
                size='x-small', va='top', rotation=-45)
         ylabel('Time (UTC)')
         title(r'$\overline{{V^{{\ 2}}}}, \,\theta_z=\ {}^\circ$'.format(zas[index]))
         tight_layout()
         if dosave:
-            savefig('../reduc_data/fig_{}.png'.format(index+5))
+            savefig('{}/../reduc_data/fig_{}.png'.format(io.__file__[:-11], index+5))
 
 def sigma(data, axis):
     return nanstd(data.copy(), axis=axis)
@@ -181,10 +183,10 @@ def mu(data, axis, weights=None):
         weights = ones_like(data)
     return array(ma.average(data.copy(), axis=axis, weights=weights))
 
-def ratio_err(za, d_za, za0_ind=0):
+def ratio_err(za, d_za, za0_ind):
     '''
     Assumes the mean airmass is not affected by d_za, i.e. not a systematic offset.
     '''
     am = 1 / cos(pi * za / 180)
-    plusmin = (1 / cos(pi * (za + d) / 180) for d in (d_za, -d_za))
-    return ((a - am.mean()) / (a[za0_ind] - am.mean()) for a in plusmin)
+    plusmin = [1 / cos(pi * (za + d) / 180) for d in (d_za, -d_za)]
+    return [(a - am.mean()) / (a[za0_ind] - am.mean()) for i, a in enumerate(plusmin)]
