@@ -1,4 +1,6 @@
 Time (UTC),Notes,Author
+2016-07-17T16:33:17, weathered the storm just fine. wiped down outside of mylar with kimwipe while scanning. leaving n2 on today (supposed to rain again after noon).,JXK
+2016-07-15T21:25:36, That seemed to work. all angles within .5 deg. Lets keep scanning while we wait for new attenuators,JXK
 2016-07-14T20:08:07, failed again. now only doing re-init once every 20 scans.,JXK
 2016-07-14T18:33:09, failed again. go_log is not showing any errors (nohup's fault?),JXK
 2016-07-14T17:17:05, set scanning after another failure. hard reset roach and checked all connections. everything seems fine..,JXK
