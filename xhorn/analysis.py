@@ -14,26 +14,25 @@ class data:
         '''
         za0_ind = kwargs.get('za0_ind')
         if za0_ind is None:
-            za0_ind = 0
+            za0_ind = -1
         try:
-            try:
-                if len(args) < 1:
-                    raise TypeError
+            if len(args) < 1:
+                raise TypeError
+            if type(args[0]) is instance and args[0].__module__=='xhorn.reduc_spec':
                 self._set_attrs(reduce(args[0], za0_ind))
-            except AttributeError:
-                if type(args[0]) is str:
-                    if '.np' in args[0]:
-                        self.load(args[0])
-                    elif any('.h5' in a for a in args):
-                        self._set_attrs(reduce(rs.data(*args), za0_ind))
-                elif all(type(a) in (tuple, None) for a in args):
-                    self._set_attrs(reduce(rs.data(*args, **kwargs), za0_ind))
-                else:
-                    raise TypeError
+            if type(args[0]) is str:
+                if '.np' in args[0]:
+                    self.load(args[0])
+                elif any('.h5' in a for a in args):
+                    self._set_attrs(reduce(rs.data(*args), za0_ind))
+            elif len(args)==2 and all(type(a) in (tuple, None) for a in args):
+                self._set_attrs(reduce(rs.data(*args, **kwargs), za0_ind))
+            else:
+                raise TypeError
         except TypeError:
-            raise TypeError, '*args must be in of the following forms: '+\
-                'one reduc_spec.data object, two time tuples, '+\
-                'any number of .h5 filepaths, or one .npy/.npz filepath.'
+            raise TypeError('*args must be in of the following forms: '+\
+                'one reduc_spec.data object, two time tuples/None objects, '+\
+                'any number of .h5 filepaths, or one .npy/.npz filepath.')
         
     def _set_attrs(self, d):
         for k, v in d.items():
@@ -56,8 +55,6 @@ class data:
         waterfall_spec(self.za1_spec[start:stop], self.times[start:stop], dosave)
     
 def reduce(d, za0_ind=0):
-    '''
-    '''
     scan_inds = d.getscanind()
     za = unique(d.za[scan_inds])
     am = d.za2am(za)
@@ -85,19 +82,14 @@ def reduce(d, za0_ind=0):
     return containers
 
 def plot_ratio(ratio, expect, zas, za0_ind, d_za=1, dosave=False):
-    '''
-    Accepts an (n_chans, n_ZAs)-shaped array of reduced data, and 
-    an (n_ZAs,)-shaped array of expectations, and plots them as 
-    (n_ZAs) populations alongside the corresponding prediction. 
-    '''
     colors = ['b', 'g', 'r', 'c', 'm']
     f = linspace(9.5, 11.7, 2048)
     ex = tile(expect, (2, 1))
     plus_am, minus_am = (tile(a, (2, 1)) - ex for a in ratio_err(zas, d_za, za0_ind))
     figure(1, figsize=(15, 8));clf()
     plot([],[], 'k', label='Expectation values')
-    plot([], [], 'k.', label='Mean')
-    plot([], [], 'gray', linewidth=10, label='$\sigma_{za}=\pm1^\circ$')
+    plot([],[], 'k.', label='Mean')
+    plot([],[], 'gray', linewidth=10, label='$\sigma_{za}=\pm1^\circ$')
     for i in range(ratio.shape[2]):
         c = colors[i]
         mean_ = mu(ratio, 0)[:,i]
@@ -122,10 +114,6 @@ def plot_ratio(ratio, expect, zas, za0_ind, d_za=1, dosave=False):
     tight_layout()
 
 def waterfall_res(data, expect, times, dosave=False):
-    '''
-    Generates (n_ZA) images of the residuals of the reduced data
-    wrt. their expectation over time. 
-    '''
     close('all')
     zas = array([20., 32.6, 40.24, 45.74, 50.])
     for index, prediction in enumerate(expect):
@@ -135,13 +123,13 @@ def waterfall_res(data, expect, times, dosave=False):
         #colorbar()
         xticks(arange(2048)[::2048/22.], 
                [round(a, 2) for a in linspace(9.5, 11.7, 23)],
-               rotation=-90, ha='center')
+               rotation=90, ha='center')
         xlabel('Frequency (GHz)')
         ylabel('Scan number')
         ax2 = ax1.twinx()
         yticks(arange(times.size)[::-10], 
                [t[6:-7] for t in times[::10]], 
-               size='xx-small', va='top', rotation=-45)
+               size='xx-small', va='center')
         ylabel('Time (UTC)')
         title(r'$T_{{sky}}$ ratio residuals, railed at $\pm2$, $\theta_z={}^\circ$'.format(zas[index]))
         tight_layout()
@@ -149,10 +137,6 @@ def waterfall_res(data, expect, times, dosave=False):
             savefig('{}/../reduc_data/fig_{}.png'.format(io.__file__[:-11], index))
 
 def waterfall_spec(data, times, dosave=False):
-    '''
-    Generates (n_ZA) images of the residuals of the reduced data
-    wrt. their expectation over time. 
-    '''
     close('all')
     zas = array([20., 32.6, 40.24, 45.74, 50.])
     for index in range(data.shape[2]):
@@ -162,13 +146,13 @@ def waterfall_spec(data, times, dosave=False):
         #colorbar()
         xticks(arange(2048)[::2048/22.], 
                [round(a, 2) for a in linspace(9.5, 11.7, 23)],
-               rotation=-90, ha='center')
+               rotation=90, ha='center')
         xlabel('Frequency (GHz)')
         ylabel('Scan number')
         ax2 = ax1.twinx()
         yticks(arange(times.size)[::-10], 
                [t[6:-7] for t in times[::10]], 
-               size='x-small', va='top', rotation=-45)
+               size='x-small', va='center')
         ylabel('Time (UTC)')
         title(r'$\overline{{V^{{\ 2}}}}, \,\theta_z=\ {}^\circ$'.format(zas[index]))
         tight_layout()
@@ -184,9 +168,6 @@ def mu(data, axis, weights=None):
     return array(ma.average(data.copy(), axis=axis, weights=weights))
 
 def ratio_err(za, d_za, za0_ind):
-    '''
-    Assumes the mean airmass is not affected by d_za, i.e. not a systematic offset.
-    '''
     am = 1 / cos(pi * za / 180)
     plusmin = [1 / cos(pi * (za + d) / 180) for d in (d_za, -d_za)]
-    return [(a - am.mean()) / (a[za0_ind] - am.mean()) for i, a in enumerate(plusmin)]
+    return [(a - am.mean()) / (a[za0_ind] - am.mean()) for a in plusmin]

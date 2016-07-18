@@ -162,7 +162,7 @@ class data:
             max_ind = np.where(moves==moves.max())[0]
             turnover = self.za.size
             diffs = np.diff(max_ind)
-            if np.unique(diffs).size != 1:
+            if np.unique(diffs).size > 1:
                 raise ValueError, 'Can\'t deal with non-uniform cal data yet.'
             if max_ind.size > 1:
                 turnover = diffs[0]
