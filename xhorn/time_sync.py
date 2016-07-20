@@ -45,4 +45,7 @@ def iso_to_mjd(iso):
     '''
     return dt_to_mjd(iso_to_dt(iso))
 
-
+def mjd_to_iso(mjd):
+    epoch_delta = (datetime(1970, 1, 1) - datetime(1858, 11, 17)).total_seconds()
+    mjd_secs = mjd * 60. * 60. * 24.
+    return datetime.utcfromtimestamp(mjd_secs - epoch_delta).isoformat().encode('utf-8')

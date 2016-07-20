@@ -64,7 +64,6 @@ def go(min = 20, max = 50, n_steps = 5, zenith = 0, samp_rate = 4400, acc_len = 
         None,  writes to disk and std out.
     '''
     m = Motor(port = port)
-    s = Spec(ip = ip, samp_rate = samp_rate, acc_len = acc_len)
     angles = np.sign(min)*scan_range(min, max, n_steps)
 
     # Flag calibration data if not scanning indefinitely
@@ -74,6 +73,13 @@ def go(min = 20, max = 50, n_steps = 5, zenith = 0, samp_rate = 4400, acc_len = 
         calext='_scan'
 
     while True:
+        while True:
+            try:
+                s = Spec(ip = ip, samp_rate = samp_rate, acc_len = acc_len) #re-initialize roach
+                break
+            except Exception:
+                pass
+            
         dt = 0 #ts.offset()
         fname = '/'.join(os.path.abspath(io.__file__).split('/')[:-2])\
                 + '/output/' + ts.true_time(dt) + calext + '.h5'

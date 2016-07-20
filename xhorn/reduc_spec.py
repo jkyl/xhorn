@@ -3,8 +3,6 @@ import numpy as np
 from copy import deepcopy as dc
 from IPython.core.debugger import Tracer; debug_here=Tracer()
 from matplotlib.pyplot import *
-#import planck
-from cal import planck
 
 # Useful trig functions
 def asind(x):
@@ -15,6 +13,16 @@ def cosd(x):
     return np.cos(x*np.pi/180)
 def atand2(x,y):
     return np.arctan2(x,y)*180/np.pi
+
+#planck fxn lives here now
+def planck(f, T):
+    h = 6.62606957e-34
+    c = 2.99792458e8
+    k = 1.3806488e-23
+    x = 8 * h * np.pi / c**3
+    y = f**3
+    ex = np.exp(h * f / (k * T)) - 1
+    return x * y / ex
 
 def arr(x):
     if type(x) is int:
@@ -40,13 +48,17 @@ def azel2radec(az,el,mjd,lat=47.8781,lon=-87.6298):
 
 class data:
 
-    def __init__(self, ts, tf):
+    def __init__(self, *args, **kwargs):
         '''
         Read in data, t0 and t1 as tuples, e.g. (2016,5,3,0,0,0)
         '''
-        
-        # Read data
-        d=in_out.read_time_range(dt_0=ts,dt_f=tf)
+        if all([((type(arg) is tuple) or (arg is None)) for arg in args]):
+            ts, tf = args[0], args[1]
+            d=in_out.read_time_range(dt_0=ts,dt_f=tf, ext=kwargs.get('ext'))
+        elif any(('.h5' in arg for arg in args)):
+            d=in_out.read_to_arrays([arg for arg in args if '.h5' in arg])
+        else:
+            raise ValueError
         
         # Modified Julian date
         self.mjd=d['mjd'][:,0]
@@ -94,8 +106,8 @@ class data:
         self._getscanind()
 
         # Useful information
-        self.nscan=self.ind['ss'].size
-        self.nf=self.f.size
+        self.nscan = np.unique(self.scan).size
+        self.nf = self.f.size
 
         ##################
         # Do the reduction
@@ -134,27 +146,34 @@ class data:
         
     def _getscanind(self):
         """Identify start/stop indices of cal and scanning"""
-        
-        # Cal zenith angle
-        zacal = np.min(np.unique(self.za))
-
-        # Calibration stare indices
-        calind = np.where(self.za==zacal)[0]
-        cs = calind[np.where((calind-np.roll(calind,1))!=1)[0]]
-        ce = calind[np.where((np.roll(calind,-1)-calind)!=1)[0]]+1
-
-        # Stepping indices
-        calind = np.where(self.za!=zacal)[0]
-        ss = calind[np.where((calind-np.roll(calind,1))!=1)[0]]
-        se = calind[np.where((np.roll(calind,-1)-calind)!=1)[0]]+1
-        
-        self.ind={'cs':cs,'ce':ce,'ss':ss,'se':se}
-
-        # Define a scan block array
-        self.scan=np.zeros(self.spec.shape[0])
-        for k,val in enumerate(ss):
-            self.scan[cs[k]:se[k]]=k;
-
+  
+        zamin = self.za.min()
+        first = np.where(self.za==zamin)[0]
+        self.scan = np.zeros(self.spec.shape[0])
+        if zamin < 0:
+            cs = first[np.where((first - np.roll(first, 1)) != 1)[0]]
+            ss = first[np.where((np.roll(first,-1) - first) != 1)[0]] + 1
+            ce = ss - 1
+            se = np.roll((cs - 1) % self.za.size, -1)
+            for k, val in enumerate(cs):
+                self.scan[val:se[k] + 1] = k
+        else:
+            moves = np.diff(self.za)
+            max_ind = np.where(moves==moves.max())[0]
+            turnover = self.za.size
+            diffs = np.diff(max_ind)
+            if np.unique(diffs).size > 1:
+                raise ValueError, 'Can\'t deal with non-uniform cal data yet.'
+            if max_ind.size > 1:
+                turnover = diffs[0]
+            cs = ce = np.array([])
+            ss = np.arange(self.za.size)[::turnover]
+            se = np.roll((ss - 1) % self.za.size, -1)
+            for k, val in enumerate(ss):
+                self.scan[val:se[k] + 1] = k
+            
+        self.ind = {'cs': cs, 'ce': ce, 'ss': ss, 'se': se}
+                
     def getind(self,start,end,blk):
         """Return indices corresponding to start and end indices, strings as
         defined in self.ind"""
@@ -176,7 +195,8 @@ class data:
         ind=self.getind('ss','se',arr(blk))
         ind=ind[(self.za[ind]>=zarange[0]) & (self.za[ind]<=zarange[1])]
         return ind
-    
+
+        
     def getcalind(self,blk=None):
         """Return indices of periods of calibrator staring. If blk is defined,
         return all indices of cal stares, including leading and trailing for
