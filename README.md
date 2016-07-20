@@ -12,6 +12,7 @@ Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor co
  * [scipy]
  * [matplotlib]
  * [tqdm]
+ * [vxi11]
 
 All can be installed (as root) with `$ pip install <packagename>` except:
  * [adc5g]:
@@ -150,3 +151,4 @@ In addition to the [sma_wideband] code that we import verbatim:
 [rww_tools]: <https://github.com/sma-wideband/adc_tests/blob/master/rww_tools.py>
 [sma_wideband]: <https://github.com/sma-wideband>
 [tqdm]: <https://github.com/tqdm/tqdm>
+[vxi11]: <https://github.com/python-ivi/python-vxi11>
