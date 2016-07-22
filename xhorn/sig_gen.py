@@ -21,8 +21,7 @@ class Gen:
         '''
         Attempts to make an ID query. Returns bool of success within timeout (s).
         '''
-        def handler(_,__):
-            raise RuntimeError
+        def handler(_,__): raise RuntimeError
         signal.signal(signal.SIGALRM, handler)
         signal.alarm(timeout)
         try:
@@ -31,7 +30,7 @@ class Gen:
             return True
         except RuntimeError:
             return False
-
+        
     def set_freq(self, f):
         '''
         Sets the generator frequency in GHz. 
@@ -56,13 +55,13 @@ class Gen:
         '''
         return float(self.instr.ask('POW?'))
 
-    def set_rf_status(self, on_or_off):
+    def set_rf(self, on_or_off):
         '''
         Sets the RF output to on or off based on bool or 1/0 arg.
         '''
         self.instr.write(':OUTP {}'.format(int(on_or_off)))
 
-    def get_rf_status(self):
+    def get_rf(self):
         '''
         Returns a bool of the RF on/off status.
         '''
