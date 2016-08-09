@@ -11,7 +11,7 @@ def reflect_spec(s, freq=10, n_accs=None):
     g = Gen()
     ion()
     g.set_freq(freq)
-    g.set_pow(10)
+    g.set_pow(-40)
     g.set_rf(0)
     n = 1
     while True:
@@ -26,7 +26,7 @@ def reflect_spec(s, freq=10, n_accs=None):
         diffr[1024] = 0
         plot(F_AXIS, diffr)
         xlim(freq-.2, freq+.2)
-        ylim(0, 3e13)
+        ylim(0, 1e11 * s.acc_len)
         pause(.05)
         if n == n_accs:
             break
@@ -38,7 +38,7 @@ def reflect_time(s, freq=10, n_accs=None):
     ion()
     g = Gen()
     g.set_freq(freq)
-    g.set_pow(10)
+    g.set_pow(-20)
     g.set_rf(0)
     n = 1; t = []; p = []
     while True:
@@ -56,13 +56,14 @@ def reflect_time(s, freq=10, n_accs=None):
             band = [band-1, band, band+1]
             t.append(n)
             p.append(diffr[band].sum())
-            plot(t, p, 'bo-', linewidth=3, markersize=20)
-            bot, top = ylim(0, 2e13)
+            semilogy(t, p, 'bo-', linewidth=3, markersize=20)
             srt, stp = xlim(max(0, n-8), max(9, n+1))
             xticks(arange(srt, stp+1))
-            yticks(linspace(bot, top, 11))
+            #bot, top = ylim(0, 5e11 * s.acc_len)
+            #yticks(linspace(bot, top, 11))
             grid(True)
             tight_layout()
+            ylim(1e5,1e14)
             pause(.05)
         except KeyboardInterrupt:
             return p
