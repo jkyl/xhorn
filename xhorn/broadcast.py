@@ -38,7 +38,7 @@ def reflect_time(s, freq=10, n_accs=None):
     ion()
     g = Gen()
     g.set_freq(freq)
-    g.set_pow(-20)
+    g.set_pow(-50)
     g.set_rf(0)
     n = 1; t = []; p = []
     while True:
