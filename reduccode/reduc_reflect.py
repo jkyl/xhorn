@@ -15,6 +15,12 @@ Pout=array([10.,10,-20,0,0,0,0,0,0,0,0,0,0])
 x = array([-90., -45,   0,  45,  90,   0,   0,  0,   0, 180, -135, 135, 180])
 y = array([-20., -20, -20, -20, -20,  45, -45, 90, -90,   0,    0,   0,  45])
 
+# Remove third data point which is probably a back lobe (makes no difference with lid)
+ind=2
+Prx=delete(Prx,ind)
+Pout=delete(Pout,ind)
+x=delete(x,ind)
+y=delete(y,ind)
 
 # Interpolate to lat/lon grid
 yi=linspace(-90,90,100)
