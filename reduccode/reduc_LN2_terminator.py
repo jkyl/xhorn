@@ -5,7 +5,7 @@ from copy import deepcopy as dc
 # Load data
 
 
-figext='corrug_horn_wood_box_b'
+figext='nolid'
 
 if 0:
     # Terminator runs
@@ -80,7 +80,31 @@ if 1:
     cind=arange(15)
     hind=-cind-1
 
+if 0:
+    # wood box LN2 eccosorb run with baffled corrugated horn,
+    # just prior to putting on new lid
+    x=load('lab_spec_data/2016-08-17T16:04:04.npz') 
+    z=x['spec']
+    lo=x['LO_freq']
+    t=x['time']
+    #For warming up data
+    cind=arange(30)
+    hind=-cind-1
+    Th=290.0
+    Tc=150.0
 
+if 1:
+    # wood box LN2 eccosorb run with baffled corrugated horn,
+    # after putting on new lid
+    x=load('lab_spec_data/2016-08-17T16:41:02.npz') 
+    z=x['spec']
+    lo=x['LO_freq']
+    t=x['time']
+    #For warming up data
+    cind=arange(100)
+    hind=-cind-1
+    Th=290.0
+    Tc=140.0
 
 
 f=linspace(0,2200,z.shape[1])
@@ -188,14 +212,14 @@ xlabel('f (MHz)')
 ###############
 figure(3)
 clf()
-r1=(zz[0,ntz-1]-zz[0,0])/(zz[0,25]-zz[0,0])
-r2=(zz[1,ntz-1]-zz[1,0])/(zz[1,25]-zz[1,0])
+r1=(zz[0,ntz-1]-zz[0,0])/(zz[0,50]-zz[0,0])
+r2=(zz[1,ntz-1]-zz[1,0])/(zz[1,50]-zz[1,0])
 clf();plot(f,r1);xlim(1050,1500);
 plot(f,roll(r2,51));xlim(1050,1500);
 ylim(0,4)
 xlabel('f (MHz)')
 ylabel('ratio')
-title('raw spectrum [P(first)-P(last)]/[P(intermediate)-P(first)]')
+title('raw spectrum [P(last)-P(first)]/[P(intermediate)-P(first)]')
 legend(['$f_{{LO}}$={:0.0f}'.format(loval[0]*1000),
         'frequency shifted $f_{{LO}}$={:0.0f}'.format(loval[1]*1000)],
        loc='lower right')
@@ -233,7 +257,7 @@ text(.99,.02,'calibrated spectra'.format(f[1200]),
       verticalalignment='bottom',horizontalalignment='right',transform=gca().transAxes)
 
 
-dosave=True
+dosave=False
 if dosave:
     for k in (array(range(4))+1):
         figure(k)
