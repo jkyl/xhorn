@@ -5,12 +5,12 @@ from copy import deepcopy as dc
 # Load data
 
 
-figext='term_a'
+figext='corrug_horn_wood_box_b'
 
-if 1:
+if 0:
     # Terminator runs
-    x=load('lab_spec_data/2016-07-28T17:39:15.npz') #1st terminator run
-    #x=load('lab_spec_data/2016-07-29T17:10:35.npz') #2nd terminator run
+    #x=load('lab_spec_data/2016-07-28T17:39:15.npz') #1st terminator run
+    x=load('lab_spec_data/2016-07-29T17:10:35.npz') #2nd terminator run
     z=x['spec']
     lo=x['LO_freq']
     t=x['time']
@@ -44,12 +44,12 @@ if 0:
     x2=load('lab_spec_data/2016-07-30T15:32:01.npz')
     z=concatenate((x1['spec'],x2['spec']))
     lo=concatenate((x1['LO_freq'],x2['LO_freq']))
-    t=concatenate((x1['time'],x2['time']))
+    t=concatenate((x1['time'],x2['time']+x1['time'][-1]+2))
     #For warming up data
     cind=arange(15)
     hind=-cind-1
     Th=290.0
-    Tc=180.0
+    Tc=200.0
 
 if 0:
     # metal box LN2 eccosorb run with corrugated horn run 2
@@ -61,20 +61,24 @@ if 0:
     cind=arange(15)
     hind=-cind-1
     Th=290.0
-    Tc=180.0
+    Tc=200.0
 
-if 0:
+if 1:
     # wood box LN2 eccosorb run with corrugated horn
     #x=load('lab_spec_data/2016-07-30T17:41:22.npz') # Run 1
+    #Th=290.0
+    #Tc=200.0
+
     x=load('lab_spec_data/2016-07-30T18:09:07.npz') # Run 2
+    Th=290.0
+    Tc=180.0
+
     z=x['spec']
     lo=x['LO_freq']
     t=x['time']
     #For warming up data
     cind=arange(15)
     hind=-cind-1
-    Th=290.0
-    Tc=180.0
 
 
 
