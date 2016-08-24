@@ -63,7 +63,7 @@ if 0:
     Th=290.0
     Tc=200.0
 
-if 1:
+if 0:
     # wood box LN2 eccosorb run with corrugated horn
     #x=load('lab_spec_data/2016-07-30T17:41:22.npz') # Run 1
     #Th=290.0
@@ -93,7 +93,7 @@ if 0:
     Th=290.0
     Tc=150.0
 
-if 1:
+if 0:
     # wood box LN2 eccosorb run with baffled corrugated horn,
     # after putting on new lid
     x=load('lab_spec_data/2016-08-17T16:41:02.npz') 
@@ -101,7 +101,20 @@ if 1:
     lo=x['LO_freq']
     t=x['time']
     #For warming up data
-    cind=arange(100)
+    cind=arange(20)
+    hind=-cind-1
+    Th=290.0
+    Tc=150.0
+
+if 1:
+    # wood box LN2 eccosorb run with baffled corrugated horn,
+    # lid, and mylar in front of baffle
+    x=load('lab_spec_data/2016-08-18T18:33:44.npz')
+    z=x['spec']
+    lo=x['LO_freq']
+    t=x['time']
+    #For warming up data
+    cind=arange(20)
     hind=-cind-1
     Th=290.0
     Tc=140.0
@@ -177,6 +190,7 @@ zmean=mean(zred,1)
 
 
 #close('all')
+#stop
 
 ###############
 figure(1)
