@@ -89,7 +89,10 @@ class data:
         self.f = np.linspace(0,self.samp_rate/2,self.spec.shape[1])
 
         # Add LO frequency
-        self.f=self.f+9500
+        if d.has_key('LO_freq'):
+            self.lo=d['LO_freq']
+        else:
+            self.lo=9500
 
         # Zenith angle in degrees. 
         self.za=d['angle_degs']-d['zenith_degs']
@@ -106,7 +109,6 @@ class data:
         self._getscanind()
 
         # Useful information
-        self.nscan = np.unique(self.scan).size
         self.nf = self.f.size
 
         ##################
@@ -114,6 +116,20 @@ class data:
         ##################
         #zarange=[20,50]
         #self.reduc(zarange)
+
+    def splitbylo(self,lo):
+        """Split out structure into a single LO, lo in GHz"""
+        ind=np.where(self.lo==lo)[0]
+
+        d=dc(self)
+        fields=['mjd','dec','ra','lo','scan','t','spec','za','am']
+        for k,val in enumerate(fields):
+            x=getattr(d,val)
+            setattr(d,val,x[ind])
+        d._getscanind()
+
+        return d
+        
 
     def za2am(self,x):
         """Zenith angle in degrees to airmass"""
@@ -131,7 +147,7 @@ class data:
         #self.removedrift(deg)
 
         # Convert P-> T RJ
-        self.P2T()
+        #self.P2T()
 
         # Now fit a line to P(am) in each scan and store the results.
         self.fitam(zarange)
@@ -173,7 +189,8 @@ class data:
                 self.scan[val:se[k] + 1] = k
             
         self.ind = {'cs': cs, 'ce': ce, 'ss': ss, 'se': se}
-                
+        self.nscan = np.unique(self.scan).size
+
     def getind(self,start,end,blk):
         """Return indices corresponding to start and end indices, strings as
         defined in self.ind"""
@@ -304,8 +321,8 @@ class data:
         Trx=np.zeros([self.nscan,self.nf]) # noise temperature
 
         Th=290 # hot load
-        Tz=20 # Zenith temperature
-        Tiso=2.7
+        Tz=10 # T zenith
+        Tiso=2.7 # T above atmosphere
 
         for k in range(self.nscan):
             # Pull out scanning data for this block
@@ -320,37 +337,39 @@ class data:
             y=s[fitind,:]
             
             # Fit P(am) for each frequency
-            for j in range(self.nf):
-                yy=y[:,j]
-                if not np.any(np.isnan(yy)):
-                    p=np.polyfit(x,yy,deg=2);
-                    q[k,j]=p[0]
-                    m[k,j]=p[1]
-                    b[k,j]=p[2]
-
+            #for j in range(self.nf):
+            #    yy=y[:,j]
+            #    if not np.any(np.isnan(yy)):
+                    #p=np.polyfit(x,yy,deg=1);
+                    #m[k,j]=p[0]
+                    #b[k,j]=p[1]
+            
             # Try to get gain
             # Mean of lead/trail cal stare
             c[k,:] = self.calccalmean(k)
 
+            cold=y.mean(0)
+            Tc = am.mean()*Tz + Tiso
+            for j in range(self.nf):
+                p=np.polyfit([Tc,Th],[cold[j],c[k,j]],deg=1)
+                g[k,j]=p[0]
+                b[k,j]=p[1]
+            
             # Noise temperature
             Trx0=np.linspace(0,500,1000);
 
-            rhs = (Trx0+Th)/(Trx0+Tiso)
-            #sm=s.mean(0)
+            rhs = (Trx0+Th)/(Trx0+Tc)
             for j in range(self.nf):
                 Ph=c[k,j] # hot load
                 Pc=b[k,j] # cold load
-                #Pc=sm[j]
                 lhs = Ph/Pc
                 Trx[k,j]=np.interp(0,lhs-rhs,Trx0)
 
-            g[k,:]=(c[k,:]-b[k,:])/(Th-Tz)
-            #g[k,:]=(c[k,:]-sm)/(Th-Tz)
+            #g[k,:]=(c[k,:]-b[k,:])/(Th-Tc)
 
         self.c = c
         self.m = m
         self.b = b
-        self.q = q
         self.g = g
         self.Trx=Trx
 
