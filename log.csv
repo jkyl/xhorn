@@ -1,4 +1,10 @@
 Time (UTC),Notes,Author
+2016-08-23T22:59:13, start airmass spaced scan btwn 40 and 45 degs,JXK
+2016-08-23T22:47:28, stop linear spaced scan,JXK
+2016-08-23T22:06:40, start linear spaced scan,JXK
+2016-08-23T16:50:11, resume scan without baffle.,JXK
+2016-08-23T16:36:16, stopped scan to remove baffle.,JXK
+2016-08-22T22:23:54, scanning with roach off of shaft and other improvements.,JXK
 2016-07-17T16:33:17, weathered the storm just fine. wiped down outside of mylar with kimwipe while scanning. leaving n2 on today (supposed to rain again after noon).,JXK
 2016-07-15T21:25:36, That seemed to work. all angles within .5 deg. Lets keep scanning while we wait for new attenuators,JXK
 2016-07-14T20:08:07, failed again. now only doing re-init once every 20 scans.,JXK
