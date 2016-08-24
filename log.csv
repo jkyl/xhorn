@@ -11,7 +11,7 @@ Time (UTC),Notes,Author
 2016-07-14T20:08:07, failed again. now only doing re-init once every 20 scans.,JXK
 2016-07-14T18:33:09, failed again. go_log is not showing any errors (nohup's fault?),JXK
 2016-07-14T17:17:05, set scanning after another failure. hard reset roach and checked all connections. everything seems fine..,JXK
-2016-07-14T15:30:51, set scanning after another failure. go_log.txt reports that first the roach could not connect then during the very long retry loop it reported "too many files open" despite the close() statement in in_out.py. I believe this error was thrown in katcp_wrapper though. I put in a time.sleep(5) in the retry loop and have it only entering the loop for a RuntimeError.,JXK
+2016-07-14T15:30:51, set scanning after another failure. go_log.txt reports that first the roach could not connect then during the very long retry loop it reported too many files open despite the close() statement in in_out.py. I believe this error was thrown in katcp_wrapper though. I put in a time.sleep(5) in the retry loop and have it only entering the loop for a RuntimeError.,JXK
 2016-07-13T22:09:39, implemented retry in spec reinit. if it continues to stop it is not bc of reinit failure,JXK
 2016-07-13T19:25:33, set scanning again after another mystery stop. will rain soon.,JXK
 2016-07-13T14:50:12, set scanning in AM after mystery stop yesterday afternoon. Seems to have weathered rain ok despite n2 shutoff (again). despite leakage its a good idea to open main valve all the way and throttle with regulator,JXK
