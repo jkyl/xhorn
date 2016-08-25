@@ -170,7 +170,7 @@ class data:
             cs = first[np.where((first - np.roll(first, 1)) != 1)[0]]
             ss = first[np.where((np.roll(first,-1) - first) != 1)[0]] + 1
             ce = ss - 1
-            se = np.roll((cs - 1) % self.za.size, -1)
+            se = np.roll((cs - 1) % self.za.size, -1) + 1
             for k, val in enumerate(cs):
                 self.scan[val:se[k] + 1] = k
         else:
