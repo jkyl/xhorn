@@ -321,7 +321,7 @@ class data:
         Trx=np.zeros([self.nscan,self.nf]) # noise temperature
 
         Th=290 # hot load
-        Tz=10 # T zenith
+        Tz=2 # Atmospheric zenith temp (not including CMB)
         Tiso=2.7 # T above atmosphere
 
         for k in range(self.nscan):
