@@ -120,16 +120,21 @@ class data:
     def splitbylo(self,lo):
         """Split out structure into a single LO, lo in GHz"""
         ind=np.where(self.lo==lo)[0]
+        self.splitbyind(ind)
+        
+    def splitbyscans(self,scans):
+        """Split out structure, keeping scans in scans"""
+        ind=np.where(np.array([val in scans for dum,val in enumerate(self.scan)]))[0]
+        self.splitbyind(ind)
 
-        d=dc(self)
+    def splitbyind(self,ind):
+        """Split out by time index"""
         fields=['mjd','dec','ra','lo','scan','t','spec','za','am']
         for k,val in enumerate(fields):
-            x=getattr(d,val)
-            setattr(d,val,x[ind])
-        d._getscanind()
+            x=getattr(self,val)
+            setattr(self,val,x[ind])
+        self._getscanind()
 
-        return d
-        
 
     def za2am(self,x):
         """Zenith angle in degrees to airmass"""
@@ -169,7 +174,7 @@ class data:
         if zamin < 0:
             cs = first[np.where((first - np.roll(first, 1)) != 1)[0]]
             ss = first[np.where((np.roll(first,-1) - first) != 1)[0]] + 1
-            ce = ss - 1
+            ce = ss 
             se = np.roll((cs - 1) % self.za.size, -1) + 1
             for k, val in enumerate(cs):
                 self.scan[val:se[k] + 1] = k
@@ -352,8 +357,8 @@ class data:
             Tc = am.mean()*Tz + Tiso
             for j in range(self.nf):
                 p=np.polyfit([Tc,Th],[cold[j],c[k,j]],deg=1)
-                g[k,j]=p[0]
-                b[k,j]=p[1]
+                g[k,j]=dc(p[0])
+                b[k,j]=dc(p[1])
             
             # Noise temperature
             Trx0=np.linspace(0,500,1000);
