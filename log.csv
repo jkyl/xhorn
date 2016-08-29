@@ -1,4 +1,7 @@
 Time (UTC),Notes,Author
+2016-08-26T20:54:47, scan end,JXK
+2016-08-26T20:42:26, scan start with added 10db of atten,JXK
+2016-08-26T20:28:38, cal scan after adding 10db of attenuation to reduce state changes,JXK
 2016-08-26T16:46:34, cal scan with eccosorb covering crossbeam and south-sidebeam,JXK
 2016-08-26T16:16:22, stop scan,JXK
 2016-08-25T22:46:24, moved rig facing east overnight scan start,JXK
