@@ -1,0 +1,68 @@
+<HTML>
+<HEAD>
+<TITLE>X-Horn Parallax Corrections</TITLE>
+</HEAD>
+<BODY TEXT="#000000"  BGCOLOR="#F0F0F0">
+
+<H2>August 24, 2015 - Parallax Corrections to X-Horn's Beam Profile Measurement</H2>
+<p>
+<hr>
+<p>
+  In the post preceeding this, I noted that the sidelobes we measured look like they're scaled down to smaller angles compared to the Princeton profile. I think that this could be accounted for by a parallax effect. Since the rotational axis for the az scan sits behind the aperture of the horn, as the angle increases, the aperture will be offset from the initial boresight by a significant amount. This can be accounted for as an additive angular contribution, going roughly as d/l, where d is the distance from rotation axis to the aperture, and l is the distance from the source to the aperture.
+<p>
+  In the code below, I calculated the offset exactly with trig functions. First I fit a gaussian to the raw data in order to find the center of the beam. Then I transform the array of angle values, first translating them so that they're centered about 0, then by scaling them by the parallax correction. Then I fit another gaussian to the corrected points, and plot against the Princeton data.
+<hr>
+<xmp>
+from numpy import *
+from matplotlib.pyplot import *
+from scipy import optimize
+from scipy.interpolate import interp1d
+
+d=14.
+l=200.
+
+x,y=loadtxt('roof_profile_20_08_2015.tsv',unpack=True,usecols=[0,1])
+yy=y-y.max()
+
+def fit(p,x):
+    return 10*log10(exp( -(x-p[1])**2 / (2*(p[0]**2))))
+
+def residual(p,x,y):
+    return (fit(p,x)-y)
+
+p0=[1.,1.]
+pf, cov, info, mesg, success = optimize.leastsq(residual, p0,
+                                                args=(x[where(x<15)],yy[where(x<15)]), full_output=1)
+
+xx=(x-pf[1])+((180/pi)*arctan(sin((x-pf[1])*pi/180)/((l/d)+1-cos((x-pf[1])*pi/180))))
+profile=interp1d(xx,yy,kind='linear')
+angrange=linspace(xx[0],xx[-1],1000)
+
+pf, cov, info, mesg, success = optimize.leastsq(residual, p0,
+                                                args=(xx[where(x<15)],yy[where(x<15)]), full_output=1)
+
+a,b=loadtxt('11ghz.csv',delimiter=', ',unpack=True,usecols=[0,1])
+
+scatter(xx,yy,facecolors='none',edgecolors='k',linewidth=1.5,label='Roof data, corrected')
+scatter(x,yy,facecolors='none',edgecolors='grey',linewidth=0.5,label='Roof data, uncorrected')
+plot(angrange,profile(angrange),'b-')
+plot(angrange[where(fit(pf,angrange)>-61)],fit(pf,angrange[where(fit(pf,angrange)>-61)]+pf[1]),'r-',label='Gaussian, FWHM=%.4s'%(2.355*pf[0]))
+plot(a[where(a<=xx[-1])],b[where(a<=xx[-1])],'g:',label='Princeton data')
+plot([xx[0],xx[-1]],[-61,-61],'k--',label='Noise floor')
+legend(loc='best')
+xlabel('Angle (deg)')
+ylabel('Power (dB)')
+grid()
+show()
+
+</xmp>
+
+<hr>
+<H3>Fig. 1</H3>
+<p>
+Profiles with and without correction, d/l=7% based on measuring our apparatus. Fits Princeton's results better at higher angles, but we see a slight (~1dB) bump around 20 deg. 
+<p>
+<table border="1">
+<td><a href="figure_1.png"><img src="figure_1.png" width=1300></a>
+</table>
+<p>

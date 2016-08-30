@@ -1,0 +1,143 @@
+
+<HTML>
+<HEAD>
+<TITLE>X-band el tipping radiometer field notes</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#F0F0F0">
+<CENTER>
+<H1>X-band el tipping radiometer field notes</H1>
+Update to latest version by running <tt> $python ~xhorn/public_html/field_notes/gen_log.py</tt>
+<p>
+</CENTER>
+<head>
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+</style>
+</head>
+<body>
+<table style="width:100%">
+  <tr><td>Time (UTC)</td><td>Notes</td><td>Author
+</td></tr><tr><td>2016-08-23T23:17:39</td><td> stop scan and take horn down for the night.</td><td>JXK
+</td></tr><tr><td>2016-08-23T22:59:13</td><td> start airmass spaced scan btwn 40 and 45 degs</td><td>JXK
+</td></tr><tr><td>2016-08-23T22:47:28</td><td> stop linear spaced scan</td><td>JXK
+</td></tr><tr><td>2016-08-23T22:06:40</td><td> start linear spaced scan</td><td>JXK
+</td></tr><tr><td>2016-08-23T16:50:11</td><td> resume scan without baffle.</td><td>JXK
+</td></tr><tr><td>2016-08-23T16:36:16</td><td> stopped scan to remove baffle.</td><td>JXK
+</td></tr><tr><td>2016-08-22T22:23:54</td><td> scanning with roach off of shaft and other improvements.</td><td>JXK
+</td></tr><tr><td>2016-07-17T16:33:17</td><td> weathered the storm just fine. wiped down outside of mylar with kimwipe while scanning. leaving n2 on today (supposed to rain again after noon).</td><td>JXK
+</td></tr><tr><td>2016-07-15T21:25:36</td><td> That seemed to work. all angles within .5 deg. Lets keep scanning while we wait for new attenuators</td><td>JXK
+</td></tr><tr><td>2016-07-14T20:08:07</td><td> failed again. now only doing re-init once every 20 scans.</td><td>JXK
+</td></tr><tr><td>2016-07-14T18:33:09</td><td> failed again. go_log is not showing any errors (nohup's fault?)</td><td>JXK
+</td></tr><tr><td>2016-07-14T17:17:05</td><td> set scanning after another failure. hard reset roach and checked all connections. everything seems fine..</td><td>JXK
+</td></tr><tr><td>2016-07-14T15:30:51</td><td> set scanning after another failure. go_log.txt reports that first the roach could not connect then during the very long retry loop it reported too many files open despite the close() statement in in_out.py. I believe this error was thrown in katcp_wrapper though. I put in a time.sleep(5) in the retry loop and have it only entering the loop for a RuntimeError.</td><td>JXK
+</td></tr><tr><td>2016-07-13T22:09:39</td><td> implemented retry in spec reinit. if it continues to stop it is not bc of reinit failure</td><td>JXK
+</td></tr><tr><td>2016-07-13T19:25:33</td><td> set scanning again after another mystery stop. will rain soon.</td><td>JXK
+</td></tr><tr><td>2016-07-13T14:50:12</td><td> set scanning in AM after mystery stop yesterday afternoon. Seems to have weathered rain ok despite n2 shutoff (again). despite leakage its a good idea to open main valve all the way and throttle with regulator</td><td>JXK
+</td></tr><tr><td>2016-07-12T22:13:56</td><td> set scanning (nocal nohome) with 6db on both sides of short cable after measuring total power(?) with SA and removing counterweight (seemed to be causing sticking)</td><td>JXK
+</td></tr><tr><td>2016-07-12T21:02:15</td><td> short cable + 6dB both retry</td><td>JXK
+</td></tr><tr><td>2016-07-12T20:56:58</td><td> short cable + 6dB box + 9dB roach</td><td>JXK
+</td></tr><tr><td>2016-07-12T20:47:28</td><td> short cable + 3dB box + 12dB (10+2) roach</td><td>JXK
+</td></tr><tr><td>2016-07-12T20:38:32</td><td> short cable + 3dB box side + 9dB roach side also new rigid coax after IF (broke other one)</td><td>JXK
+</td></tr><tr><td>2016-07-12T20:28:34</td><td> short cable + 6dB box side + 9dB roach side</td><td>JXK
+</td></tr><tr><td>2016-07-12T20:21:21</td><td> short cable + 6dB both sides + IF amp</td><td>JXK
+</td></tr><tr><td>2016-07-12T20:14:21</td><td> short cable + 6dB roach side + 3dB box side + IF amp</td><td>JXK
+</td></tr><tr><td>2016-07-12T20:07:27</td><td> short cable + 3dB both sides + IF amp</td><td>JXK
+</td></tr><tr><td>2016-07-12T19:59:39</td><td> short cable + 3dB atten on both sides</td><td>JXK
+</td></tr><tr><td>2016-07-12T19:54:02</td><td> short cable + 3dB atten on roach side</td><td>JXK
+</td></tr><tr><td>2016-07-12T19:49:19</td><td> cal scan with short cable + no atten</td><td>JXK
+</td></tr><tr><td>2016-07-11T22:12:47</td><td> scan stopped prematurely. must have been heat killed laptop</td><td>JXK
+</td></tr><tr><td>2016-07-11T20:37:46</td><td> analysis code issues. setting scanning while i fix</td><td>JXK
+</td></tr><tr><td>2016-07-11T20:30:34</td><td> Waited for everything to warm up again before taking a few cal trials</td><td>JXK
+</td></tr><tr><td>2016-07-10T22:47:11</td><td> noticed that roach was changing state. added reset to scan.go() while loop. decided to redo the cal measurements from 2 days ago with some updated ratio plotting code. noticed that 2nd amp's output sma connector very loose and affecting spectrum. tightened connector but managed to snap off LO's +15v connector. redid the solder. caused a short bc new solder contacted the LO case. redid solder again. was too dark to work by the time i finished.</td><td>JXK
+</td></tr><tr><td>2016-07-09T00:01:58</td><td> set scanning with short secured cable and without cal stares (n2 tube would interfere) will take pics also no IF or atten</td><td>JXK
+</td></tr><tr><td>2016-07-08T23:40:27</td><td> unexpectadly bad. trying again without IF or any attenuators still short cable</td><td>JXK
+</td></tr><tr><td>2016-07-08T23:32:57</td><td> not any better with IF-2dB. now going to remove IF and do 1dB</td><td>JXK6
+</td></tr><tr><td>2016-07-08T23:25:04</td><td> that trial was worse than the long sma. going to add the IF amp before -2dB just a shot in the dark</td><td>JXK
+</td></tr><tr><td>2016-07-08T23:13:32</td><td> Too much attenuation=more noise and much worse R. Now try with only -2dB keeping short sma</td><td>JXK 
+</td></tr><tr><td>2016-07-08T23:04:16</td><td> R improved with shorter cable. judging by the std in the good range (inds 800 1600). now try with 10db attenuator before short sma</td><td>JXK
+</td></tr><tr><td>2016-07-08T22:52:12</td><td> looks like the last trial gave the smoothest R. Now a scan with that setup + secured shorter sma>roach also lots of cloud cover</td><td>JXK
+</td></tr><tr><td>2016-07-08T22:30:23</td><td> horn>lna>bp>amp>mix>longsma>roach redo</td><td>JXK
+</td></tr><tr><td>2016-07-08T22:25:43</td><td> horn>lna>bp>amp>mix>IFamp>longsma>roach redo</td><td>JXK
+</td></tr><tr><td>2016-07-08T22:20:22</td><td> horn>lna>bp>amp>mix>IFamp>-10dB>longsma>roach redo bc weird feature from clouds</td><td>JXK
+</td></tr><tr><td>2016-07-08T21:16:03</td><td> horn>lna>bp>amp>mix>IFamp>-10dB>longsma>roach</td><td>JXK
+</td></tr><tr><td>2016-07-08T20:52:26</td><td> horn>lna>bp>amp>mix>-10dB>longsma>roach</td><td>JXK
+</td></tr><tr><td>2016-07-08T20:50:04</td><td> horn>lna>bp>amp>mix>longsma>roach</td><td>JXK
+</td></tr><tr><td>2016-07-08T20:23:56</td><td> stop scan. zenith@0.5 deg 50@49.5. going to swap some cables and attenuators to try and smooth out R</td><td>JXK
+</td></tr><tr><td>2016-07-07T19:30:32</td><td> resume scan</td><td>JXK
+</td></tr><tr><td>2016-07-07T19:16:14</td><td> stop scan - previous angle measurements have not changed. rebalanced by shifting position of large vice from south to north side of roach. everything looks dry despite rain. will maintain 10scfh flow rate.</td><td>JXK
+</td></tr><tr><td>2016-07-06T18:31:09</td><td> resume scan while i come up with rebalancing scheme.</td><td>JXK
+</td></tr><tr><td>2016-07-06T18:14:59</td><td> stop scan. zenith read 0.2 deg but 50 deg read 49.1 deg. Inconsistent offsets - 30 & 40 are bang on but 20 is not. Need to rebalance.Slight condensation on inside of mylar - nitrogen shut off at some point. going to increase the flow rate to 1 scfh.</td><td>JXK
+</td></tr><tr><td>2016-07-04T19:45:55</td><td> Resume scan - want to see if roach resetting changes spectrum</td><td>JXK
+</td></tr><tr><td>2016-07-04T19:24:01</td><td> Stop scan protractor 0.4 deg at zenith turned N2 on</td><td>JXK
+</td></tr><tr><td>2016-07-03T21:18:58</td><td> Resume scan with prior front end arrangement</td><td>JXK
+</td></tr><tr><td>2016-07-03T18:26:35</td><td> Stop scan. Protractor reads 0.4 deg at zenith. Going to look at front end components with spectrum analyzer</td><td>JXK
+</td></tr><tr><td>2016-07-01T20:58:38</td><td> Resume scan</td><td>JXK
+</td></tr><tr><td>2016-07-01T19:37:00</td><td> Stop scan. Protractor reads 0.5 deg at zenith - adjusted back to 0 deg after replacing stripped screw on coupler</td><td>JXK
+</td></tr><tr><td>2016-07-01T15:22:19</td><td> At some point overnight N2 stopped flowing which is ok because it didn't rain</td><td>JXK
+</td></tr><tr><td>2016-06-30T20:57:25</td><td> Start scan. Replaced electronics lid screws with M4. Looked like rain so turned N2 on</td><td>JXK
+</td></tr><tr><td>2016-06-30T19:21:56</td><td> Stop scan. Protractor reads 0.1 deg at zenith</td><td>JXK
+</td></tr><tr><td>2016-06-29T23:52:07</td><td> Start overnight scan w/ new electronics order</td><td>JXK
+</td></tr><tr><td>2016-06-29T23:38:11</td><td> Remove IF amp and 10dB atten</td><td>JXK
+</td></tr><tr><td>2016-06-29T23:21:44</td><td> Horn > LNA > BP > 2nd amp > Mixer > 10dB atten > IF > out. Fewer connectors as well</td><td>JXK 
+</td></tr><tr><td>2016-06-29T22:36:14</td><td> Remove 10dB from front of IF amp</td><td>JXK
+</td></tr><tr><td>2016-06-29T22:27:23</td><td> Everything the same</td><td>JXK
+</td></tr><tr><td>2016-06-29T22:03:04</td><td> Stop in order to rearrange electronics for some test runs</td><td>JXK
+</td></tr><tr><td>2016-06-28T23:49:37</td><td> Leave on IF amp w/ 10dB attenuator + 1dB calibrated atten in front. Start scan</td><td>CDS
+</td></tr><tr><td>2016-06-28T23:23:41</td><td> 9dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T23:39:38</td><td> 6dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T23:38:04</td><td> 10dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T23:36:31</td><td> 2dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T23:35:00</td><td> 20dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T23:33:28</td><td> Point at za=30 deg with IF amp and 10dB attenuator still in place. 1dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T23:15:19</td><td> 9dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T23:13:32</td><td> 6dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T23:11:53</td><td> 10dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T23:10:16</td><td> 2dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T23:08:41</td><td> 20dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T23:01:47</td><td> Hook up IF amp w/ 10dB attenuator. 1dB on cal</td><td>CDS
+</td></tr><tr><td>2016-06-28T22:55:48</td><td> 1dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T22:54:21</td><td> 2dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T22:52:54</td><td> 6dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T22:51:32</td><td> 9dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T22:48:30</td><td> 20dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T22:47:10</td><td> 10dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T22:45:28</td><td> 6dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T22:43:52</td><td> 2dB</td><td>CDS
+</td></tr><tr><td>2016-06-28T22:41:54</td><td> 1 dB on cal (30s)</td><td>CDS
+</td></tr><tr><td>2016-06-28T21:41:05</td><td> 10 min za=30 deg stare</td><td>CDS
+</td></tr><tr><td>2016-06-28T21:27:22</td><td> >10 minute cal stare</td><td>CDS
+</td></tr><tr><td>2016-06-28T20:28:57</td><td> Stop scan</td><td>CDS
+</td></tr><tr><td>2016-06-27T21:27:44</td><td> Scanning. Back to half as many ints on cal but equal number per ZA</td><td>JXK
+</td></tr><tr><td>2016-06-27T21:17:07</td><td> Stop scan</td><td>JXK
+</td></tr><tr><td>2016-06-27T19:55:26</td><td> Scanning. Equal number of ints on each angle + cal</td><td>JXK
+</td></tr><tr><td>2016-06-27T19:28:18</td><td> Stop scan</td><td>JXK
+</td></tr><tr><td>2016-06-24T22:27:12</td><td> Overnight scan without IF amp or attenuator</td><td>JXK
+</td></tr><tr><td>2016-06-24T21:33:36</td><td> Stop scan</td><td>JXK
+</td></tr><tr><td>2016-06-23T23:17:28</td><td> Overnight scan with baffle and N2 line</td><td>JXK
+</td></tr><tr><td>2016-06-23T22:42:47</td><td> 0dB</td><td>JXK
+</td></tr><tr><td>2016-06-23T22:41:28</td><td> 1dB again</td><td>JXK
+</td></tr><tr><td>2016-06-23T22:39:58</td><td> 20dB</td><td>JXK
+</td></tr><tr><td>2016-06-23T22:38:09</td><td> 10dB</td><td>JXK
+</td></tr><tr><td>2016-06-23T22:36:18</td><td> 9dB</td><td>JXK
+</td></tr><tr><td>2016-06-23T22:34:01</td><td> 6dB</td><td>JXK
+</td></tr><tr><td>2016-06-23T22:31:37</td><td> 2dB</td><td>JXK
+</td></tr><tr><td>2016-06-23T22:29:17</td><td> 1dB</td><td>JXK
+</td></tr><tr><td>2016-06-23T22:18:27</td><td> 2dB (bad connection)</td><td>JXK
+</td></tr><tr><td>2016-06-23T22:14:29</td><td> Measuring attenuators behind mixer - 1dB (bad connection)</td><td>JXK
+</td></tr><tr><td>2016-06-22T22:31:27</td><td> Calibrated attenuator trials contaminated by broken coax jacket</td><td>JXK
+</td></tr><tr><td>2016-06-20T17:01:42</td><td> Stop scan</td><td>JXK
+</td></tr><tr><td>2016-06-17T23:27:40</td><td> Overnight scan</td><td>JXK
+</td></tr><tr><td>2016-06-17T22:56:43</td><td> LN2 ints</td><td>JXK
+</td></tr><tr><td>2016-06-17T22:18:16</td><td> Heated calibration ints</td><td>JXK
+</td></tr>
+</table>
+</body>
+<p><HR width=100%>
+</BODY>
+</HTML>

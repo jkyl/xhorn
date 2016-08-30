@@ -1,0 +1,24 @@
+<HTML>
+<HEAD>
+<TITLE>Motor control code</TITLE>
+</HEAD>
+<BODY TEXT="#000000"  BGCOLOR="#F0F0F0">
+
+<H2>February 10, 2016 - Motor Control Code</H2>
+
+<p>
+<hr>
+<p>
+  A class for controlling the velmex rotary stage. Includes methods for homing and baudrate change. A stepping run could look like this:
+<xmp>
+m = Motor()
+if m.home():
+    while m.position < 10000 and m.status == 'ready':
+        print(m.move(incr = 500))
+</xmp>
+
+<H3>Code</H3>
+<hr>
+<iframe src="http://caelum.uchicago.edu/~xhorn/logbook/analysis/20160210_motor_code/motor.py" width = 700 height = 500></iframe> 
+
+

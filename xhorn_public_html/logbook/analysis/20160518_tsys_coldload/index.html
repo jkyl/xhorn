@@ -1,0 +1,174 @@
+<HTML>
+<HEAD>
+<TITLE>Tsys from cold load measurements</TITLE>
+</HEAD>
+<BODY TEXT="#000000"  BGCOLOR="#F0F0F0">
+
+<H2>May 18, 2016 - Tsys from cold load measurements</H2>
+Christopher D. Sheehy
+<p>
+
+
+<hr>
+<H3>Intro</H3>
+
+We measured T_sys using cold loads, both with the horn pointed at beam filling
+sources and with terminators. The data and plotting code
+is <a href="plotcodeanddata.tar">here</a>. 
+
+<p>
+<hr>
+<H3>Results</H3>
+
+<b>Figure 1</b> shows the measured spectra  with the terminator on the end of a
+3" piece of semi-rigid waveuide, at room temp and dunked into LN2. The LNA is
+now outside the main enclosure. The first version of the box I made did not
+provide adequate heat sinking for the LNA. The box was relatively hot to the
+touch, and the LNA must have been very hot. The noise temperature measurement
+yielded a higher than expected value because we had just performed this
+measurement with the LNA in the main box (well heat sunk) and measured noise
+temperatures near the amplifier specs. I improved the heat sinking and the Tsys
+measurement improved greatly (see later):
+
+<p>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th>Fig.&nbsp;1&nbsp;-</th>
+      <th>Spectra with terminators</th>
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><a href="Tsys_fig2.png"><img src="Tsys_fig2.png" width=600></a></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+
+<p>
+<b>Figure 2</b> shows the measured spectra for the horn pointing at different
+loads. In all cases, the LNA is well heat sunk.
+
+<ul>
+<li>"ceiling" - horn pointed at ceiling
+<li>"ceiling + cooler" - put empty cooler on top
+<li>"ciling + cooler + 290 K absorber" - put the metal backed AN-72 square in
+  the cooler
+<li>"290 K cone absorber" - looking at the eccosorb cone 290 K load
+<li>"ceiling + cooler + 77 K absorber" - same as ceiling+cooler+290 K absorber
+  but now filled with LN2
+</ul>
+
+<p>It's clear that just the presence of the cooler is modifying the signal
+  greatly. This is not what we want. Just the presence. It's clear that the
+  ceiling supports many standing waves. It is not plotted, but simply putting
+  the room temp absorber over the horn cuts down these standing waves and makes
+  a spectrum nearly the same as the cyan 290 K cone spectrum.
+
+<p>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th>Fig.&nbsp;1&nbsp;-</th>
+      <th>Spectra with the horn</th>
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><a href="Tsys_fig1.png"><img src="Tsys_fig1.png" width=600></a></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+
+<p>
+<b>Figure 3</b> shows the resulting noise temperatures. Heat sinking the LNA
+clearly helped a lot and gets us nearly to the LNA spec. Adding the horn makes a
+bunch of standing waves, but the mean is clearly higher than with the (well heat
+sunk) terminator. We expect some losses in the antenna, which could account for
+some. But given that the cooler is clearly not transparent, we should try a
+measurement with the zotefoam bucket downstairs.
+
+<p>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th>Fig.&nbsp;1&nbsp;-</th>
+      <th>Tsys</th>
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><a href="Tsys_fig3.png"><img src="Tsys_fig3.png" width=600></a></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+
+
+<p>
+<hr>
+<H3>Conclusions</H3>
+
+The LNA has the noise temperature we expect. The cooler cold load has a bunch of
+reflections, so we should repeat the measurement with a zotefoam bucket. All in
+all, though, the noise temperatures are not terrible, so we are in good shape.
+
+<!--
+
+One panel
+
+<p>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th>Fig.&nbsp;1&nbsp;-</th>
+      <th>Figure title</th>
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><a href="fig_1.png"><img src="fig_1.png"></a></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+
+Two panel
+
+<p>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th rowspan="2">Fig.&nbsp;1&nbsp;-</th>
+      <th colspan="2">Figure title</th>
+  </tr>
+  <tr><td align="center"><b>a. </b> label a</td>
+      <td align="center"><b>b. </b> label b</td>
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><img src="fig_1.png"></td>
+      <td><img src="fig_2.png"></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+
+Three panel
+
+<p>
+<b>Fig 1 - Figure title</b>
+<table border="1">
+<tr><th>a - label 1
+<th>b - label 2
+<th>c - label 3
+<tr>
+<td><a href="fig_1.png"><img src="fig_1.png"></a>
+<td><a href="fig_2.png"><img src="fig_2.png"></a>
+<td><a href="fig_3.png"><img src="fig_3.png"></a>
+</table>
+
+-->

@@ -1,0 +1,190 @@
+<HTML>
+<HEAD>
+<TITLE></TITLE>
+</HEAD>
+<BODY TEXT="#000000"  BGCOLOR="#F0F0F0">
+<H2>July 13, 2016 - Effect of attenuators and cables on standing waves</H2>
+Jonathan Kyl
+<p>
+Last edited July 6, 2016 (JXK)
+<p>
+<hr>
+<H3>Intro</H3>
+I investigate the effect of attenuators and a shorter cable from the electronics box to the roach on standing waves (which may well be a nonlinear term in gain c.f. <a href="http://caelum.uchicago.edu/~xhorn/logbook/analysis/20160708_ratio_waves">these</a> <a href="http://caelum.uchicago.edu/~xhorn/logbook/analysis/20160711_nonlin_waves">two</a> posts). 
+<hr>
+<H3>Results</H3>
+<b>Figures 1 - 4</b> all show $R$ as a function of frequency over a single scan, each one with a different attenuator configuration. This is the data as I saw it while I was fiddling around. The full range of data is up on orion and is documented in the <a href="http://caelum.uchicago.edu/~xhorn/waterfalls/2016-07-12/">waterfall plots</a> and <a href="http://caelum.uchicago.edu/~xhorn/field_notes/">field notes</a>. 
+<p>
+Some of this structure does average down, as seen in plots 5 and 6. Although it's hard to tell by eye, I thought that figure 3 showed the least structure of all the different attenuator trials (figure 4 being the only trial without any attenuators). It's also difficut to determine what structure is truly static and what will change due to clouds, tempereture etc. After settling on the setup from fig. 3 (6db attenuators + IF) I set the rig scanning indefinitely. 
+<p>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th rowspan="2"></th>
+      <th colspan="2"></th>
+  </tr>
+  <tr><td align="center"><b>1</b></td>
+      <td align="center"><b>2</b></td>
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><img src="fig_1.png" width=600></td>
+      <td><img src="fig_2.png" width=600></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th rowspan="2"></th>
+      <th colspan="2"></th>
+  </tr>
+  <tr><td align="center"><b>3 </b></td>
+      <td align="center"><b>4 </b></td>
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><img src="fig_3.png" width=600></td>
+      <td><img src="fig_4.png" width=600></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+<p>
+<b>Figures 5 and 6</b> compare the ratios from two seperate trials, each with 32 scans. Figure 5 excludes the IF amp and attenuators, and figure six includes them. It looks like some of the structure has been beaten down in figure 6, although that could be the luck of the draw. We need more integration time but alas both trials failed early due to roach connectivity issues (see field notes and git changes to <tt>scan.go()</tt>). 
+<p>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th>Fig.&nbsp;5&nbsp;-</th>
+      
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><a href="fig_5.png"><img src="fig_5.png" width=1200></a></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+<p>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th>Fig.&nbsp;6&nbsp;-</th>
+      
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><a href="fig_6.png"><img src="fig_6.png" width=1200></a></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+<p>
+<b>Figure 7</b> shows the mean spectrum for each trial. Standing waves have clearly been diminished with the attenuators and IF amp.
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th>Fig.&nbsp;7&nbsp;-</th>
+      
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><a href="fig_7.png"><img src="fig_7.png" width=1200></a></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+<p>
+<hr>
+<H3>Conclusions</H3>
+<ul>
+<li>Attenuators on either side of a shorter cable seem to diminish standing waves, as seen in the raw spectrum and in the long-term ratio plots (waterfalls + figs 5 & 6)</li>
+<li>It is tricky to determine in situ what effect tinkering with the electronics has on the ratio, due to clouds, reflections, code issues (no longer), etc. This sort of process is invaluable though.</li> 
+<li>There is still structure in the ratio that doesn't average out over 1.5 hours.</li>
+<li>Is it possible that this could be calibrated out with the room temp load? Gain nonlinearity may prohibit this.</li>
+<li>It seems as if the angular precision was much better in fig. 6. This could be because I removed a heavy vounterweight.</li>
+
+
+ <!-- MathJax -->
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AM
+S-MML_HTMLorMML"></script>
+    <!-- MathJax equation numbering -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+      TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+      MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AM
+S-MML_HTMLorMML"></script>
+
+
+<!--
+
+One panel
+
+<p>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th>Fig.&nbsp;1&nbsp;-</th>
+      <th>Figure title</th>
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><a href="fig_1.png"><img src="fig_1.png"></a></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+
+Two panel
+
+<p>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th rowspan="2">Fig.&nbsp;1&nbsp;-</th>
+      <th colspan="2">Figure title</th>
+  </tr>
+  <tr><td align="center"><b>a. </b> label a</td>
+      <td align="center"><b>b. </b> label b</td>
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><img src="fig_1.png"></td>
+      <td><img src="fig_2.png"></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+
+Three panel
+
+<p>
+<b>Fig 1 - Figure title</b>
+<table border="1">
+<tr><th>a - label 1
+<th>b - label 2
+<th>c - label 3
+<tr>
+<td><a href="fig_1.png"><img src="fig_1.png"></a>
+<td><a href="fig_2.png"><img src="fig_2.png"></a>
+<td><a href="fig_3.png"><img src="fig_3.png"></a>
+</table>
+
+-->
