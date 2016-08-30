@@ -18,9 +18,9 @@ class data:
         try:
             if len(args) < 1:
                 raise TypeError
-            if type(args[0]) is instance and args[0].__module__=='xhorn.reduc_spec':
+            elif isinstance(args[0], rs.data):
                 self._set_attrs(reduce(args[0], za0_ind))
-            if type(args[0]) is str:
+            elif type(args[0]) is str:
                 if '.np' in args[0]:
                     self.load(args[0])
                 elif any('.h5' in a for a in args):
@@ -45,14 +45,17 @@ class data:
     def save(self, fname='../reduc_data/test.npz'):
         savez_compressed(fname, **self.__dict__)
 
-    def plot_ratio(self, start=None, stop=None, d_za=1, dosave=False):
-        plot_ratio(self.ratio[start:stop], self.expect, self.za, self.za0_ind, d_za, dosave)
+    def plot_ratio(self, start=None, stop=None, d_za=1, dosave=False, kind='median', title=None):
+        plot_ratio(self.ratio[start:stop], self.expect, self.za, self.za0_ind, 
+                   d_za, dosave, kind, title)
 
-    def waterfall_res(self, start=None, stop=None, dosave=False):
-        waterfall_res(self.ratio[start:stop], self.expect, self.times[start:stop], dosave)
+    def waterfall_res(self, start=None, stop=None, dosave=False, title=None):
+        waterfall_res(self.ratio[start:stop], self.expect, self.za, self.times[start:stop], 
+                      dosave, title)
 
-    def waterfall_spec(self, start=None, stop=None, dosave=False):
-        waterfall_spec(self.za1_spec[start:stop], self.times[start:stop], dosave)
+    def waterfall_spec(self, start=None, stop=None, dosave=False, title=None, ext=''):
+        waterfall_spec(self.za1_spec[start:stop], self.za, self.times[start:stop], 
+                       dosave, title, ext)
     
 def reduce(d, za0_ind=0):
     scan_inds = d.getscanind()
@@ -67,7 +70,7 @@ def reduce(d, za0_ind=0):
         for k in range(d.nscan):
             za1_inds, za0_inds = (where((d.scan==k) & (d.za==za_))[0] for za_ in (za1, za0))
             za1_spec, za0_spec = (d.spec[za_inds].mean(0) for za_inds in (za1_inds, za0_inds))
-            mean_spec = d.spec[where(d.scan==k)[0]].mean(0)
+            mean_spec = d.spec[where((d.scan==k) & (d.za>0))[0]].mean(0)
             ratio = (za1_spec - mean_spec) / (za0_spec - mean_spec)
             output = ['za1_spec', 'mean_spec', 'ratio']
             for o in output :
@@ -81,20 +84,24 @@ def reduce(d, za0_ind=0):
         containers[i] = eval(i)
     return containers
 
-def plot_ratio(ratio, expect, zas, za0_ind, d_za=1, dosave=False):
+def plot_ratio(ratio, expect, zas, za0_ind, d_za=1, dosave=False, kind='median', custom_title=None):
     colors = ['b', 'g', 'r', 'c', 'm']
     f = linspace(9.5, 11.7, 2048)
     ex = tile(expect, (2, 1))
-    plus_am, minus_am = (tile(a, (2, 1)) - ex for a in ratio_err(zas, d_za, za0_ind))
-    figure(1, figsize=(15, 8));clf()
-    plot([],[], 'k', label='Expectation values')
-    plot([],[], 'k.', label='Mean')
+    plus_am, minus_am = (tile(a, (2, 1))  for a in ratio_err(zas, d_za, za0_ind))
+    if kind=='mean':
+        baseline = mu(ratio, 0)
+    elif kind=='median':
+        baseline = nanmedian(ratio, 0)
+    err = sigma(ratio, 0)
+    figure(figsize=(15, 8))
+    clf()
+    plot([],[], 'k', label=r'$\langle R \rangle$')
+    plot([],[], 'k.', label='{}'.format(kind))
     plot([],[], 'gray', linewidth=10, label='$\sigma_{za}=\pm1^\circ$')
     for i in range(ratio.shape[2]):
         c = colors[i]
-        mean_ = mu(ratio, 0)[:,i]
-        err = sigma(ratio, 0)[:,i]
-        fill_between(f, mean_ - err, mean_ + err,
+        fill_between(f, baseline[:, i] - err[:, i], baseline[:, i] + err[:, i],
                      facecolor=c, edgecolor=c, alpha=0.8)
         fill_between([f[0], f[-1]], ex[:,i] + plus_am[:,i], ex[:,i] + minus_am[:,i],
                      facecolor = 'gray', edgecolor='gray', alpha=.3)
@@ -102,20 +109,52 @@ def plot_ratio(ratio, expect, zas, za0_ind, d_za=1, dosave=False):
              linewidth=10)
         plot(f, mu(ratio, 0)[:, i], 'k.', ms=2)
         plot([f[0], f[-1]], [expect[i], expect[i]], 'k')
-    ylim(-2, 2)
+    ylim(-1.5, 1.5)
     xlim(9.75, 11.7)
     xticks(arange(9.75, 11.75, .25), rotation=-90, ha='center')
     grid(True)
-    legend(loc='upper left',prop={'size':11})
-    title(r'$T_{{sky}}$ ratio, {} airmasses with 1 sigma error bands'.format(len(zas)))
+    legend(loc='upper left',prop={'size':10})
+    if custom_title is None:
+        title(r'$T_{{sky}}$ ratio, {} airmasses with 1 sigma error bands'.format(len(zas)))
+    else:
+        title(r'{}'.format(custom_title))
     xlabel('Frequency (GHz)')
-    ylabel(r'$R(f)$, $\theta_0={}^\circ$, average over {} scans'.format(zas[za0_ind], 
-                                                                        ratio.shape[0]), size=16)
+    ylabel(r'$R(\theta_0={}^\circ)$, {} over {} scans'.format(zas[za0_ind], kind, 
+                                                                ratio.shape[0]), size=15)
     tight_layout()
+    if dosave:
+        savefig('{}/../reduc_data/fig_10.png'.format(io.__file__[:-11]))
 
-def waterfall_res(data, expect, times, dosave=False):
+def compare_ratio(datadict, expect, zas, za0_ind, 
+                  dosave=False, kind='median', ext=''):
+    if kind=='median':
+        baselinedict = {k: nanmedian(v, 0) for k, v in datadict.items()}
+    elif kind=='mean':
+        baseline1, baseline2 = {k: mu(v, 0) for k, v in datadict.items()}
+    else:
+        raise ValueError, 'invalid kwarg for "kind" (needs "mean" or "median")'
+    f = linspace(9.5, 11.7, 2048)
+    fig, all_axes = subplots(4, 1, sharex=True, sharey=True, figsize=(20, 10))
+    for i in range(len(zas[:-1])):
+        ax = all_axes[i]
+        for k, v in baselinedict.items():
+            ax.plot(f, v[:, i] - expect[i], label=k, linewidth=1.5)
+        ax.set_ylim(-1, 1)
+        ax.set_xlim(9.5, 11.7)
+        ax.set_xticks(arange(9.5, 11.7, .1))
+        ax.set_xticklabels(arange(9.5, 11.7, .1), rotation=90, ha='center')
+        ax.grid(True)
+        ax.set_title(r'$\theta_z={}$'.format(zas[i]))
+    all_axes[0].legend(loc='upper left', prop={'size':8})
+    ax.set_xlabel('Frequency (GHz)')
+    #tight_layout()
+    fig.text(0.07, 0.5, r'$\mathrm{{{}}}(R)-\langle R\rangle$'.format(kind), va='center', 
+             rotation='vertical', size=16)
+    if dosave:
+        savefig('{}/../reduc_data/compare_ratio{}.png'.format(io.__file__[:-11], ext))
+
+def waterfall_res(data, expect, zas, times, dosave=False, custom_title=None):
     close('all')
-    zas = array([20., 32.6, 40.24, 45.74, 50.])
     for index, prediction in enumerate(expect):
         fig, ax1 = subplots(figsize=(10, 10))
         img = data[:, :, index].copy() - prediction
@@ -127,22 +166,25 @@ def waterfall_res(data, expect, times, dosave=False):
         xlabel('Frequency (GHz)')
         ylabel('Scan number')
         ax2 = ax1.twinx()
-        yticks(arange(times.size)[::-10], 
-               [t[6:-7] for t in times[::10]], 
+        yticks(arange(times.size)[::-30], 
+               [t[6:-7] for t in times[::30]], 
                size='xx-small', va='center')
         ylabel('Time (UTC)')
-        title(r'$T_{{sky}}$ ratio residuals, railed at $\pm2$, $\theta_z={}^\circ$'.format(zas[index]))
+        if custom_title is None:
+            title(r'$T_{{sky}}$ ratio residuals, railed at $\pm2$, $\theta_z={}^\circ$'\
+                      .format(zas[index]))
+        else:
+            title(r'{}'.format(custom_title))
         tight_layout()
         if dosave:
             savefig('{}/../reduc_data/fig_{}.png'.format(io.__file__[:-11], index))
 
-def waterfall_spec(data, times, dosave=False):
+def waterfall_spec(data, zas, times, dosave=False, custom_title=None, ext=''):
     close('all')
-    zas = array([20., 32.6, 40.24, 45.74, 50.])
     for index in range(data.shape[2]):
         fig, ax1 = subplots(figsize=(10, 10))
         img = data[:, :, index].copy()
-        imshow(img, vmin=nanmin(data), vmax=nanmax(data))
+        imshow(log10(img))
         #colorbar()
         xticks(arange(2048)[::2048/22.], 
                [round(a, 2) for a in linspace(9.5, 11.7, 23)],
@@ -150,14 +192,52 @@ def waterfall_spec(data, times, dosave=False):
         xlabel('Frequency (GHz)')
         ylabel('Scan number')
         ax2 = ax1.twinx()
-        yticks(arange(times.size)[::-10], 
-               [t[6:-7] for t in times[::10]], 
+        Nth_tick = int(round(times.size / 50.))
+        yticks(arange(times.size)[::-Nth_tick], 
+               [t[6:-7] for t in times[::Nth_tick]], 
                size='x-small', va='center')
         ylabel('Time (UTC)')
-        title(r'$\overline{{V^{{\ 2}}}}, \,\theta_z=\ {}^\circ$'.format(zas[index]))
+        if custom_title is None:
+            title(r'$\mathrm{{log_{{10}}}}\overline{{V^{{\ 2}}}}, \,\theta_z=\ {}^\circ$'.format(zas[index]))
+        else:
+            title(r'{}'.format(custom_title))
         tight_layout()
         if dosave:
-            savefig('{}/../reduc_data/fig_{}.png'.format(io.__file__[:-11], index+5))
+            savefig('{}/../reduc_data/spec{}_{}.png'.format(io.__file__[:-11], ext, index))
+
+def plot_ratio_twopanel(data, expect, zas, times, dosave=False, custom_title=None, ext=''):
+    close('all')
+    for index in range(data.shape[2]):
+        figure(figsize=(10, 10))
+        ax1 = subplot2grid((4,3), (0,0), colspan=3, rowspan=3)
+        ax2 = subplot2grid((4,3), (3,0), colspan=3, sharex=ax1)
+        img = data[:, :, index].copy() - expect[index]
+        ax1.imshow(img, vmin=-2, vmax=2)
+        ax1.set_ylabel('Scan number')
+        ax2.plot(arange(2048), nanmedian(img, 0))
+        ax2.set_xlim(0, 2048)
+        ax2.set_ylim(-1, 1)
+        ax2.set_xticks(arange(2048)[::2048/22.])
+        ax2.set_xlabel('Frequency (GHz)')
+        ax2.set_ylabel(r'$\mathrm{median}(R-\langle R\rangle)$', size=15)
+        ax2.grid(True)
+        for a in (ax1, ax2):
+            a.set_xticklabels([round(a, 2) for a in linspace(9.5, 11.7, 23)],
+                              rotation='vertical', ha='center')
+        ax3 = ax1.twinx()
+        Nth_tick = int(round(times.size / 50.))
+        ax3.set_yticks(arange(times.size)[::-Nth_tick])
+        ax3.set_yticklabels([t[6:-7] for t in times[::Nth_tick]], 
+                            size='x-small', va='center')
+        ax3.set_ylabel('Time (UTC)')
+        if custom_title is None:
+            ax1.set_title((r'$R\,-\,\langle R \rangle\,,\,\theta_z=\ {}^\circ$, '+\
+                            'color scale railed at $\pm2$').format(zas[index]))
+        else:
+            ax1.set_title(r'{}'.format(custom_title))
+        tight_layout()
+        if dosave:
+            savefig('{}/../reduc_data/twopanel{}_{}.png'.format(io.__file__[:-11], ext, index))
 
 def sigma(data, axis):
     return nanstd(data.copy(), axis=axis)
@@ -170,4 +250,5 @@ def mu(data, axis, weights=None):
 def ratio_err(za, d_za, za0_ind):
     am = 1 / cos(pi * za / 180)
     plusmin = [1 / cos(pi * (za + d) / 180) for d in (d_za, -d_za)]
-    return [(a - am.mean()) / (a[za0_ind] - am.mean()) for a in plusmin]
+    plusmin = [(a - am.mean()) / (a[za0_ind] - am.mean()) for a in plusmin]
+    return [a - ((am - am.mean()) / (am[za0_ind] - am.mean())) for a in plusmin]
