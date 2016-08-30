@@ -1,4 +1,12 @@
 Time (UTC),Notes,Author
+2016-08-30T18:13:25, stop scan to put on baffle and nitrogen,JXK
+2016-08-29T21:50:56, start scan with just horn+mylar no baffle or an73 cage.,JXK
+2016-08-29T21:39:57, stop and didnt see any state change. just fyi these were all without baffle.,JXK
+2016-08-29T20:54:40, seems to have worked. doing a scan trial now.,JXK
+2016-08-29T20:46:35, still seeing state change. Trying again,JXK
+2016-08-29T20:38:20, still state changes. trying with 20db total atten rather than 16.,JXK
+2016-08-29T20:20:16, last scan had state changes. Trying again without home,JXK
+2016-08-29T20:12:37, cal scan with an73 in place (see photo),JXK
 2016-08-26T20:54:47, scan end,JXK
 2016-08-26T20:42:26, scan start with added 10db of atten,JXK
 2016-08-26T20:28:38, cal scan after adding 10db of attenuation to reduce state changes,JXK
