@@ -1,0 +1,125 @@
+<HTML>
+<HEAD>
+<TITLE>Suspended horn cold load calibration</TITLE>
+</HEAD>
+<BODY TEXT="#000000"  BGCOLOR="#F0F0F0">
+<H2>August 24, 2016 - More cold load calibration</H2>
+Jonathan Kyl
+<p>
+<hr>
+<H3>Intro</H3>
+We performed a series of cold load calibration trials in the lab with the intent to keep the baffle and horn
+at the same temperature throughout the trial, so as not to induce a change in the horn's gain due to a change in
+impedance. We wrapped the baffle in mylar and a towel and suspended it from the ceiling to try and reduce the amount of cold gas that got inside. We also attempted to induce such a change by pouring LN2 directly on the baffle. 
+<p>
+<hr>
+<H3>Results</H3>
+<b>Figure 1</b> shows the calibrated spectra for the suspended horn with baffle, mylar and towel. 
+<p>
+This trial appears to have slightly more pronounced structure than the non-suspended, non-mylar-and-towel version shown in figure 17 <a href="http://caelum.uchicago.edu/~xhorn/logbook/analysis/20160801_cold_load_cal/">here.</a>
+<p>
+<b>Fig 1</b>
+<table border="1">
+<tr><th>a - calibrated mean spectrum
+<th>b - raw spectra
+<tr>
+<td><a href="fig_2_hanging_baff.png "><img src="fig_2_hanging_baff.png"width=600></a>
+<td><a href="fig_4_hanging_baff.png"><img src="fig_4_hanging_baff.png"width=600></a>
+</table>
+<p>
+<b>Figure 2</b> shows the calibrated spectra for the suspended horn with just the baffle. 
+<p>
+This trial appears to have slightly less pronounced structure than the non-suspended version shown in figure 4a and 4b <a href="http://caelum.uchicago.edu/~xhorn/logbook/analysis/20160803_more_cold_cal/">here.</a>
+<p>
+<b>Fig 2</b>
+<table border="1">
+<tr><th>a - calibrated mean spectrum
+<th>b - raw spectra
+<tr>
+<td><a href="fig_2_hanging_nobaff.png "><img src="fig_2_hanging_nobaff.png"width=600></a>
+<td><a href="fig_4_hanging_nobaff.png"><img src="fig_4_hanging_nobaff.png"width=600></a>
+</table>
+<p>
+<b>Figure 3</b> shows the effect of dumping LN2 directly on the baffle. It was calculated by using a previous calibration to generate calibrated spectra. It shows the difference between temporally adjecent mean spectra. 
+<p>
+LN2 was dumped at the 150th integration and stopped at the 400th integration. It seems as if the standing-wave-like wiggles begin to form there, and then fade as time goes on. 
+<p>
+We can take the means of fewer spectra to increase the time resolution of this plot at the expense of SNR. The 
+wiggle behaviour is not as obvious in this case (3b). 
+<p>
+Figure 3c shows the same data as 3a, but animated in order to better see structure over time.
+<p>
+<b>Fig 3</b>
+<table border="1">
+<tr><th>a - Groups of 25
+<th>b - Groups of 10 
+<th>c - Groups of 25, animated
+<tr>
+<td><a href="cold_dump_25.png"><img src="cold_dump_25.png" width=600></a>
+<td><a href="cold_dump_10.png"><img src="cold_dump_10.png" width=600></a>
+<td><a href="25.gif"><img src="25.gif" width=600></a>
+</table>
+<p>
+<hr>
+<H3>Conclusions</H3>
+
+The baffle and/or the horn's gain does seem to be changing during these cooldown trials, as evidenced by the state change in figure 3 and the reduced wiggles in figure 2 compared to figure 1. <p>
+It is unclear whether suspending the horn above the box or the towel and mylar did much to decrease the gas exchange, because of the slightly <i>more</i> pronounced features compared to the non-suspended, non-mylar-and-towel trials. 
+
+<!--
+
+One panel
+
+<p>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th>Fig.&nbsp;1&nbsp;-</th>
+      <th>Figure title</th>
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><a href="fig_1.png"><img src="fig_1.png"></a></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+
+Two panel
+
+<p>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th rowspan="2">Fig.&nbsp;1&nbsp;-</th>
+      <th colspan="2">Figure title</th>
+  </tr>
+  <tr><td align="center"><b>a. </b> label a</td>
+      <td align="center"><b>b. </b> label b</td>
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><img src="fig_1.png"></td>
+      <td><img src="fig_2.png"></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+
+Three panel
+
+<p>
+<b>Fig 1 - Figure title</b>
+<table border="1">
+<tr><th>a - label 1
+<th>b - label 2
+<th>c - label 3
+<tr>
+<td><a href="fig_1.png"><img src="fig_1.png"></a>
+<td><a href="fig_2.png"><img src="fig_2.png"></a>
+<td><a href="fig_3.png"><img src="fig_3.png"></a>
+</table>
+
+-->

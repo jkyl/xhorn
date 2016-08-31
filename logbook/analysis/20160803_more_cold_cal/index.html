@@ -1,0 +1,237 @@
+<HTML>
+<HEAD>
+<TITLE>More cold load calibration</TITLE>
+</HEAD>
+<BODY TEXT="#000000"  BGCOLOR="#F0F0F0">
+<H2>August 3, 2016 - More cold load calibration</H2>
+Jonathan Kyl
+<p>
+<hr>
+<H3>Intro</H3>
+I performed a series of cold load calbration trials using LN2-soaked pyramidal absorber in 
+a wooden box, with the same procedure as <a href="../20160801_cold_load_cal">before</a>. I 
+wanted to test the hypothesis that standing waves due to reflections off the room's walls 
+and/or the absorber box were the source of all the structure that we saw in the ratio and 
+in the baseline-subtracted calibrated spectra. 
+<p>
+The trials took place over two days. The first day I attempted to replicate the results from 
+<a href="../20160801_cold_load_cal">Chris's trials</a>, and then remove the forebaffle. The 
+second day I wanted to see the effect of scooting the horn slightly closer to the load - after 
+removing the baffle on the first day, I noticed that the edge of the bench was anterior to the 
+aperture of the horn. Finally I attempted to shield the horn from room reflections using not 
+the baffle but an enclosure of eccosorb sheets surrounding the back and sides of the horn. 
+<p>
+<hr>
+<H3>Procedure</H3>
+The procedure is to thoroughly spray the absorber with LN2, position it as close as possible to the 
+edge of the bench, and immediately begin integrating while frequency switching. I used the same 
+integration scheme as before, namely <p>&nbsp&nbsp&nbsp&nbsp<tt>
+lab_spec.integrate(s, int_time=960, LO_freq=[9.445,9.5,9.555], LO_time=2)</tt><p>
+Tsys is calculated as (y-intercept / slope) of a linear fit between two points of "known" (really
+tuned) temperature on a temperature/power plot. Points in between these two can thus be assigned
+a temperature based on their measured power. We calculate T(f) for each channel of each measured spectrum,
+then fit each to a 4th order polynomial and subtract. Finally we calculate the mean of these residuals. 
+We also calculate the "ratio" as (Pcold - Phot) / (Pintermediate - Pcold). If Tsys and G are sufficiently
+flat in frequency and linear with input power, this ratio should also be featureless. 
+<p>
+There are two days represented here, each with 3 succesful trials. On day 1, the order was as follows:
+<ul><li>baffle on<li>baffle off<li>baffle off + flexible SMA</ul>
+The reason for the flexible SMA was due to a crack in the original rigid SMA between the LNA and
+amp box that I noticed after the second trial. I had a lot of trouble on this day due to up/downlink
+timeouts between my laptop and the roach. I switched over to sundog which gave rise to a host of other 
+problems which have since been resolved. 
+<p>
+On day 2, the order was as follows:
+<ul><li>baffle off<li>baffle off + scooted forward<li>baffle off + scooted forward 
++ eccosorb enclosure</ul>All trials on this day were with the flexible SMA. 
+<p>
+<hr>
+<H3>Results</H3>
+<b>Figure 1</b> shows Tsys on day 1. 
+<p>
+You can clearly see in 1a how drastically the scale had to be adjusted to
+compensate for the warm Tcold, because the errors have been exaggerated too. 
+<p>
+<b>Fig 1</b>
+<table border="1">
+<tr><th>a - Baffle
+<th>b - No baffle
+<th>c - No baffle + flexible SMA
+<tr>
+<td><a href="fig_1_corr_horn_baff.png "><img src="fig_1_corr_horn_baff.png"width=400></a>
+<td><a href="fig_1_corr_horn_nobaff_a.png "><img src="fig_1_corr_horn_nobaff_a.png"width=400></a>
+<td><a href="fig_1_corr_horn_nobaff_b.png "><img src="fig_1_corr_horn_nobaff_b.png" width=400></a>
+</table>
+<p>
+<b>Figure 2</b> shows Tsys on day 2. 
+<p>
+I got the hang of adequately soaking the pyramids and the adjustments were not so drastic. 
+<p>
+<b>Fig 2</b>
+<table border="1">
+<tr><th>a - No baffle
+<th>b - No baffle + scooted forward
+<th>c - No baffle + scooted forward + eccosorb
+<tr>
+<td><a href="fig_1_corr_horn_nobaff_behind_noshield.png"><img src="fig_1_corr_horn_nobaff_behind_noshield.png" width=400></a>
+<td><a href="fig_1_corr_horn_nobaff_infront_noshield.png "><img src="fig_1_corr_horn_nobaff_infront_noshield.png" width=400></a>
+<td><a href="fig_1_corr_horn_nobaff_infront_shielded.png"><img src="fig_1_corr_horn_nobaff_infront_shielded.png" width=400></a>
+</table>
+<p>
+<b>Figure 3</b> shows the mean Tsys with order-4 polyfit subtracted on day 1. 
+<p>
+Looks like there are ~300 MHz (~1 meter) RF standing waves in panels a and b. There is also a big IF 
+feature at about 900 MHz in panel b - not sure what this could be, as the crack in the SMA after 
+the LNA ought to show up in RF if anything. Most tellingly, there are unmistakably ~60 MHz (~5 meter) 
+RF standing waves in c with the baffle off. Strongly suggests that side/backlobes are picking up coherent
+room reflections. 
+<p>
+<b>Fig 3</b>
+<table border="1">
+<tr><th>a - Baffle
+<th>b - No baffle 
+<th>c - No baffle + flexible SMA 
+<tr>
+<td><a href="fig_2_corr_horn_baff.png"><img src="fig_2_corr_horn_baff.png" width=400></a>
+<td><a href="fig_2_corr_horn_nobaff_a.png "><img src="fig_2_corr_horn_nobaff_a.png" width=400></a>
+<td><a href="fig_2_corr_horn_nobaff_b.png"><img src="fig_2_corr_horn_nobaff_b.png" width=400></a>
+</table>
+<p>
+<b>Figure 4</b> shows the mean Tsys with order-4 polyfit subtracted on day 2. 
+<p>
+The IF features visible in figure 3b have gone away, and we still see those 5 meter standing waves in a and b. 
+They have largely disappeared in c with the addition of the eccosorb enclosure.  There still looks to be some RF
+structure in c corresponding to about 1 meter (approximately the scale of the calibrator box. It is unfortunately
+impossible to tell how much of an effect the baffle has on suppressing room reflections due to how noisy that 
+trial turned out to be. Will redo. 
+<p>
+<b>Fig 4</b>
+<table border="1">
+<tr><th>a - No baffle
+<th>b - No baffle + scooted forward
+<th>c - No baffle + scooted forward + eccosorb
+<tr>
+<td><a href="fig_2_corr_horn_nobaff_behind_noshield.png"><img src="fig_2_corr_horn_nobaff_behind_noshield.png" width=400></a>
+<td><a href="fig_2_corr_horn_nobaff_infront_noshield.png "><img src="fig_2_corr_horn_nobaff_infront_noshield.png" width=400></a>
+<td><a href="fig_2_corr_horn_nobaff_infront_shielded.png"><img src="fig_2_corr_horn_nobaff_infront_shielded.png" width=400></a>
+</table>
+<p>
+<b>Figure 5</b> shows the ratio on day 1.
+<p>
+<b>Fig 5</b>
+<table border="1">
+<tr><th>a - Baffle
+<th>b - No baffle 
+<th>c - No baffle + flexible SMA 
+<tr>
+<td><a href="fig_3_corr_horn_baff.png"><img src="fig_3_corr_horn_baff.png" width=400></a>
+<td><a href="fig_3_corr_horn_nobaff_a.png "><img src="fig_3_corr_horn_nobaff_a.png" width=400></a>
+<td><a href="fig_3_corr_horn_nobaff_b.png"><img src="fig_3_corr_horn_nobaff_b.png" width=400></a>
+</table>
+<p>
+<b>Figure 6</b> shows the ratio on day 2.
+<p>
+<b>Fig 6</b>
+<table border="1">
+<tr><th>a - No baffle
+<th>b - No baffle + scooted forward
+<th>c - No baffle + scooted forward + eccosorb
+<tr>
+<td><a href="fig_3_corr_horn_nobaff_behind_noshield.png"><img src="fig_3_corr_horn_nobaff_behind_noshield.png" width=400></a>
+<td><a href="fig_3_corr_horn_nobaff_infront_noshield.png "><img src="fig_3_corr_horn_nobaff_infront_noshield.png" width=400></a>
+<td><a href="fig_3_corr_horn_nobaff_infront_shielded.png"><img src="fig_3_corr_horn_nobaff_infront_shielded.png" width=400></a>
+</table>
+<p>
+<b>Figure 7</b> shows the raw spectra and calibrated T(f) on day 1. 
+<p>
+<b>Fig 7</b>
+<table border="1">
+<tr><th>a - Baffle
+<th>b - No baffle 
+<th>c - No baffle + flexible SMA 
+<tr>
+<td><a href="fig_4_corr_horn_baff.png"><img src="fig_4_corr_horn_baff.png" width=400></a>
+<td><a href="fig_4_corr_horn_nobaff_a.png "><img src="fig_4_corr_horn_nobaff_a.png" width=400></a>
+<td><a href="fig_4_corr_horn_nobaff_b.png"><img src="fig_4_corr_horn_nobaff_b.png" width=400></a>
+</table>
+<p>
+<b>Figure 8</b> shows the raw spectra and calibrated T(f) on day 2. 
+<p>
+<b>Fig 8</b>
+<table border="1">
+<tr><th>a - No baffle
+<th>b - No baffle + scooted forward
+<th>c - No baffle + scooted forward + eccosorb 
+<tr>
+<td><a href="fig_4_corr_horn_nobaff_behind_noshield.png"><img src="fig_4_corr_horn_nobaff_behind_noshield.png" width=400></a>
+<td><a href="fig_4_corr_horn_nobaff_infront_noshield.png "><img src="fig_4_corr_horn_nobaff_infront_noshield.png" width=400></a>
+<td><a href="fig_4_corr_horn_nobaff_infront_shielded.png"><img src="fig_4_corr_horn_nobaff_infront_shielded.png" width=400></a>
+</table>
+<p>
+<hr>
+<H3>Conclusions</H3>
+
+We agree that the eccosorb serves to suppress the long-mode (5m) RF standing waves, consistent with coherent room reflections.
+We still see some short-mode RF standing waves in the eccosorb trial - probably due to reflections from within the cal box. 
+We ought to redo the baffle on/off trial due to the high noise in the very first trial. We will also connect the corrugated
+horn to the signal generator and transmit a narrow band signal towards the cal box, and use the 
+pyramidal horn to pick up any reflections. This is the time-reversed analogue of radiation building up coherently within the box 
+and being picked up by the corrugated horn. This can be measured in real time.  
+
+<!--
+
+One panel
+
+<p>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th>Fig.&nbsp;1&nbsp;-</th>
+      <th>Figure title</th>
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><a href="fig_1.png"><img src="fig_1.png"></a></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+
+Two panel
+
+<p>
+<center>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table border="0" cellpadding="5" cellspacing="0">
+  <tr><th rowspan="2">Fig.&nbsp;1&nbsp;-</th>
+      <th colspan="2">Figure title</th>
+  </tr>
+  <tr><td align="center"><b>a. </b> label a</td>
+      <td align="center"><b>b. </b> label b</td>
+  </tr>
+  <tr><td>&nbsp;</td>
+      <td><img src="fig_1.png"></td>
+      <td><img src="fig_2.png"></td>
+  </tr>
+  </table>
+</td></tr>
+</table>
+</center>
+
+Three panel
+
+<p>
+<b>Fig 1 - Figure title</b>
+<table border="1">
+<tr><th>a - label 1
+<th>b - label 2
+<th>c - label 3
+<tr>
+<td><a href="fig_1.png"><img src="fig_1.png"></a>
+<td><a href="fig_2.png"><img src="fig_2.png"></a>
+<td><a href="fig_3.png"><img src="fig_3.png"></a>
+</table>
+
+-->

@@ -1,0 +1,31 @@
+<HTML>
+<HEAD>
+<TITLE>Mixer/Osc Notes</TITLE>
+</HEAD>
+<BODY TEXT="#000000"  BGCOLOR="#F0F0F0">
+
+<H2>Notes on New Oscillator and Mixer</H2>
+<p>
+<hr>
+<p>
+  For future reference, some specs for the Herley CTI 9506 MHz oscillator and the Mini Circuits wide band frequency mixer:
+<p>
+  <a href="http://www.ebay.com/itm/Herley-CTI-phase-locked-PDRO-oscillator-9506-MHz-9-506-GHz-tested-/300923642046">Oscillator:</a>
+  <ul>
+    <li>+13 dBm output power</li>
+    <li>0 dBm REF CLK input power</li>
+    <li>95.1 MHz, 47.5 MHz, or 23.8 MHz REF CLK input freq.</li>
+    <li>15V DC supply</li>
+  </ul>
+<p>
+  <a href="http://www.minicircuits.com/pdfs/ZX05-153LH+.pdf">Mixer</a>
+  <ul>
+    <li>3200-15000 MHz LO/RF input freq.</li>
+    <li>DC-4000 MHz IF output freq.</li>
+    <li>6.6 dB typ conversion loss</li>
+    <li>15V DC supply</li>
+  </ul> 
+<p>
+  <a href="http://caelum.uchicago.edu/~xhorn/photos/20151012_electronics_prelim/tn/IMG_0115.JPG.html"</a>Preliminary electronics setup.</a> Eventually the spectrum analyzer will be replaced with the roach board, at which point we'll need a new reference clock. Note the 20dB attenuator on the input of the analyzer, and the 20dB amplifier between the 50 MHz ref. output of the analyzer and the ref. input of the oscillator.
+<p>
+  Mixer functions as expected: with 9.5 GHz RF and 9.4 GHz LO inputs, we see the IF output peak at exactly 100 MHz on the analyzer. The 18.9 GHz summed-frequency component is also present, but only ~15 dB above noise, compared to ~30dB for the differenced-frequency component (lowpassed)? We also see both the RF and LO peaks.

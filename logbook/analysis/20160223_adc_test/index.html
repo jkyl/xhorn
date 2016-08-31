@@ -1,0 +1,34 @@
+<HTML>
+<HEAD>
+<TITLE>ADC Testing</TITLE>
+</HEAD>
+<BODY TEXT="#000000"  BGCOLOR="#F0F0F0">
+
+<H2>February 23, 2016 - ADC Testing</H2>
+
+<p>
+<hr>
+<p>
+  Here is a class for sampling on the ROACH's ADC. It imports fit_snap from fit_cores but nothing from rww_tools because that code is a nightmare. Includes method for fitting and clearing ogp. Will update with fft method. Use like this to fit ogp and look at a sample:
+  <xmp>  r = Roach(IP)
+  r.clear_ogp()
+  r.fit_ogp()
+  r.plot_snap()
+  r.plot_cores()
+</xmp>
+<p>
+<hr>
+<p>  
+<H3>Results</H3>
+<hr>
+<p>
+  There is something up with core #4 -- way more jitter, and its fit parameters vary a lot from fit to fit (particularly phase).
+<p>
+<embed src="http://caelum.uchicago.edu/~xhorn/logbook/analysis/20160223_adc_test/figure1.pdf" width="1000" height="650" type='application/pdf'>
+<p>
+<embed src="http://caelum.uchicago.edu/~xhorn/logbook/analysis/20160223_adc_test/figure2.pdf" width="1000" height="650" type='application/pdf'>
+<H3>Code</H3>
+<hr>
+<iframe src="http://caelum.uchicago.edu/~xhorn/logbook/analysis/20160223_adc_test/jkyl_roach.py" width = 700 height = 500></iframe> 
+
+

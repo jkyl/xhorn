@@ -1,0 +1,168 @@
+<HTML>
+<HEAD>
+<TITLE>Error Analysis</TITLE>
+</HEAD>
+<BODY TEXT="#000000"  BGCOLOR="#F0F0F0">
+
+<H2>September 23, 2015 - Error Analysis</H2>
+
+<p>
+
+
+<hr>
+<p>
+ Discussion of systematic errors in our beam profile measurements.  
+<p>
+There are four sources of uncertainty accounted for here: 
+<ul>
+<li>the degree scale of the rotation stage</li>
+<li>the parallax dimensions (referred to as <i>l</i> and <i>d</i>) 
+<li>distortion of the profile due to slicing off-boresight</li>
+<li>error in estimating power on the spectrum analyzer
+</ul>
+<p>
+The error due to slicing is correlated with the errors in angle. I wrote a simple monte carlo script that assigns x and y error bars  based on the standard deviation of points generated with best-guess errors in the parameters mentioned above, multiplied by a random array sigma=1. The correlation between errors due to slicing and sources of x-error has a higher order effect and is probably not necessary to account for at this stage. 
+<p>
+<hr>
+
+<xmp>
+from numpy import *
+from matplotlib.pyplot import *
+from scipy import optimize
+from scipy.interpolate import interp1d
+
+
+x,y=loadtxt('9_12.tsv',unpack=True,usecols=[0,1]) #data
+x_ub=16.                                          #region to fit
+p0=[1.,1.,1.]                                     #initial guesses
+
+d=14.                                             #parallax measurements
+l=205.
+
+derr=3.                                           #best guess uncertainty
+lerr=3.
+
+yerr=10.                                          #off boresight
+
+angoff=(180/pi)*arctan(yerr/l)                    #off boresight->angle
+
+angerr=0.25                                       #degree scale precision
+
+percent=0.01
+def powerr(y,percent):                            #percent error in power
+    return -percent*y
+
+N=200                                             #three random arrays std=1
+i=random.randn(N)
+j=random.randn(N)
+k=random.randn(N)
+
+def fit(p,x):
+    return (10*log10(exp( -(x-p[1])**2 / (2*(p[0]**2)))))+p[2]
+def residual(p,x,y):
+    return fit(p,x)-y
+def fitparams(x,y):
+    return optimize.leastsq(residual,p0,
+            args=(x[where(x<x_ub)],y[where(x<x_ub)]),full_output=1)[0]
+def norm(x,y):
+    return x-fitparams(x,y)[1],y-fitparams(x,y)[2]
+                                                  #no errors introduced yet
+x,y=norm(x,y)                                               
+                                                  #normalize data
+def parallax(x,xerr,d,derr,l,lerr):
+    return x+xerr+((180/pi)*arctan(((d+derr)/(l+lerr))*sin((pi/180.)*(x+xerr))))
+                                                  #parallax() takes error args,
+                                                  #returns only x array
+
+X=parallax(x,0,d,0,l,0)                           #parallaxed x values
+
+xx=X[0:-1]
+yy=y[0:-1]                                        #truncated parallaxed arrays
+
+
+
+#monte carlo
+def Xerror(angerr,derr,lerr):
+    xplus=[]                
+    xminus=[]
+    for n in range(len(x)):
+        xerr=[]
+        for m in range(N):
+            xerr.append(parallax(x[n],(angerr*i[m]),d,(derr*j[m]),l,(lerr*k[m])))
+        xerr=array(xerr)
+        xplus.append((xerr[where(xerr>X[n])]).std())
+        xminus.append((xerr[where(xerr<X[n])]).std())
+    xplus=array(xplus)
+    xminus=array(xminus)
+    return [xplus,xminus]
+
+####################
+def Yerror(angerr,derr,lerr,angoff,percent):
+    yplus=[]
+    yminus=[]
+    a=linspace(-100,100,1000)
+    az,el=meshgrid(a,a)
+    r=sqrt(az**2 + el**2)
+    profiles=[]
+    N=50
+    for n in range(N):
+        profile=[]
+        for k in range(len(X)):
+            profile.append(X[k]+((Xerror(angerr,derr,lerr)[0])[k]*random.randn()))
+        profiles.append(profile)
+    for n in range(N):
+        f=interp1d(profiles[n],y)
+        z=f(r)
+        zslice=z[(abs(a-angoff)).argmin()]
+        zslice=zslice-zslice.max()
+        zerr=zslice-z[500]
+        errf=interp1d(a,zerr)
+        yplus.append((errf(xx))*(errf(xx)>0))
+        yminus.append((errf(xx))*(errf(xx)<=0))
+
+    yplus,yminus=swapaxes(yplus,0,1),swapaxes(yminus,0,1)
+    Yplus=[]
+    Yminus=[]
+    for n in range(len(yplus)):
+       Yplus.append(abs(mean(yplus[n])))
+       Yminus.append(abs(mean(yminus[n])))
+    return [Yplus+powerr(yy,percent),Yminus+powerr(yy,percent)]
+
+close('all')
+figure(1);grid()
+errorbar(xx,yy,Yerror(angerr,derr,lerr,angoff,percent),[(Xerror(angerr,derr,lerr)[0])[0:-1],(Xerror(angerr,derr,lerr)[1])[0:-1]])
+show()
+
+figure(2);grid()
+plot(xx,Yerror(angerr,derr,lerr,angoff,0)[0],label='Correlated, without 1%')
+plot(xx,Yerror(0.001,0.001,0.001,angoff,0)[0],label='Uncorrelated, without 1%')
+plot(xx,Yerror(angerr,derr,lerr,angoff,percent)[0],label='Correlated, with 1%')
+plot(xx,Yerror(0.001,0.001,0.001,angoff,percent)[0],label='Uncorrelated, with 1%')
+legend();show()
+</xmp>
+<hr>
+<p>
+The monte carlo section first calculates plus and minus x error bars by calling parallax (which takes error arguments) N times for each angle, with each error set to a randn*our best guess for that error. It then calculates the standard deviation of each of the N parallaxed values at each point, and appends that to an array of x errors. It includes a data point that was made up at 180 deg, so as to be able to interpolate a 2d patch in the next section. When we plot the data this point is truncated. 
+<p>
+It then takes these x values and their errors and generates N profiles, each with its x values shifted by a randn*its associated +x error (the positive errors were generally larger due to the parallax effect). It then generates a 2d profiles for each of the 1d profiles, slices it back to 1d at a best guess angle, normalizes, and calculates the vertical difference at each x value between it and the 0 deg slice. These are seperated into plus and minus error bars (as with the x errors) and then added to an error that goes as some percent of the Y value in dB. Both of these processes are written as functions to more easily compare the effect of incorporating x errors into the y error calculation. 
+ <H3>Fig. 1</H3>  
+<p>
+Comparison of positive y errors at each angle, with and without correlation between x and y errors, and with and without the percent error.
+<p>
+The uncertainty is dominated by error in reading off power, such that the correlation between x and y error is insignificant. Hopefully the percent error can be reduced by using the signal generator's 10 MHz reference signal to clock the spectrum analyzer. 
+
+<p>
+<hr>
+<table border="1">
+<td><a href="figure_1.png"><img src="figure_1.png" width=1300></a>
+</table> 
+<p>
+<H3>Fig. 2</H3>  
+<p>
+  The beam profile with error bars. <b>WILL UPDATE THIS - STAY TUNED GOING HOME FOR THE DAY</b>
+<p>
+<hr>
+<table border="1">
+<td><a href="figure_2.png"><img src="figure_2.png" width=1300></a>
+</table> 
+<p>
