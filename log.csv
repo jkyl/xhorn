@@ -1,4 +1,12 @@
 Time (UTC),Notes,Author
+2016-09-09T20:40:33, stop scan,JXK
+2016-09-09T19:36:44, start scan with sheet metal surface on east side,JXK
+2016-09-09T19:27:20, stop scan,JXK
+2016-09-09T18:49:52, start scan with slightly different eccosorb cage (see picture) and .5 second accs,JXK
+2016-09-09T18:23:12, end scan,JXK
+2016-09-07T20:46:10, start two day scan w/o baffle facing east.,JXK
+2016-09-07T20:36:56, cal scan after switching to .5 second accumulations. state changes not present.,JXK
+2016-09-07T20:26:43, cal scan after turning off roach overnight. Still see state changes.,JXK
 2016-08-30T18:13:25, stop scan to put on baffle and nitrogen,JXK
 2016-08-29T21:50:56, start scan with just horn+mylar no baffle or an73 cage.,JXK
 2016-08-29T21:39:57, stop and didnt see any state change. just fyi these were all without baffle.,JXK
