@@ -1,6 +1,7 @@
 from xhorn import reduc_spec
 from numpy import *
 from matplotlib.pyplot import *
+import sys
 
 
 BAFF = ((2016, 8, 22, 22, 23), 
@@ -9,14 +10,26 @@ BAFF = ((2016, 8, 22, 22, 23),
 NOBAFF = ((2016, 8, 23, 16, 50),     
           (2016, 8, 23, 18, 50))
 
-ECCO = ((2016, 8, 29, 20, 54),       #eccosorb cage on beams
+ECCO = ((2016, 8, 29, 20, 54),      
         (2016, 8, 29, 21, 40))
 
-NOECCO = ((2016, 8, 23, 16, 50),     #no eccosorb right before
+NOECCO = ((2016, 8, 23, 16, 50),    
           (2016, 8, 23, 17, 25))
 
 NOECCO_CONTAM = ((2016, 8, 29, 21, 50),
                  (2016, 8, 29, 22, 40))
+
+NEWNO = ((2016, 9, 9, 17, 42),
+         (2016, 9, 9, 18, 26))
+
+NEWNO_2 = ((2016, 9, 9, 17, 0),
+           (2016, 9, 9, 17, 44))
+
+NEWEC = ((2016, 9, 9, 18, 49),
+         (2016, 9, 9, 19, 30))
+
+NEWLIP = ((2016, 9, 9, 19, 36),
+          (2016, 9, 9, 20, 20))
 
 class sky:
     def __init__(self, **entries): 
@@ -34,7 +47,7 @@ def doload(on, off):
     d['xon'], d['xoff'] = ((a.spec - a.b[exind]) / a.g[exind]\
                                for a in (d_on, d_off))
     d['d_on'], d['d_off'], d['exind'], d['cind'], d['za'], d['f'] = \
-        (d_on, d_off, exind,  cind, unique(d_on.za), d_on.f+unique(d_on.lo)[0])
+        (d_on, d_off, exind,  cind, unique(d_on.za), d_on.f+unique(d_on.lo)[0]*1e3)
     return sky(**d)
 
 def tsys(s):
@@ -115,10 +128,66 @@ def ims(s):
         fig.subplots_adjust(right=0.8)
         cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
         c=colorbar(cax=cbar_ax);c.set_label('T (K)')
-   
+
+def means(s, titles=('on', 'off')):
+    figure(5);clf()
+    fig, axes2d = subplots(num=5, nrows=5, ncols=2,
+                           sharex=True, sharey=True,
+                           figsize=(22,12))
+    sind=s.d_on.getscanind()
+    for i, row in enumerate(axes2d):
+        for j, cell in enumerate(row):
+            on_or_off = (s.xon, s.xoff)[j]
+            if i == 0:
+                cell.set_title(titles[j])
+            if j == 1:
+                cell.set_ylabel(s.za[i+1])
+                cell.yaxis.set_label_position("right")
+            data = nanmean((on_or_off[s.d_on.za==s.za[i+1]].T\
+                                -nanmean(on_or_off[s.d_on.za==s.za[i+1],700:1000],1)).T,0)
+            cell.plot(s.f, data, color='bgrcm'[i])
+            cell.set_xlim(s.f[0], s.f[-1])
+            cell.set_xticks(linspace(s.f[0], s.f[-1], 12))
+            cell.set_xticklabels((round(a,1) for a in linspace(s.f[0], s.f[-1], 12) / 1e3), rotation='vertical')
+            cell.set_ylim(-5, 5)
+            cell.grid(True)
+    fig.text(0.5, 0.97, 'Calibrated spectra\'s deviation from median ZA\'s, mean-subtracted and averaged over {} scans.'.format(s.d_on.nscan), ha='center', fontsize=15)
+    fig.text(0.06, 0.5, 'T (K)', va='center', rotation='vertical')
+    fig.text(0.94, 0.5, 'ZA (deg)', va='center', rotation='vertical')
+    fig.text(0.5, 0.03, 'f (GHz)', ha='center')
+
+def over(s, titles=('on', 'off')):
+    figure(5);clf()
+    fig, axes2d = subplots(num=5, nrows=5, ncols=1,
+                           sharex=True, sharey=True,
+                           figsize=(22,12))
+    sind=s.d_on.getscanind()
+    for i, cell in enumerate(axes2d):
+        for j in (0, 1):
+            on_or_off = (s.xon, s.xoff)[j]
+            cell.set_ylabel(s.za[i+1])
+            cell.yaxis.set_label_position("right")
+            data = nanmean((on_or_off[s.d_on.za==s.za[i+1]].T\
+                                -nanmean(on_or_off[s.d_on.za==s.za[i+1],700:1000],1)).T,0)
+            cell.plot(s.f, data, color='br'[j], label=titles[j])
+            cell.set_xlim(s.f[0], s.f[-1])
+            cell.set_xticks(linspace(s.f[0], s.f[-1], 12))
+            cell.set_xticklabels((round(a,1) for a in linspace(s.f[0], s.f[-1], 12) / 1e3), rotation='vertical')
+            cell.set_ylim(-5, 5)
+            cell.grid(True)
+            if i == 2:
+                cell.legend()
+    fig.text(0.5, 0.97, 'Calibrated spectra\'s deviation from median ZA\'s, mean-subtracted and averaged over {} scans.'.format(s.d_on.nscan), ha='center', fontsize=15)
+    fig.text(0.06, 0.5, 'T (K)', va='center', rotation='vertical')
+    fig.text(0.94, 0.5, 'ZA (deg)', va='center', rotation='vertical')
+    fig.text(0.5, 0.03, 'f (GHz)', ha='center')
+
+def tseries(s, titles=('on', 'off')):
+    figure(7);clf()
+    
+        
 def main(s):
     tsys(s)
     tant(s)
     tcal(s)
     ims(s)
-    
