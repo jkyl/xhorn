@@ -5,7 +5,7 @@ from copy import deepcopy as dc
 # Load data
 
 
-figext='nolid'
+figext='cold_dump'
 
 if 0:
     # Terminator runs
@@ -102,6 +102,7 @@ if 0:
     t=x['time']
     #For warming up data
     cind=arange(20)
+<<<<<<< Updated upstream
     hind=-cind-1
     Th=290.0
     Tc=150.0
@@ -115,9 +116,111 @@ if 1:
     t=x['time']
     #For warming up data
     cind=arange(20)
+=======
+>>>>>>> Stashed changes
     hind=-cind-1
     Th=290.0
     Tc=140.0
+
+if 0:
+    # cold dump
+    x=load('lab_spec_data/2016-08-18T16:47:26.npz') 
+    z=x['spec']
+    lo=x['LO_freq']
+    t=x['time']
+    #For warming up data
+    cind=arange(5)
+    hind=-cind-1
+    Th=290.0
+    Tc=140.0
+
+if 1:
+    # wood box LN2 eccosorb run with baffled corrugated horn,
+    # lid, and mylar
+    x=load('lab_spec_data/2016-08-18T18:33:44.npz') 
+    z=x['spec']
+    lo=x['LO_freq']
+    t=x['time']
+    #For warming up data
+    cind=arange(20)
+    hind=-cind-1
+    Th=290.0
+    Tc=140.0
+
+if 0:
+    # wood box LN2 eccosorb run with baffled corrugated horn,
+    # lid, mylar, and towel
+    x=load('lab_spec_data/2016-08-19T12:26:25.npz') 
+    z=x['spec']
+    lo=x['LO_freq']
+    t=x['time']
+    #For warming up data
+    cind=arange(20)
+    hind=-cind-1
+    Th=290.0
+    Tc=220.0
+
+if 0:
+    # terminator redo (BAD BC I MOVED THE FRONT END)
+    x=load('lab_spec_data/2016-08-19T14:32:49.npz') 
+    z=x['spec']
+    lo=x['LO_freq']
+    t=x['time']
+    hind=arange(6) # 290 K indices
+    cind=-hind-1
+    Th=290.0
+    Tc=77.0
+
+if 0:
+    # terminator redo
+    x=load('lab_spec_data/2016-08-19T14:48:48.npz') 
+    z=x['spec']
+    lo=x['LO_freq']
+    t=x['time']
+    hind=arange(6) # 290 K indices
+    cind=-hind-1
+    Th=290.0
+    Tc=77.0
+
+if 0:
+    # wood box LN2 eccosorb run with baffled corrugated horn,
+    # lid, NO mylar, and towel
+    x=load('lab_spec_data/2016-08-19T15:33:18.npz') 
+    z=x['spec']
+    lo=x['LO_freq']
+    t=x['time']
+    #For warming up data
+    cind=arange(20)
+    hind=-cind-1
+    Th=290.0
+    Tc=130.0
+
+if 0:
+    # wood box LN2 eccosorb run with baffled corrugated horn,
+    # lid, mylar, towel, hanging from the ceiling pointed down
+    x=load('lab_spec_data/2016-08-19T17:58:36.npz') 
+    z=x['spec']
+    lo=x['LO_freq']
+    t=x['time']
+    #For warming up data
+    cind=arange(50)
+    hind=-cind-1
+    Th=290.0
+    Tc=130.0
+
+if 0:
+    # wood box LN2 eccosorb run with UNbaffled corrugated horn,
+    # lid, hanging from the ceiling pointed down
+    x=load('lab_spec_data/2016-08-19T18:39:30.npz') 
+    z=x['spec']
+    lo=x['LO_freq']
+    t=x['time']
+    #For warming up data
+    cind=arange(50)
+    hind=-cind-1
+    Th=270.0
+    Tc=145.0
+
 
 
 f=linspace(0,2200,z.shape[1])
@@ -271,7 +374,7 @@ text(.99,.02,'calibrated spectra'.format(f[1200]),
       verticalalignment='bottom',horizontalalignment='right',transform=gca().transAxes)
 
 
-dosave=False
+dosave=True
 if dosave:
     for k in (array(range(4))+1):
         figure(k)

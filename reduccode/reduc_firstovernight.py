@@ -1,14 +1,15 @@
 from xhorn import reduc_spec
 
-doload=False
+doload=True
 if doload:
-    d = reduc_spec.data( (2016,8,22,23,23,54) , (2016,8,23,15,36,16) )
+    #d = reduc_spec.data( (2016,8,22,23,23,54) , (2016,8,23,15,36,16) )
+    d = reduc_spec.data((2016, 8, 29, 20, 54), (2016, 8, 29, 21, 40))
     d.fitam(zarange=[40,41])
     exind=d.expandcal()
     x=(d.spec - d.b[exind])/d.g[exind]
 
 za=unique(d.za)
-f=d.f+d.lo
+f=d.f+unique(d.lo)[0]
 
     
 figure(1)
