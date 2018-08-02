@@ -1,7 +1,7 @@
 # xhorn
 Code for communicating between CASPER's ROACH2 + 5 Gs/s ADC, Velmex VXM motor controller + B59 rotary table, and Python 2.7.
 
-##Dependencies
+## Dependencies
  * [adc5g]
  * [fit_cores]
  * [corr]
@@ -30,7 +30,7 @@ All can be installed (as root) with `$ pip install <packagename>` except:
 
 or wherever Python's `sys.path` is on your system.
 
-##Files
+## Files
  * `spec.py` - A class that initializes a 2048 channel spectrometer on the ROACH board.
  * `motor.py` - A class capable of stepping and reading back the position of the rotary table.
  * `time_sync.py` - Contains functions that determine the system time's offset from UTC using the nearest NTP server.
@@ -62,7 +62,7 @@ In [2]: go(step = 1, home = False, min = 0, max = 45, zenith = 0, samp_rate = 44
 
 Each time the motor returns to `zenith`, the script closes the current output file and opens a new one. All output files are automatically named with the current UTC time, which is calculated at each return to `home` by querying an NTP server for the system time's offset from UTC. File I/O and time syncronization operations are accomplished with functions in `in_out.py` and `time_sync.py`. 
 
-##`Spec`
+## `Spec`
 
 To create a standalone spectrometer instance, run:
 
@@ -119,7 +119,7 @@ If the fit was succesful, you can save the OGP settings to ```output/ogp.npy``` 
 s.save_ogp()
 s.load_ogp()
 ```
-##`Motor`
+## `Motor`
 To create an instance of the `Motor` class, run:
 ```python
 from motor import Motor
@@ -132,7 +132,7 @@ The `home()` method makes use of the B59 rotary table's magnetic limit switch to
 
 For safety reasons, a `KeyboardInterrupt` or `SystemExit` during `send_command()` will trigger the command `"D"`, which decelerates the motor to a stop. Default acceleration and speed are set to 1 and 20, and can be changed with `m.accl` and `m.speed`, or else specified with optional arguments in `incr()` and `abst()`.
 
-#Acknowledgements
+# Acknowledgements
 In addition to the [sma_wideband] code that we import verbatim:
  * The initialization and snapping methods in `Spec` are derived from Jack Hickish's [simple_spec].
  * The OGP fitting methods in ```Spec``` are derived from Rurik Primiani's [rww_tools].
